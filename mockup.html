@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style1.css">
+<title>Scribalive - Home</title>
+</head>
+
+<body>
+<!-- Scribalive logo -->
+<h1 style="font-family:fantasy;">Scribalive</h1>
+<hr>
+
+<!-- Create a welcome message that can be changed when button is clicked -->
+<p id="demo">
+<i>Welcome to Scribalive, the real-time note taking software. Please sign up or sign in!</i>
+<br><br>For the best search engine, try <a href="http://www.google.com">Google</a>
+</p>
+
+<!-- Simple Javascript function, change the above paragraph -->
+<script>
+function myFunction()
+{
+	document.getElementById("demo").innerHTML="Logging in...";
+}
+</script>
+
+Username: <input type="text" name="username"><br>
+Password:&nbsp<input type="password" name="pwd"><br>
+<button type="button" onclick="myFunction()">Sign in</button>
+
+<!-- Sign up form -->
+<form>
+<br>
+<b>Not a member?</b><br>
+First name:&nbsp&nbsp<input type="text" name="firstname"><br>
+Last name:&nbsp&nbsp&nbsp<input type="text" name="lastname"><br>
+Email:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" name="email"><br>
+Password:&nbsp&nbsp&nbsp<input type="password" name="pwd"><br>
+Gender<br>
+<input type="radio" name="sex" value="male">Male
+<input type="radio" name="sex" value="female">Female<br><br>
+I agree to the terms for Scribalive<br>
+<script src=javascript1.js></script>
+<script>printDate()</script><br>
+<input type="checkbox" name="agreement" value="value">
+
+
+<br>
+<input type="submit" value="Create Account">
+<SCRIPT SRC="javascript1.js">
+</SCRIPT>
+</form>
+
+</body>
+
+</html>
