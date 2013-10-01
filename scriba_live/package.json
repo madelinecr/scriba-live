@@ -1,0 +1,21 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.4.0",
+    "hbs": "*",
+    "socket.io": "*",
+    "sequelize": "~2.0.0-beta.0",
+    "sqlite3": "~2.1.17",
+    "bcrypt-nodejs": "0.0.3"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-ember-templates": "~0.4.15",
+    "grunt-contrib-concat": "~0.3.0"
+  }
+}
