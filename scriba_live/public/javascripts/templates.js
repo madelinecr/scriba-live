@@ -36,9 +36,21 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["welcome"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  
+  var buffer = '', hashContexts, hashTypes, escapeExpression=this.escapeExpression;
 
 
   data.buffer.push("<h>WELCOME!</h>\n\n");
+  hashContexts = {'controllerBinding': depth0};
+  hashTypes = {'controllerBinding': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SigninView", {hash:{
+    'controllerBinding': ("SL.signinController")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n");
+  hashContexts = {'controllerBinding': depth0};
+  hashTypes = {'controllerBinding': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SignupView", {hash:{
+    'controllerBinding': ("SL.signupController")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  return buffer;
   
 });

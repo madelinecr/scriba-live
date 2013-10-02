@@ -1,5 +1,6 @@
 extends ../layout
 
 block content
-script(type="text/x-handlebars")
-  {{view SL.UsersView controllerBinding="SL.usersController"}}
+  //- Indent the script or it will not render
+  script(type="text/x-handlebars")
+    {{view SL.WelcomeView controllerBinding="SL.welcomeController"}}
