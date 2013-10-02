@@ -6,7 +6,7 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var hbs = require('hbs');
+var jade = require('jade');
 var io = require('socket.io');
 
 var app = express();
@@ -20,8 +20,8 @@ app.set('controllers', require('./controllers'));
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
-app.engine('hbs', hbs.__express);
-app.set('view engine', 'hbs');
+app.engine('jade', jade.__express);
+app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -47,6 +47,7 @@ app.get('/note', app.get('controllers').pages.note);
 // JSON ROUTES (serve JSON objects)
 // Checks regex for url from top entries down (for get and post individually)
 
+// app.http_verb('/model', app.get('controllers').model.action)
 // -> USERS ROUTES
 // --> GET
 app.get('/users', app.get('controllers').users.index);
