@@ -1,5 +1,4 @@
 // http://stackoverflow.com/questions/9709912/separating-file-server-and-socket-io-logic-in-node-js
-// sockets.js
 var socketio = require('socket.io');
 
 module.exports.listen = function(server){
