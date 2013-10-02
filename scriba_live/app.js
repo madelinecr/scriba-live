@@ -7,12 +7,10 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var jade = require('jade');
-var io = require('socket.io');
 
 var app = express();
 
 var server = http.createServer(app);
-var io = io.listen(server);
 
 app.set('db', require('./models'));
 app.set('controllers', require('./controllers'));
@@ -68,6 +66,9 @@ app.get('/notes/:id', app.get('controllers').notes.show);
 // --> POST
 //app.post('/notes', app.get('controllers').notes.create);
 //app.post('/notes/:id', app.get('controllers').notes.update);
+
+// socket io
+app.get('controllers').io.listen(server);
 
 // DATABASE
 app.get('db').sequelize.sync().complete(function(err) {

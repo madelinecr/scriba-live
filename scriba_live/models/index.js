@@ -1,31 +1,3 @@
-/*// http://sequelizejs.com/heroku modified
-if (!global.hasOwnProperty('db')) {
-  var Sequelize = require('sequelize');
-  var sequelize = null;
-
-  // the application is executed on the local machine ... use mysql
-  sequelize = new Sequelize('development', 'username', null, {
-    dialect: 'sqlite',
-    storage: __dirname + '/../db/development.db' // path to sqlite database file
-  });
-
-  global.db = {
-    Sequelize: Sequelize,
-    sequelize: sequelize,
-
-    // add models here, define each in a name_model.js file
-    User: sequelize.import(__dirname + '/user_model'),
-    Note: sequelize.import(__dirname + '/note_model')
-  }
-
-
-  //  Associations can be defined here. E.g. like this:
-  //  global.db.User.hasMany(global.db.SomethingElse)
-
-}
-
-module.exports = global.db*/
-
 // ref: http://architects.dzone.com/articles/sequelize-javascript-orm
 
 var Sequelize = require('sequelize');
