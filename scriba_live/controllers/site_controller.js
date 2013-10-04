@@ -8,7 +8,7 @@
 */
 
 exports.welcome = function(req, res) {
-  res.render('pages/welcome', { title: 'Express' });
+  res.render('site/welcome', { title: 'Express' });
 };
 
 
@@ -17,7 +17,7 @@ exports.welcome = function(req, res) {
 */
 
 exports.home = function(req, res) {
-  res.render('pages/home', { title: 'Express' });
+  res.render('site/home', { title: 'Express' });
 };
 
 
@@ -26,5 +26,5 @@ exports.home = function(req, res) {
 */
 
 exports.note = function(req, res) {
-  res.render('pages/note', { title: 'Express' });
+  res.render('site/note', { title: 'Express' });
 };
