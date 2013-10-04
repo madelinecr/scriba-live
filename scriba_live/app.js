@@ -35,11 +35,11 @@ if ('development' == app.get('env')) {
 }
 
 
-// VIEW ROUTES (serve actual HTML pages)
-// -> PAGES ROUTES
-app.get('/', app.get('controllers').pages.welcome);
-app.get('/home', app.get('controllers').pages.home);
-app.get('/note', app.get('controllers').pages.note);
+// VIEW ROUTES (serve actual HTML site)
+// -> SITE ROUTES
+app.get('/', app.get('controllers').site.welcome);
+app.get('/home', app.get('controllers').site.home);
+app.get('/note', app.get('controllers').site.note);
 
 
 // JSON ROUTES (serve JSON objects)
