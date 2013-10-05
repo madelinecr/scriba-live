@@ -16,6 +16,8 @@ var sequelize = new Sequelize('development', 'username', null, {
 // load models
 module.exports.User = sequelize.import(__dirname + '/user_model');
 module.exports.Note = sequelize.import(__dirname + '/note_model');
+module.exports.Page = sequelize.import(__dirname + '/page_model');
+module.exports.Text = sequelize.import(__dirname + '/text_model');
 
 /*
   describe relationships here, automatically adds foriegn key but may also
