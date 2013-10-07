@@ -1,6 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define("Page", {
 
-    order: DataTypes.INTEGER
+    page_index: DataTypes.INTEGER
   });
 }
