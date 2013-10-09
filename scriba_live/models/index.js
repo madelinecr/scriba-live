@@ -34,6 +34,20 @@ module.exports.Rect = sequelize.import(__dirname + '/rect_model');
 
   // Note
   m.Note.belongsTo(m.User);
+  m.Note.hasMany(m.Page);
+
+  // Page
+  m.Page.belongsTo(m.Note);
+  m.Page.hasMany(m.Text);
+  m.Page.hasMany(m.Path);
+  m.Page.hasMany(m.Oval);
+  m.Page.hasMany(m.Rect);
+
+  // Drawing Objects
+  m.Text.belongsTo(m.Page);
+  m.Path.belongsTo(m.Page);
+  m.Oval.belongsTo(m.Page);
+  m.Rect.belongsTo(m.Page);
 
 })(module.exports);
 
