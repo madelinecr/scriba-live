@@ -6,3 +6,16 @@ body {
 a {
   color: #00B7FF;
 }
+
+#editor-menu {
+  background-color: blue;
+}
+#editor-canvas {
+  float: left;
+  background-color: red;
+  position: absolute;
+}
+#editor-canvas-textarea {
+  float: left;
+  position: absolute;
+}

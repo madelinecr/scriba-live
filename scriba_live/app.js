@@ -39,7 +39,7 @@ if ('development' == app.get('env')) {
 // -> SITE ROUTES
 app.get('/', app.get('controllers').site.welcome);
 app.get('/home', app.get('controllers').site.home);
-app.get('/note', app.get('controllers').site.note);
+app.get('/editor', app.get('controllers').site.editor);
 
 
 // JSON ROUTES (serve JSON objects)

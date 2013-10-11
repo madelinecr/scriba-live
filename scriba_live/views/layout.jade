@@ -7,18 +7,24 @@ html(lang="en")
     script(src="/javascripts/handlebars-1.0.0.js")
     script(src="/javascripts/ember.js")
     script(src="/socket.io/socket.io.js")
+    script(src="/javascripts/raphael.js")
+    script(src="/javascripts/raphael_inline.js")
     <!-- EMBERJS TEMPLATES -->
     script(src="/javascripts/templates.js")
     <!-- EMBERJS APP -->
     script(src="/javascripts/scriba.js")
     <!-- EMBERJS MODELS -->
     script(src="/javascripts/models/user_model.js")
+    script(src="/javascripts/models/page_model.js")
+    script(src="/javascripts/models/text_model.js")
+    script(src="/javascripts/models/rect_model.js")
     <!-- EMBERJS CONTROLLERS -->
     script(src="/javascripts/controllers/application_controller.js")
     script(src="/javascripts/controllers/users_controller.js")
     script(src="/javascripts/controllers/welcome_controller.js")
     script(src="/javascripts/controllers/signin_controller.js")
     script(src="/javascripts/controllers/signup_controller.js")
+    script(src="/javascripts/controllers/editor_controller.js")
     <!-- EMBERJS INITIALIZE CONTROLLERS -->
     script(src="/javascripts/init_controllers.js")
     <!-- EMBERJS VIEWS -->
@@ -26,6 +32,12 @@ html(lang="en")
     script(src="/javascripts/views/welcome_view.js")
     script(src="/javascripts/views/signin_view.js")
     script(src="/javascripts/views/signup_view.js")
+    script(src="/javascripts/views/editor_view.js")
+    <!-- ONLOAD -->
+    script(src="/javascripts/onload.js")
+    <!-- CSS -->
+    link(rel='stylesheet', href="/stylesheets/style.css")
+
 
   body
     block content

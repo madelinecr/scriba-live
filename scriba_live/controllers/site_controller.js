@@ -25,6 +25,6 @@ exports.home = function(req, res) {
   GET note page.
 */
 
-exports.note = function(req, res) {
-  res.render('site/note', { title: 'Express' });
+exports.editor = function(req, res) {
+  res.render('site/editor', { title: 'Express' });
 };

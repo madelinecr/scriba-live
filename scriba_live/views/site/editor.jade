@@ -1,0 +1,6 @@
+extends ../layout
+
+block content
+  //- Indent the script or it will not render
+  script(type="text/x-handlebars")
+    {{view SL.EditorView controllerBinding="SL.editorController"}}
