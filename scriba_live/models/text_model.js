@@ -5,5 +5,4 @@ module.exports = function(sequelize, DataTypes) {
     y_pos: DataTypes.INTEGER,
     value: DataTypes.TEXT     // Under mysql, stored off table
   });
-  });
 }
