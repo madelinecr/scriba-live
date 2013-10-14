@@ -306,14 +306,34 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
     var rect = controller.get('active');
 
-    var dx = x - controller.get('ox');
-    var dy = y - controller.get('oy');
+    var ox = controller.get('ox');
+    var oy = controller.get('oy');
 
-    // rectangle can't have width less than 0 - will improve later
-    rect.attr({
-      width:  dx > 1 ? dx : 1,
-      height: dy > 1 ? dy : 1
-    });
+    // Keep width > 0
+    if (x > ox) {
+      rect.attr({width:  x - ox});
+    }
+    else if (x == ox)
+      rect.attr({width:  1});
+    else { // x < ox
+      rect.attr({
+        x: x,
+        width: ox - x
+      });
+    }
+
+    // Keep height > 0
+    if (y > oy) {
+      rect.attr({height:  y - oy});
+    }
+    else if (y == oy)
+      rect.attr({height:  1});
+    else { // y < oy
+      rect.attr({
+        y: y,
+        height: oy - y
+      });
+    }
   },
 
 
