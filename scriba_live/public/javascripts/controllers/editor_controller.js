@@ -7,6 +7,7 @@ SL.EditorController = Em.Controller.extend({
   pages: [],
   texts: [],
   rects: [],
+  ovals: [],
 
   // variables
   tool: 'text',
@@ -97,7 +98,17 @@ SL.EditorController = Em.Controller.extend({
     SL.editorController.get('rects').pushObject(rect);
   },
 
-  newOval: function(obj) { },
+  newOval: function(obj) {
+    var oval = SL.Oval.create({
+      x_pos: obj.attr('x'),
+      y_pos: obj.attr('y'),
+      width: obj.attr('rx'),
+      height: obj.attr('ry'),
+      object: obj
+    });
+
+    SL.editorController.get('ovals').pushObject(oval);
+  },
 
   // CRUD FOR RAPHAEL OBJECTS
 
@@ -137,7 +148,15 @@ SL.EditorController = Em.Controller.extend({
     return rect;
   },
 
-  newRaphOval: function() { },
+  newRaphOval: function(page, x, y, width, height) {
+    // create new raphael ellipse object
+    var oval = page.get('object').ellipse(x, y, width, height);
+
+    // add event handlers like drag etc.
+
+    // return ellipse
+    return oval;
+  },
 
   // EVENT HANDLERS
 
@@ -153,6 +172,9 @@ SL.EditorController = Em.Controller.extend({
     else*/ if (tool == "rect") {
       SL.editorController.newRectDown(event);
     }
+    else if (tool == "oval") {
+      SL.editorController.newOvalDown(event);
+    }
 
   },
 
@@ -166,6 +188,9 @@ SL.EditorController = Em.Controller.extend({
     else*/ if (tool == "rect") {
       SL.editorController.newRectUp(event);
     }
+    else if (tool == "oval") {
+      SL.editorController.newOvalUp(event);
+    }
 
     SL.editorController.set('is_down', false);
   },
@@ -178,6 +203,9 @@ SL.EditorController = Em.Controller.extend({
     if (controller.get('is_down')) {
       if (tool == 'rect') {
         controller.resizeRect(event.offsetX, event.offsetY);
+      }
+      else if (tool == 'oval') {
+        controller.resizeOval(event.offsetX, event.offsetY);
       }
     }
   },
@@ -217,19 +245,6 @@ SL.EditorController = Em.Controller.extend({
 
   // EVENT HELPERS
 
-  resizeRect: function(x, y) {
-    var controller = SL.get('editorController');
-    var rect = controller.get('active');
-
-    var dx = x - controller.get('ox');
-    var dy = y - controller.get('oy');
-
-    // rectangle can't have width less than 0 - will improve later
-    rect.attr({
-      width:  dx > 1 ? dx : 1,
-      height: dy > 1 ? dy : 1
-    });
-  },
 
   /*newTextDown: function(event) {
     var controller = SL.get('editorController');
@@ -254,6 +269,7 @@ SL.EditorController = Em.Controller.extend({
     // save text to server
     controller.saveText(text);
   },*/
+
 
   newRectDown: function(event) {
     var controller = SL.get('editorController');
@@ -285,6 +301,67 @@ SL.EditorController = Em.Controller.extend({
     // clear active
     controller.set('active', null);
   },
+
+  resizeRect: function(x, y) {
+    var controller = SL.get('editorController');
+    var rect = controller.get('active');
+
+    var dx = x - controller.get('ox');
+    var dy = y - controller.get('oy');
+
+    // rectangle can't have width less than 0 - will improve later
+    rect.attr({
+      width:  dx > 1 ? dx : 1,
+      height: dy > 1 ? dy : 1
+    });
+  },
+
+
+  newOvalDown: function(event) {
+    var controller = SL.get('editorController');
+
+    // get current page
+    var page = controller.get('pages').objectAt(0);
+
+    // save original starting x and y
+    controller.set('ox', event.offsetX);
+    controller.set('oy', event.offsetY);
+
+    // create a new ellipse to shape where mouse clicks down
+    var oval = controller.newRaphOval(page, event.offsetX, event.offsetY, 0.5, 0.5);
+
+    // set active value to ellipse so other events know what to edit
+    controller.set('active', oval);
+  },
+
+  newOvalUp: function(event) {
+    var controller = SL.get('editorController');
+
+    // save ellipse to object array
+    var obj = controller.get('active');
+    var oval = controller.newOval(obj);
+
+    // save to server
+    controller.saveOval(obj);
+
+    // clear active
+    controller.set('active', null);
+  },
+
+  resizeOval: function(x, y) {
+    var controller = SL.get('editorController');
+    var oval = controller.get('active');
+
+    var dx = x - controller.get('ox');
+    var dy = y - controller.get('oy');
+
+    // oval can't have width less than 0 - will improve later
+    oval.attr({
+      rx:  dx > 1 ? dx : 1,
+      ry: dy > 1 ? dy : 1
+    });
+  },
+
 
   // EMBER HANDLEBARS ACTIONS
   actions: {
