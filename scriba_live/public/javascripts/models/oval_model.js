@@ -10,8 +10,8 @@ SL.Oval = Em.Object.extend({
   object: null,
 
   update: function() {
-    this.set('x_pos', this.object.attr('x'));
-    this.set('y_pos', this.object.attr('y'));
+    this.set('x_pos', this.object.attr('cx'));
+    this.set('y_pos', this.object.attr('cy'));
     this.set('width', this.object.attr('rx'));
     this.set('height', this.object.attr('ry'));
   }

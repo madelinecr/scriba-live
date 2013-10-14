@@ -100,8 +100,8 @@ SL.EditorController = Em.Controller.extend({
 
   newOval: function(obj) {
     var oval = SL.Oval.create({
-      x_pos: obj.attr('x'),
-      y_pos: obj.attr('y'),
+      x_pos: obj.attr('cx'),
+      y_pos: obj.attr('cy'),
       width: obj.attr('rx'),
       height: obj.attr('ry'),
       object: obj
@@ -148,9 +148,9 @@ SL.EditorController = Em.Controller.extend({
     return rect;
   },
 
-  newRaphOval: function(page, x, y, width, height) {
+  newRaphOval: function(page, cx, cy, rx, ry) {
     // create new raphael ellipse object
-    var oval = page.get('object').ellipse(x, y, width, height);
+    var oval = page.get('object').ellipse(cx, cy, rx, ry);
 
     // add event handlers like drag etc.
 
@@ -313,8 +313,9 @@ SL.EditorController = Em.Controller.extend({
     if (x > ox) {
       rect.attr({width:  x - ox});
     }
-    else if (x == ox)
+    else if (x == ox) {
       rect.attr({width:  1});
+    }
     else { // x < ox
       rect.attr({
         x: x,
@@ -326,8 +327,9 @@ SL.EditorController = Em.Controller.extend({
     if (y > oy) {
       rect.attr({height:  y - oy});
     }
-    else if (y == oy)
+    else if (y == oy) {
       rect.attr({height:  1});
+    }
     else { // y < oy
       rect.attr({
         y: y,
@@ -372,14 +374,35 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
     var oval = controller.get('active');
 
-    var dx = x - controller.get('ox');
-    var dy = y - controller.get('oy');
+    var ox = controller.get('ox');
+    var oy = controller.get('oy');
 
-    // oval can't have width less than 0 - will improve later
-    oval.attr({
-      rx:  dx > 1 ? dx : 1,
-      ry: dy > 1 ? dy : 1
-    });
+    // Calculate new center
+    oval.attr({cx: (ox + x) / 2});
+    oval.attr({cy: (oy + y) / 2});
+
+    // Keep x radius > 0.5
+    if ((x - ox) > 1) {
+      oval.attr({rx: (x - ox) / 2});
+    }
+    else if ((ox - x) > 1) {
+      oval.attr({rx: (ox - x) / 2});
+    }
+    else { // |x - ox| < 1
+      oval.attr({rx: 0.5});
+    }
+
+    // Keep y radius > 0.5
+    if ((y - oy) > 1) {
+      oval.attr({ry: (y - oy) / 2});
+    }
+    else if ((oy - y) > 1) {
+      oval.attr({ry: (oy - y) / 2});
+    }
+    else { // |y - oy| < 1
+      oval.attr({ry: 0.5});
+    }
+
   },
 
 
