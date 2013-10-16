@@ -9,6 +9,10 @@ SL.Rect = Em.Object.extend({
   height: 0,
   object: null,
 
+  element_id: function() {
+    return this.get('object').node.id;
+  }.property('this.object.node.id'),
+
   update: function() {
     this.set('x_pos', this.object.attr('x'));
     this.set('y_pos', this.object.attr('y'));

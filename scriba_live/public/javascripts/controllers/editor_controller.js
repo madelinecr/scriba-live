@@ -33,15 +33,44 @@ SL.EditorController = Em.Controller.extend({
 
   // CRUD FOR SOCKET.IO TO CREATE THINGS
 
-  createPage: function(values) { },
+  createPage: function(page) {
+    // create a raphael object
+    var paper = SL.editorController.newRaphPage(page.get('id'), page.get('width'), page.get('height'));
 
-  createText: function (values) { },
+    // attach raphael object to page
+    page.set('object', paper);
 
-  createPath: function (values) { },
+    // save page to pages array
+    SL.editorController.get('pages').pushObject(page);
+  },
 
-  createRect: function(values) { },
+  createText: function (text) {
 
-  createOval: function(values) { },
+  },
+
+  createPath: function (path) {
+
+  },
+
+  createRect: function(rect) {
+    // get page
+    var page = controller.get('pages').objectAt(0);
+
+    // create raphael object
+    var raph_rect = SL.editorController.newRaphRect(page,
+      rect.get('x'),
+      rect.get('y'),
+      rect.get('width'),
+      rect.get('height')
+    );
+
+    // attach raphael object to object on page
+    SL.editorController.get('rects').pushObject(rect);
+  },
+
+  createOval: function(oval) {
+
+  },
 
   // CRUD FOR USERS TO CREATE THINGS
 
@@ -99,7 +128,7 @@ SL.EditorController = Em.Controller.extend({
   },
 
   newOval: function(obj) {
-    var oval = SL.Oval.create({
+      var oval = SL.Oval.create({
       x_pos: obj.attr('cx'),
       y_pos: obj.attr('cy'),
       width: obj.attr('rx'),
@@ -142,7 +171,20 @@ SL.EditorController = Em.Controller.extend({
     // create new raphael rect object
     var rect = page.get('object').rect(x, y, width, height);
 
+    // build element id
+    var element_id = "rect-"+SL.editorController.get('rects').get('length')+"-page-"+page.get('id');
+
+    // style
+    rect.attr({
+      fill: 'green',
+    });
+
+    // set id
+    rect.node.id = element_id;
+
     // add event handlers like drag etc.
+    $('#'+element_id).on('mousedown', SL.editorController.rectMouseDown);
+    $('#'+element_id).on('mouseup', SL.editorController.rectMouseUp);
 
     // return rect
     return rect;
@@ -152,7 +194,11 @@ SL.EditorController = Em.Controller.extend({
     // create new raphael ellipse object
     var oval = page.get('object').ellipse(cx, cy, rx, ry);
 
+    // style
+    oval.attr('fill', 'green');
+
     // add event handlers like drag etc.
+
 
     // return ellipse
     return oval;
@@ -206,6 +252,9 @@ SL.EditorController = Em.Controller.extend({
       }
       else if (tool == 'oval') {
         controller.resizeOval(event.offsetX, event.offsetY);
+      }
+      else if (tool =='select') {
+        controller.moveObject(event.offsetX, event.offsetY);
       }
     }
   },
@@ -405,6 +454,65 @@ SL.EditorController = Em.Controller.extend({
 
   },
 
+  moveObject: function (x, y) {
+    var controller = SL.get('editorController');
+    var active = controller.get('active');
+
+    if (active.type == 'rect') {
+      controller.rectMove(x, y);
+    }
+  },
+
+  rectMouseDown: function(event) {
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool = "select") {
+
+      // get element id
+      var element_id = event.target.id;
+      // get SL.Rect instance from array, get it's associated raphael object and
+      var rect = controller.get('rects').findBy('element_id', element_id).get('object');
+
+      // set current x and y positions
+      controller.set('dx', event.offsetX - rect.attr('x'));
+      controller.set('dy', event.offsetY - rect.attr('y'));
+
+      // set rect to active
+      controller.set('active', rect);
+    }
+  },
+
+  rectMouseUp: function(event) {
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool == "select") {
+      // get SL.Rect instance
+      var element_id = event.target.id;
+      var rect = controller.get('rects').findBy('element_id', element_id);
+
+      // update SL.Rect instance values
+      rect.update();
+
+      // set active to null
+      controller.set('active', null);
+    }
+  },
+
+  rectMove: function(x, y) {
+    var controller = SL.get('editorController');
+    var rect = controller.get('active');
+
+    var dx = controller.get('dx');
+    var dy = controller.get('dy');
+
+    rect.attr({
+      x: x - dx,
+      y: y - dy
+    });
+  },
+
 
   // EMBER HANDLEBARS ACTIONS
   actions: {
@@ -421,14 +529,20 @@ SL.EditorController = Em.Controller.extend({
 
   // SAVE FUNCTIONS TO SERVER
 
-  savePage: function(page) { },
+  savePage: function(page) {
 
-  saveText: function(text) { },
+  },
 
-  savePath: function(path) { },
+  saveText: function(text) {
+
+  },
+
+  savePath: function(path) {
+
+  },
 
   saveRect: function(rect) {
-    // call SL.socket_controller code here to save to server
+    // call SL.socket_controller code here to save passed SL.Rect object to server
   },
 
   saveOval: function(oval) { },
