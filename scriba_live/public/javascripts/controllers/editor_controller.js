@@ -12,6 +12,7 @@ SL.EditorController = Em.Controller.extend({
   // variables
   tool: 'text',
   active: null,
+  last_active: null,
   is_down: false,
   is_tool: false,
 
@@ -29,6 +30,8 @@ SL.EditorController = Em.Controller.extend({
 
     // initalize a new page to draw on
     var page = this.newPage('editor-canvas', 300, 400);
+
+    window.onkeydown = SL.editorController.keyDown;
   },
 
   // CRUD FOR SOCKET.IO TO CREATE THINGS
@@ -125,10 +128,12 @@ SL.EditorController = Em.Controller.extend({
     });
 
     SL.editorController.get('rects').pushObject(rect);
+
+    return rect;
   },
 
   newOval: function(obj) {
-      var oval = SL.Oval.create({
+    var oval = SL.Oval.create({
       x_pos: obj.attr('cx'),
       y_pos: obj.attr('cy'),
       width: obj.attr('rx'),
@@ -137,6 +142,8 @@ SL.EditorController = Em.Controller.extend({
     });
 
     SL.editorController.get('ovals').pushObject(oval);
+
+    return oval;
   },
 
   // CRUD FOR RAPHAEL OBJECTS
@@ -194,11 +201,20 @@ SL.EditorController = Em.Controller.extend({
     // create new raphael ellipse object
     var oval = page.get('object').ellipse(cx, cy, rx, ry);
 
+    // build element id
+    var element_id = "oval-"+SL.editorController.get('ovals').get('length')+"-page-"+page.get('id');
+
     // style
-    oval.attr('fill', 'green');
+    oval.attr({
+      fill: 'green',
+    });
+
+    // set id
+    oval.node.id = element_id;
 
     // add event handlers like drag etc.
-
+    $('#'+element_id).on('mousedown', SL.editorController.ovalMoveDown);
+    $('#'+element_id).on('mouseup', SL.editorController.ovalMoveUp);
 
     // return ellipse
     return oval;
@@ -247,20 +263,23 @@ SL.EditorController = Em.Controller.extend({
     var tool = controller.get('tool');
 
     if (controller.get('is_down')) {
+      var active = controller.get('active');
+
       if (tool == 'rect') {
         controller.resizeRect(event.offsetX, event.offsetY);
       }
       else if (tool == 'oval') {
         controller.resizeOval(event.offsetX, event.offsetY);
       }
-      else if (tool =='select') {
+      else if (tool =='select' && active != null) {
         controller.moveObject(event.offsetX, event.offsetY);
       }
     }
   },
 
   // lisents to keypress events
-  keyPress: function(event) {
+  keyDown: function(event) {
+    // http://www.javascripter.net/faq/keycodes.htm for keycodes
     var controller = SL.get('editorController');
     var tool = controller.get('tool');
 
@@ -289,6 +308,13 @@ SL.EditorController = Em.Controller.extend({
           text: value + String.fromCharCode(event.which),
         });
       }*/
+    }
+    else if (tool == 'select') {
+      console.log(event.which);
+      // if delete
+      if (event.which == 46) {
+        controller.deleteLast();
+      }
     }
   },
 
@@ -345,10 +371,10 @@ SL.EditorController = Em.Controller.extend({
     var rect = controller.newRect(obj);
 
     // save to server
-    controller.saveRect(obj);
+    rect.save();
 
     // clear active
-    controller.set('active', null);
+    controller.popActive();
   },
 
   resizeRect: function(x, y) {
@@ -413,10 +439,10 @@ SL.EditorController = Em.Controller.extend({
     var oval = controller.newOval(obj);
 
     // save to server
-    controller.saveOval(obj);
+    oval.save();
 
     // clear active
-    controller.set('active', null);
+    controller.popActive();
   },
 
   resizeOval: function(x, y) {
@@ -454,12 +480,17 @@ SL.EditorController = Em.Controller.extend({
 
   },
 
-  moveObject: function (x, y) {
+  moveObject: function(x, y) {
     var controller = SL.get('editorController');
     var active = controller.get('active');
 
+    akharazia2 = active;
+
     if (active.type == 'rect') {
       controller.rectMove(x, y);
+    }
+    else if (active.type == 'ellipse') {
+      controller.ovalMove(x, y);
     }
   },
 
@@ -467,7 +498,7 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
     var tool = controller.get('tool');
 
-    if (tool = "select") {
+    if (tool == "select") {
 
       // get element id
       var element_id = event.target.id;
@@ -477,6 +508,9 @@ SL.EditorController = Em.Controller.extend({
       // set current x and y positions
       controller.set('dx', event.offsetX - rect.attr('x'));
       controller.set('dy', event.offsetY - rect.attr('y'));
+
+      // bring to front
+      rect.toFront();
 
       // set rect to active
       controller.set('active', rect);
@@ -496,7 +530,7 @@ SL.EditorController = Em.Controller.extend({
       rect.update();
 
       // set active to null
-      controller.set('active', null);
+      controller.popActive();
     }
   },
 
@@ -513,6 +547,58 @@ SL.EditorController = Em.Controller.extend({
     });
   },
 
+  ovalMoveDown: function(event) {
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool == "select") {
+
+      // get element id
+      var element_id = event.target.id;
+      // get SL.Rect instance from array, get it's associated raphael object and
+      var oval = controller.get('ovals').findBy('element_id', element_id).get('object');
+
+      // set current x and y positions
+      controller.set('dx', event.offsetX - oval.attr('cx'));
+      controller.set('dy', event.offsetY - oval.attr('cy'));
+
+      // bring to front
+      oval.toFront();
+
+      // set rect to active
+      controller.set('active', oval);
+    }
+  },
+
+  ovalMoveUp: function(event) {
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool == "select") {
+      // get SL.Rect instance
+      var element_id = event.target.id;
+      var oval = controller.get('ovals').findBy('element_id', element_id);
+
+      // update SL.Rect instance values
+      oval.update();
+
+      // set active to null
+      controller.popActive();
+    }
+  },
+
+  ovalMove: function(cx, cy) {
+    var controller = SL.get('editorController');
+    var rect = controller.get('active');
+
+    var dx = controller.get('dx');
+    var dy = controller.get('dy');
+
+    rect.attr({
+      cx: cx - dx,
+      cy: cy - dy
+    });
+  },
 
   // EMBER HANDLEBARS ACTIONS
   actions: {
@@ -527,24 +613,31 @@ SL.EditorController = Em.Controller.extend({
 
   // GENERAL HELPER FUNCTIONS
 
-  // SAVE FUNCTIONS TO SERVER
+  popActive: function() {
+    var controller = SL.get('editorController');
+    var active = controller.get('active');
 
-  savePage: function(page) {
-
+    controller.set('last_active', active);
+    controller.set('active', null);
   },
 
-  saveText: function(text) {
+  deleteLast: function() {
+    console.log('delete');
+    // get last selected raphael object
+    var controller = SL.get('editorController');
+    var last_active = controller.get('last_active');
 
-  },
+    var type = last_active.type == "ellipse" ? "oval": last_active.type;
 
-  savePath: function(path) {
+    // get Ember object
+    var element_id = last_active.node.id;
+    var obj = controller.get(type+'s').findBy('element_id', element_id);
 
-  },
+    // remove from array
+    controller.get(type+'s').removeObject(obj);
 
-  saveRect: function(rect) {
-    // call SL.socket_controller code here to save passed SL.Rect object to server
-  },
-
-  saveOval: function(oval) { },
+    // remove object
+    obj.remove();
+  }
 
 });

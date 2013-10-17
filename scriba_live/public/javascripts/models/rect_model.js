@@ -18,5 +18,21 @@ SL.Rect = Em.Object.extend({
     this.set('y_pos', this.object.attr('y'));
     this.set('width', this.object.attr('width'));
     this.set('height', this.object.attr('height'));
+  },
+
+  save: function () {
+    //save to server here
+  },
+
+  remove: function() {
+    // delete raphael object
+    var raph_object = this.get('object');
+    this.set('object', null);
+    raph_object.remove();
+
+    // remove from server
+
+    // remove this object
+    this.destroy();
   }
 });
