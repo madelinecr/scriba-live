@@ -29,7 +29,7 @@ SL.EditorController = Em.Controller.extend({
   startDemo: function() {
 
     // initalize a new page to draw on
-    var page = this.newPage('editor-canvas', 300, 400);
+    var page = this.newPage('editor-canvas', 600, 600);
 
     window.onkeydown = SL.editorController.keyDown;
   },
@@ -83,6 +83,10 @@ SL.EditorController = Em.Controller.extend({
 
     // create a new raphael paper to draw stuff on
     var paper = controller.newRaphPage(id, width, height);
+
+    // set paper id
+    paper.canvas.id = "page-"+controller.get('pages').get('length');
+
     controller.newTextArea(id, width, height);
 
 
@@ -100,9 +104,28 @@ SL.EditorController = Em.Controller.extend({
 
   // add a new text area to editor
   newTextArea: function(id, width, height) {
+    var controller = SL.get('editorController');
+
     var textarea = $("#"+id).append("<textarea id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
 
     // add events to text area
+    textarea.keydown(SL.editorController.textKeyDown);
+
+
+    var text = controller.newText(textarea);
+  },
+
+  textKeyDown: function(event) {
+    var controller = SL.get('editorController');
+
+    if(event.keyCode === 9) { // tab was pressed
+        console.log('tab');
+
+        var textarea = document.getElementById(event.target.id);
+        controller.insertTextAtCaret(textarea, '\t');
+
+        event.preventDefault();
+    }
   },
 
   newText: function(obj) {
@@ -114,6 +137,8 @@ SL.EditorController = Em.Controller.extend({
     });
 
     SL.editorController.get('texts').pushObject(text);
+
+    return text;
   },
 
   newPath: function(obj) { },
@@ -274,6 +299,11 @@ SL.EditorController = Em.Controller.extend({
       else if (tool =='select' && active != null) {
         controller.moveObject(event.offsetX, event.offsetY);
       }
+
+      // prevent events from propogating
+      if (tool =='rect' || tool == 'oval' || tool == 'select') {
+        event.preventDefault();
+      }
     }
   },
 
@@ -283,37 +313,12 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
     var tool = controller.get('tool');
 
-
-    if (tool == 'text') {
-      /*var text = controller.get('active');
-      var value = text.attr('text');
-
-      // if enter
-      if (event.which == 13) {
-        text.attr({
-          text: value + "\n",
-        });
-      }
-      // if backspace
-      else if (event.which == 8) {
-        text.attr({
-          text: value.substring(0, ( value.length - 1 < 0 ? 0 : value.length - 1))
-        });
-        // stop key event from propogating to browser
-        event.preventDefault();
-      }
-      // if character
-      else {
-        text.attr({
-          text: value + String.fromCharCode(event.which),
-        });
-      }*/
-    }
-    else if (tool == 'select') {
-      console.log(event.which);
+    console.log(event.which);
+    if (tool == 'select') {
       // if delete
       if (event.which == 46) {
         controller.deleteLast();
+        event.preventDefault();
       }
     }
   },
@@ -361,6 +366,9 @@ SL.EditorController = Em.Controller.extend({
 
     // set active value to rectangle so other events know what to edit
     controller.set('active', rect);
+
+    // prevent event from propogating
+    event.preventDefault();
   },
 
   newRectUp: function(event) {
@@ -375,6 +383,9 @@ SL.EditorController = Em.Controller.extend({
 
     // clear active
     controller.popActive();
+
+    // prevent event from propogating
+    event.preventDefault();
   },
 
   resizeRect: function(x, y) {
@@ -429,6 +440,9 @@ SL.EditorController = Em.Controller.extend({
 
     // set active value to ellipse so other events know what to edit
     controller.set('active', oval);
+
+    // prevent event from propogating
+    event.preventDefault();
   },
 
   newOvalUp: function(event) {
@@ -443,6 +457,9 @@ SL.EditorController = Em.Controller.extend({
 
     // clear active
     controller.popActive();
+
+    // prevent event from propogating
+    event.preventDefault();
   },
 
   resizeOval: function(x, y) {
@@ -514,6 +531,9 @@ SL.EditorController = Em.Controller.extend({
 
       // set rect to active
       controller.set('active', rect);
+
+      // prevent event from propogating
+      event.preventDefault();
     }
   },
 
@@ -531,6 +551,9 @@ SL.EditorController = Em.Controller.extend({
 
       // set active to null
       controller.popActive();
+
+      // prevent event from propogating
+      event.preventDefault();
     }
   },
 
@@ -567,6 +590,9 @@ SL.EditorController = Em.Controller.extend({
 
       // set rect to active
       controller.set('active', oval);
+
+      // prevent event from propogating
+      event.preventDefault();
     }
   },
 
@@ -584,6 +610,9 @@ SL.EditorController = Em.Controller.extend({
 
       // set active to null
       controller.popActive();
+
+      // prevent event from propogating
+      event.preventDefault();
     }
   },
 
@@ -608,6 +637,13 @@ SL.EditorController = Em.Controller.extend({
       SL.editorController.set('is_down', false);
       SL.editorController.set('tool', tool);
       console.log(tool);
+
+      if (tool == 'text') {
+        $('#page-0').css('z-index', '-1');
+      }
+      else {
+        $('#page-0').css('z-index', '1');
+      }
     },
   },
 
@@ -638,6 +674,82 @@ SL.EditorController = Em.Controller.extend({
 
     // remove object
     obj.remove();
+  },
+
+  getInputSelection: function(el) {
+      var start = 0, end = 0, normalizedValue, range,
+          textInputRange, len, endRange;
+
+      if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+          start = el.selectionStart;
+          end = el.selectionEnd;
+      } else {
+          range = document.selection.createRange();
+
+          if (range && range.parentElement() == el) {
+              len = el.value.length;
+              normalizedValue = el.value.replace(/\r\n/g, "\n");
+
+              // Create a working TextRange that lives only in the input
+              textInputRange = el.createTextRange();
+              textInputRange.moveToBookmark(range.getBookmark());
+
+              // Check if the start and end of the selection are at the very end
+              // of the input, since moveStart/moveEnd doesn't return what we want
+              // in those cases
+              endRange = el.createTextRange();
+              endRange.collapse(false);
+
+              if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+                  start = end = len;
+              } else {
+                  start = -textInputRange.moveStart("character", -len);
+                  start += normalizedValue.slice(0, start).split("\n").length - 1;
+
+                  if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+                      end = len;
+                  } else {
+                      end = -textInputRange.moveEnd("character", -len);
+                      end += normalizedValue.slice(0, end).split("\n").length - 1;
+                  }
+              }
+          }
+      }
+
+      return {
+          start: start,
+          end: end
+      };
+  },
+
+  offsetToRangeCharacterMove: function(el, offset) {
+      return offset - (el.value.slice(0, offset).split("\r\n").length - 1);
+  },
+
+  setSelection: function (el, start, end) {
+      if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+          el.selectionStart = start;
+          el.selectionEnd = end;
+      } else if (typeof el.createTextRange != "undefined") {
+          var range = el.createTextRange();
+          var startCharMove = SL.editorController.offsetToRangeCharacterMove(el, start);
+          range.collapse(true);
+          if (start == end) {
+              range.move("character", startCharMove);
+          } else {
+              range.moveEnd("character", SL.editorController.offsetToRangeCharacterMove(el, end));
+              range.moveStart("character", startCharMove);
+          }
+          range.select();
+      }
+  },
+
+  insertTextAtCaret: function(el, text) {
+      var pos = SL.editorController.getInputSelection(el).end;
+      var newPos = pos + text.length;
+      var val = el.value;
+      el.value = val.slice(0, pos) + text + val.slice(pos);
+      SL.editorController.setSelection(el, newPos, newPos);
   }
 
 });

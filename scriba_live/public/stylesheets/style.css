@@ -8,14 +8,24 @@ a {
 }
 
 #editor-menu {
-  background-color: blue;
 }
+
 #editor-canvas {
-  float: left;
-  background-color: red;
-  position: absolute;
+  position: relative;
 }
-#editor-canvas-textarea {
-  float: left;
+
+#page-0 {
+  left: 0;
+  top: 0;
   position: absolute;
+  z-index: 1;
+}
+
+#editor-canvas-textarea {
+  left: 0;
+  top: 0;
+  position: absolute;
+  background-color: transparent;
+  z-index: 0;
+  tab-size: 2;
 }

@@ -11,6 +11,7 @@ SL.Text = Em.Object.extend({
   update: function() {
     this.set('x_pos', this.object.attr('x'));
     this.set('y_pos', this.object.attr('y'));
-    this.set('text', this.object.attr('text'));
+    this.set('text', this.object.val());
   }
+
 });
