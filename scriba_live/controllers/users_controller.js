@@ -1,3 +1,5 @@
+var crypto = require('crypto');
+
 /*
   This is the users controller which controls user-related data
 */
@@ -13,7 +15,7 @@ exports.index = function(req, res){
   // you can use req.body.ids to get the passed ids
 
   // query database for user
-  req.app.get('db').User.findAll( { where: { id: req.query.id } }).success(function(users){
+  req.app.get('db').User.findAll().success(function(users){
     // if no errors, send users (users == zero length array if no matches)
 
     res.send({
@@ -70,13 +72,25 @@ exports.create = function(req, res) {
   // you then reference the User model and call .create({ paramaters})
   // .success( function(user) { ... }) is called on a success and the created user is passed
   // .error(funciton(error) { ... }) is called when an error occurs and the error is passed
-  req.app.get('db').User.create({
 
+  // Check whether password and confirmation match before proceeding
+  if(req.body.password != req.body.password_confirmation) {
+    res.send({
+      success: false,
+      error: "Your passwords did not match"
+    })
+  }
+
+  var new_user;
+  new_user = req.app.get('db').User.build({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    email: req.body.email
-
-  }).success(function(user) {
+    email: req.body.email,
+    password: hashAndSalt(req.body.password)
+  });
+  
+  // Runs through validations as well
+  new_user.save().success(function(user) {
     // if successfully inserted into database
 
     res.send({
@@ -190,3 +204,36 @@ exports.destroy = function(req, res) {
     });
   });
 }
+
+// Private functions for user management actions
+
+var md5 = function(string) {
+  return crypto.createHash('md5').update(string).digest('hex');
+}
+
+var generateSalt = function() {
+  var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+  var salt = '';
+
+  for(var i = 0; i < 10; i++) {
+    var p = Math.floor(Math.random() * set.length);
+    salt += set[p];
+  }
+  return salt;
+}
+
+var hashAndSalt = function(password) {
+  var salt = generateSalt();
+  return (salt + (md5(password + salt)));
+}
+
+var verifyPassword = function(password, hashed_pass) {
+  var salt = hashed_pass.substr(0, 10);
+  var valid_hash = (salt + md5(password + salt));
+  if(hashed_pass === valid_hash) {
+    return true;
+  } else {
+    return false;
+  }
+}
+  

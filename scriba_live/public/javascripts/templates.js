@@ -1,3 +1,13 @@
+Ember.TEMPLATES["application_view"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  
+
+
+  data.buffer.push("<div>\n  <p>This is the application template</p>\n</div>");
+  
+});
+
 Ember.TEMPLATES["editor"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -41,7 +51,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   
 
 
-  data.buffer.push("<p>This is the signup template, put relevent textfields here</p>");
+  data.buffer.push("<h3>Sign Up:</h3>\n<form action=\"/users\" method=\"post\">\n  <label for=\"first_name\">First Name</label>\n  <input type=\"text\" name=\"first_name\"><br>\n  <label for=\"last_name\">Last Name</label>\n  <input type=\"text\" name=\"last_name\"><br>\n  <label for=\"email\">E-Mail</label>\n  <input type=\"text\" name=\"email\"><br>\n  <label for=\"password\">Password</label>\n  <input type=\"password\" name=\"password\"><br>\n  <label for=\"password_confirmation\">Confirm</label>\n  <input type=\"password\" name=\"password_confirmation\"><br>\n  <input type=\"submit\" formaction=\"/users\" value=\"Submit\">\n</form>\n");
   
 });
 
