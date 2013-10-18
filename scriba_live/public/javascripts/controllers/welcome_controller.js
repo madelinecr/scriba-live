@@ -2,4 +2,6 @@
 
 SL.WelcomeController = Em.Controller.extend({
 
+  title: "hello" 
+
 });

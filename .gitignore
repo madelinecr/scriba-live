@@ -1,2 +1,2 @@
-scriba_live/db/*.sqlite3
+/scriba_live/db/development.sqlite3
 *.swp

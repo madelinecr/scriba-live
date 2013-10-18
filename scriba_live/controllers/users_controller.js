@@ -65,7 +65,7 @@ exports.show = function(req, res){
 */
 
 exports.create = function(req, res) {
-  // try $.post('/users', { first_name: 'Mike', last_name: 'Jones', email: 'mikejones@gmail.com'}, function(response) {console.log(response)}) in javascript console
+  // try $.post('/users', { username: 'ajgilzean', password: 'hello', first_name: 'Adam', last_name: 'Gilzean', email: 'ajgilzean@gmail.com'}, function(response) {console.log(response)}) in javascript console
   // you can use req.body.name / req.body.email to get passed name / email.
 
   // To create a user you must get the db out of the app object "req.app.get('db')"
@@ -92,20 +92,16 @@ exports.create = function(req, res) {
   // Runs through validations as well
   new_user.save().success(function(user) {
     // if successfully inserted into database
-
     res.send({
       success: true,
       user: user
     });
-
   }).error(function(error){
     // if an error occurs
-
     res.send({
       success: false,
       error: error
     });
-
   });
 }
 
@@ -126,14 +122,13 @@ exports.update = function(req, res) {
 
       // try to update user
       user.updateAttributes({
-
+        username: req.body.username,
+        password: req.body.password,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email: req.body.email
-
       }).success(function(user) {
         // if successfully updated in database
-
         res.send({
           success: true,
           user: user

@@ -15,12 +15,14 @@ var sequelize = new Sequelize('development', 'username', null, {
 
 // load models
 module.exports.User = sequelize.import(__dirname + '/user_model');
+module.exports.Dino = sequelize.import(__dirname + '/dino_model');
 module.exports.Note = sequelize.import(__dirname + '/note_model');
 module.exports.Page = sequelize.import(__dirname + '/page_model');
 module.exports.Text = sequelize.import(__dirname + '/text_model');
 module.exports.Path = sequelize.import(__dirname + '/path_model');
 module.exports.Oval = sequelize.import(__dirname + '/oval_model');
 module.exports.Rect = sequelize.import(__dirname + '/rect_model');
+
 
 /*
   describe relationships here, automatically adds foriegn key but may also
@@ -31,6 +33,10 @@ module.exports.Rect = sequelize.import(__dirname + '/rect_model');
 (function(m) {
   // User
   m.User.hasMany(m.Note);
+  m.User.hasMany(m.Dino);
+
+  // Dino (this is a class ex: CSCI430)
+  m.Dino.hasMany(m.User);
 
   // Note
   m.Note.belongsTo(m.User);
