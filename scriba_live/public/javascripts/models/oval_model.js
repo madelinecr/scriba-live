@@ -18,6 +18,8 @@ SL.Oval = Em.Object.extend({
     this.set('y_pos', this.object.attr('cy'));
     this.set('width', this.object.attr('rx'));
     this.set('height', this.object.attr('ry'));
+
+    // push to server here
   },
 
   save: function() {

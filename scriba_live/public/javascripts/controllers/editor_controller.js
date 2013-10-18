@@ -106,11 +106,12 @@ SL.EditorController = Em.Controller.extend({
   newTextArea: function(id, width, height) {
     var controller = SL.get('editorController');
 
-    var textarea = $("#"+id).append("<textarea id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
+    $("#"+id).append("<textarea id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
+
+    var textarea = $("#"+id+"-textarea");
 
     // add events to text area
     textarea.keydown(SL.editorController.textKeyDown);
-
 
     var text = controller.newText(textarea);
   },
@@ -125,6 +126,13 @@ SL.EditorController = Em.Controller.extend({
         controller.insertTextAtCaret(textarea, '\t');
 
         event.preventDefault();
+    }
+
+    // update text
+    var text = controller.get('texts').findBy('element_id', event.target.id);
+
+    if (text) {
+      text.update();
     }
   },
 
@@ -676,6 +684,8 @@ SL.EditorController = Em.Controller.extend({
     obj.remove();
   },
 
+  // http://stackoverflow.com/questions/3510351/how-do-i-add-text-to-a-textarea-at-the-cursor-location-using-javascript
+  // code for inserting at cursor
   getInputSelection: function(el) {
       var start = 0, end = 0, normalizedValue, range,
           textInputRange, len, endRange;
