@@ -1,1 +1,8 @@
-<p>This is the signin template, put relevent textfields here</p>
+<p>Signin</p>
+<form id="myform">
+  <label for="login-username">Username</label> 
+  <input id="login-username" type="text" name="username" size="15" /><br />
+  <label for="login-password">Password</label> 
+  <input id="login-password" type="password" name="password" size="15" /><br />
+  <input type="submit" value="Login" {{action "login"}} />
+</form>

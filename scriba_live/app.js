@@ -34,13 +34,12 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-
 // VIEW ROUTES (serve actual HTML site)
 // -> SITE ROUTES
 app.get('/', app.get('controllers').site.welcome);
-app.get('/home', app.get('controllers').site.home);
 app.get('/editor', app.get('controllers').site.editor);
-
+app.get('/profile/:id', app.get('controllers').site.profile);
+app.get('/preferences', app.get('controllers').site.preferences);
 
 // JSON ROUTES (serve JSON objects)
 // Checks regex for url from top entries down (for get and post individually)
@@ -52,6 +51,7 @@ app.get('/users', app.get('controllers').users.index);
 app.get('/users/:id', app.get('controllers').users.show);
 
 // --> POST
+//app.post('/login', app.get('controllers').users.login);
 app.post('/users', app.get('controllers').users.create);
 app.post('/users/:id', app.get('controllers').users.update);
 
@@ -66,6 +66,18 @@ app.get('/notes/:id', app.get('controllers').notes.show);
 // --> POST
 //app.post('/notes', app.get('controllers').notes.create);
 //app.post('/notes/:id', app.get('controllers').notes.update);
+
+// -> DINOES/CLASSES ROUTES
+// --> GET
+app.get('/dinoes', app.get('controllers').dinoes.index);
+app.get('/dinoes/:id', app.get('controllers').dinoes.show);
+
+// --> POST
+app.post('/dinoes', app.get('controllers').dinoes.create);
+app.post('/dinoes/:id', app.get('controllers').dinoes.update);
+
+// --> DELETE
+app.delete('/dinoes/:id', app.get('controllers').dinoes.destroy);
 
 // socket io
 app.get('controllers').io.listen(server);

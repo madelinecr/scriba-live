@@ -1,3 +1,5 @@
+// Define what a user is, perform various validation tasks
+
 module.exports = function(sequelize, DataTypes) {
   var UserModel = sequelize.define("User", {
 

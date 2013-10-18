@@ -1,4 +1,8 @@
-<h>WELCOME!</h>
+<h>Welcome to ScribaLive, your favorite real-time note taking software!</h>
 
-{{view SL.SigninView controllerBinding="SL.signinController"}}
-{{view SL.SignupView controllerBinding="SL.signupController"}}
+{{controller.title}}
+
+{{ view SL.SigninView controllerBinding="SL.signinController" }}<br><br>
+<a href="/profile/1">If you signed in correctly, Profile</a>
+{{ view SL.SignupView controllerBinding="SL.signupController" }}<br>
+
