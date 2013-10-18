@@ -11,7 +11,7 @@ SL.ProfileController = Em.Controller.extend({
         url:"/dinoes/"+classSearch,
         //data: classSearch,
         success:function(data){
-          console.log(data));
+          console.log(data);
         }
       });
  

@@ -7,4 +7,3 @@ SL.set('signinController', SL.SignupController.create());
 SL.set('signupController', SL.SigninController.create());
 SL.set('editorController', SL.EditorController.create());
 SL.set('profileController', SL.ProfileController.create());
-SL.set('preferencesController', SL.PreferencesController.create());

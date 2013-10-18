@@ -25,14 +25,6 @@ exports.profile = function(req, res) {
 };
 
 /*
-  GET preferences page.
-*/
-
-exports.preferences = function(req, res) {
-  res.render('site/preferences', { title: 'Express' });
-};
-
-/*
   GET editor page.
 */
 

@@ -39,7 +39,6 @@ if ('development' == app.get('env')) {
 app.get('/', app.get('controllers').site.welcome);
 app.get('/editor', app.get('controllers').site.editor);
 app.get('/profile/:id', app.get('controllers').site.profile);
-app.get('/preferences', app.get('controllers').site.preferences);
 
 // JSON ROUTES (serve JSON objects)
 // Checks regex for url from top entries down (for get and post individually)
