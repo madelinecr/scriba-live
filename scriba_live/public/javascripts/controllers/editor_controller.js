@@ -36,6 +36,8 @@ SL.EditorController = Em.Controller.extend({
 
   // CRUD FOR SOCKET.IO TO CREATE THINGS
 
+  var socket = io.connect('http://localhost');
+
   createPage: function(page) {
     // create a raphael object
     var paper = SL.editorController.newRaphPage(page.get('id'), page.get('width'), page.get('height'));
