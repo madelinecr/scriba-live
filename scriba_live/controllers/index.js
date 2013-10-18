@@ -8,6 +8,7 @@ var controllers = {
   // name: require('name_controller')
   site: require('./site_controller'),
   dinoes: require('./dinoes_controller'),
+  schools: require('./schools_controller'),
   users: require('./users_controller'),
   sessions: require('./sessions_controller'),
   notes: require('./notes_controller'),

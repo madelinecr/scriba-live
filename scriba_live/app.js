@@ -83,6 +83,18 @@ app.post('/dinoes/:id', app.get('controllers').dinoes.update);
 // --> DELETE
 app.delete('/dinoes/:id', app.get('controllers').dinoes.destroy);
 
+// -> SCHOOLS ROUTES
+// --> GET
+app.get('/schools', app.get('controllers').schools.index);
+app.get('/schools/:id', app.get('controllers').schools.show);
+
+// --> POST
+app.post('/schools', app.get('controllers').schools.create);
+app.post('/schools/:id', app.get('controllers').schools.update);
+
+// --> DELETE
+app.delete('/schools/:id', app.get('controllers').schools.destroy);
+
 // socket io
 app.get('controllers').io.listen(server);
 
