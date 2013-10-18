@@ -1,6 +1,11 @@
 extends ../layout
 
 block content
+  if user
+    h3 Hello #{user.first_name}!
+    form(action="/signout",method="post")
+      input(type="submit",value="Sign Out")
+    br
   //- Indent the script or it will not render
   script(type="text/x-handlebars")
     {{view SL.WelcomeView controllerBinding="SL.welcomeController"}}

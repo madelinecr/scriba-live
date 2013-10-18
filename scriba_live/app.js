@@ -58,6 +58,9 @@ app.post('/users/:id', app.get('controllers').users.update);
 // --> DELETE
 app.delete('/users/:id', app.get('controllers').users.destroy);
 
+app.post('/signin', app.get('controllers').sessions.create);
+app.post('/signout', app.get('controllers').sessions.destroy);
+
 // -> NOTES ROUTES
 // --> GET
 app.get('/notes', app.get('controllers').notes.index);

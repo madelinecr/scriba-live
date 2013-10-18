@@ -8,7 +8,11 @@
 */
 
 exports.welcome = function(req, res) {
-  res.render('site/welcome', { title: 'Express' });
+  if(req.session.user) {
+    res.render('site/welcome', { user: req.session.user });
+  } else {
+    res.render('site/welcome');
+  }
 };
 
 

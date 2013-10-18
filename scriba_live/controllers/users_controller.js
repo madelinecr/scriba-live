@@ -226,14 +226,3 @@ var hashAndSalt = function(password) {
   var salt = generateSalt();
   return (salt + (md5(password + salt)));
 }
-
-var verifyPassword = function(password, hashed_pass) {
-  var salt = hashed_pass.substr(0, 10);
-  var valid_hash = (salt + md5(password + salt));
-  if(hashed_pass === valid_hash) {
-    return true;
-  } else {
-    return false;
-  }
-}
-  
