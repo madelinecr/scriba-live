@@ -2,16 +2,32 @@
 
 SL.ProfileController = Em.Controller.extend({
 
+  current: 'school', // 'school', 'semseter', 'class'
+
+  current_school: null,
+  current_semester: null,
+  current_class: null,
+
   actions: {
-    findClass: function(){
-      var classSearch = $('#find-class').val();
-     
+    findCurrent: function(){
+      var current = SL.profileController.get('current');
+
+      if (currrent == 'school' ) {
+        SL.profileController.getSchool();
+      }
+      var schoolName = $('#search-field').val();
+       
+      var data = {
+        
+      }	
+ 
       $.ajax({
         type:'GET',
-        url:"/dinoes/"+classSearch,
-        //data: classSearch,
-        success:function(data){
-          console.log(data);
+        //  "/dinoes/value"
+	url:"/dinoes/"+classQuery,
+        data: data,
+        success:function(response){
+          console.log(response);
         }
       });
  
@@ -19,6 +35,10 @@ SL.ProfileController = Em.Controller.extend({
       //  console.log(response.department)
       //});
     },
+
+    getSchool: function(name) {
+
+    }
 
     //createClass: function(){      
     //}

@@ -51,11 +51,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<h1>Search for an existing class</h1>\n<input type=\"text\" id=\"find-class\">\n<input type=\"button\" value=\"Find Class\" ");
+  data.buffer.push("<h1>Search for an existing class</h1>\n<input type=\"text\" id=\"search-field\">\n<input type=\"button\" value=\"Find\" ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.action.call(depth0, "findClass", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" />\n\n<h1>Create a new class</h1>\n<input type=\"text\" id=\"create-class\">\n<input type=\"button\" value=\"Create Class\" ");
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "findCurrent", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(" />\n\n<input type=>\n\n<h1>Create a new class</h1>\n<input type=\"text\" id=\"create-class\">\n<input type=\"button\" value=\"Create Class\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "createClass", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
