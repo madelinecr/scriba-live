@@ -8,6 +8,7 @@ SL.EditorController = Em.Controller.extend({
   texts: [],
   rects: [],
   ovals: [],
+  paths: [],
 
   // variables
   tool: 'text',
@@ -52,17 +53,27 @@ SL.EditorController = Em.Controller.extend({
   },
 
   createPath: function (path) {
+    // get page
+    var page = controller.get('pages').objectAt(0);
 
+    // create raphael object
+    var raph_path = SL.editorController.newRaphRect(page,
+      path.get('path')
+    );
+
+    // attach raphael object to object on page
+    SL.editorController.get('paths').pushObject(path);
   },
 
   createRect: function(rect) {
+    var controller = SL.get("editorController");
     // get page
     var page = controller.get('pages').objectAt(0);
 
     // create raphael object
     var raph_rect = SL.editorController.newRaphRect(page,
-      rect.get('x'),
-      rect.get('y'),
+      rect.get('x_pos'),
+      rect.get('y_pos'),
       rect.get('width'),
       rect.get('height')
     );
@@ -72,7 +83,20 @@ SL.EditorController = Em.Controller.extend({
   },
 
   createOval: function(oval) {
+    var controller = SL.get('editorController');
+    // get page
+    var page = controller.get('pages').objectAt(0);
 
+    // create raphael object
+    var raph_oval = SL.editorController.newRaphOval(page,
+      oval.get('x_pos'),
+      oval.get('y_pos'),
+      oval.get('width'),
+      oval.get('height')
+    );
+
+    // attach raphael object to object on page
+    SL.editorController.get('ovals').pushObject(oval);
   },
 
   // CRUD FOR USERS TO CREATE THINGS
@@ -149,7 +173,16 @@ SL.EditorController = Em.Controller.extend({
     return text;
   },
 
-  newPath: function(obj) { },
+  newPath: function(obj) {
+    var path = SL.Path.create({
+      path: '',
+      object: obj
+    });
+
+    SL.editorController.get('paths').pushObject(path);
+
+    return path;
+  },
 
   newRect: function(obj) {
     var rect = SL.Rect.create({
@@ -205,7 +238,30 @@ SL.EditorController = Em.Controller.extend({
     return text;
   },
 
-  newRaphPath: function() { },
+  newRaphPath: function(page, path_string) {
+    // create new racphael path object
+    var path = page.get('object').path(path_string);
+
+    // build element id
+    var element_id = "path-"+SL.editorController.get('paths').get('length')+"-page"+page.get('id');
+
+    // style
+    path.attr({
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        'stroke-width': 2
+    });
+
+    // set id
+    path.node.id = element_id;
+
+    // add event handlers like drag etc.
+    $('#'+element_id).on('mousedown', SL.editorController.pathMoveDown);
+    $('#'+element_id).on('mouseup', SL.editorController.pathMoveUp);
+
+    // return path
+    return path;
+  },
 
   newRaphRect: function(page, x, y, width, height) {
     // create new raphael rect object
@@ -270,6 +326,9 @@ SL.EditorController = Em.Controller.extend({
     else if (tool == "oval") {
       SL.editorController.newOvalDown(event);
     }
+    else if (tool == "path" ){
+      SL.editorController.newPathDown(event);
+    }
 
   },
 
@@ -285,6 +344,9 @@ SL.EditorController = Em.Controller.extend({
     }
     else if (tool == "oval") {
       SL.editorController.newOvalUp(event);
+    }
+    else if (tool == "path") {
+      SL.editorController.newPathUp(event);
     }
 
     SL.editorController.set('is_down', false);
@@ -303,6 +365,9 @@ SL.EditorController = Em.Controller.extend({
       }
       else if (tool == 'oval') {
         controller.resizeOval(event.offsetX, event.offsetY);
+      }
+      else if (tool =='path') {
+        controller.drawPath(event.offsetX, event.offsetY);
       }
       else if (tool =='select' && active != null) {
         controller.moveObject(event.offsetX, event.offsetY);
@@ -432,7 +497,6 @@ SL.EditorController = Em.Controller.extend({
     }
   },
 
-
   newOvalDown: function(event) {
     var controller = SL.get('editorController');
 
@@ -505,6 +569,58 @@ SL.EditorController = Em.Controller.extend({
 
   },
 
+  newPathDown: function(event) {
+    var controller = SL.get('editorController');
+
+    // get current page
+    var page = controller.get('pages').objectAt(0);
+
+    // save original starting x and y
+    controller.set('lx', event.offsetX);
+    controller.set('ly', event.offsetY);
+
+    // create a new ellipse to shape where mouse clicks down
+    var path = controller.newRaphPath(page, 'M' + event.offsetX + ' ' + event.offsetY + 'l0 0');
+
+    // set active value to ellipse so other events know what to edit
+    controller.set('active', path);
+
+    // prevent event from propogating
+    event.preventDefault();
+  },
+
+  newPathUp: function(event) {
+    var controller = SL.get('editorController');
+
+    // save ellipse to object array
+    var obj = controller.get('active');
+    var path = controller.newPath(obj);
+
+    // save to server
+    path.save();
+
+    // clear active
+    controller.popActive();
+
+    // prevent event from propogating
+    event.preventDefault();
+  },
+
+  drawPath: function(x, y) {
+    var controller = SL.get('editorController');
+    var path = controller.get('active');
+
+    var lx = controller.get('lx');
+    var ly = controller.get('ly');
+
+    path.attr({
+      path: path.attr('path') + 'l' + (x - lx) + ' ' + (y - ly)
+    });
+
+    controller.set('lx', x);
+    controller.set('ly', y);
+  },
+
   moveObject: function(x, y) {
     var controller = SL.get('editorController');
     var active = controller.get('active');
@@ -516,6 +632,9 @@ SL.EditorController = Em.Controller.extend({
     }
     else if (active.type == 'ellipse') {
       controller.ovalMove(x, y);
+    }
+    else if (active.type == 'path') {
+      //controller.pathMove(x, y);
     }
   },
 
@@ -635,6 +754,63 @@ SL.EditorController = Em.Controller.extend({
       cx: cx - dx,
       cy: cy - dy
     });
+  },
+
+   pathMoveDown: function(event) {
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool == "select") {
+
+      // get element id
+      var element_id = event.target.id;
+      // get SL.Rect instance from array, get it's associated raphael object and
+      var path = controller.get('paths').findBy('element_id', element_id).get('object');
+
+      // set current x and y positions
+      controller.set('x', event.offsetX);
+      controller.set('y', event.offsetY);
+
+      // bring to front
+      path.toFront();
+
+      // set rect to active
+      controller.set('active', path);
+
+      // prevent event from propogating
+      event.preventDefault();
+    }
+  },
+
+  pathMoveUp: function(event) {
+    console.log('MOUSUPD');
+    var controller = SL.get('editorController');
+    var tool = controller.get('tool');
+
+    if (tool == "select") {
+      // get SL.Rect instance
+      var element_id = event.target.id;
+      var path = controller.get('paths').findBy('element_id', element_id);
+
+      // update SL.Rect instance values
+      path.update();
+
+      // set active to null
+      controller.popActive();
+
+      // prevent event from propogating
+      event.preventDefault();
+    }
+  },
+
+  pathMove: function(x, y) {
+    var controller = SL.get('editorController');
+    var path = controller.get('active');
+
+    var dx = x - controller.get('x');
+    var dy = y - controller.get('y');
+
+    path.transform("T"+(dx)+","+(dy));
   },
 
   // EMBER HANDLEBARS ACTIONS

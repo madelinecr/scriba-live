@@ -1,12 +1,9 @@
-SL.Oval = Em.Object.extend({
+SL.Path = Em.Object.extend({
   id: 0,
   page_id: 0,
   note_id: 0,
   user_id: 0,
-  x_pos: 0,
-  y_pos: 0,
-  width: 0,
-  height: 0,
+  path: '',
   object: null,
 
   element_id: function() {
@@ -14,17 +11,14 @@ SL.Oval = Em.Object.extend({
   }.property('this.object.node.id'),
 
   update: function() {
-    this.set('x_pos', this.object.attr('cx'));
-    this.set('y_pos', this.object.attr('cy'));
-    this.set('width', this.object.attr('rx'));
-    this.set('height', this.object.attr('ry'));
-
-    // push to server here
+    this.set('x_pos', this.object.attr('x'));
+    this.set('y_pos', this.object.attr('y'));
+    this.set('width', this.object.attr('width'));
+    this.set('height', this.object.attr('height'));
   },
 
-  save: function() {
-    // save to server here
-    SL.ioController.pushOvalCreate(this);
+  save: function () {
+    //save to server here
   },
 
   remove: function() {
@@ -34,9 +28,9 @@ SL.Oval = Em.Object.extend({
     raph_object.remove();
 
     // remove from server
-    SL.ioController.pushOvalDestroy();
 
     // remove this object
     this.destroy();
   }
+
 });

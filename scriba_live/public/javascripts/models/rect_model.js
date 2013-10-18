@@ -22,6 +22,7 @@ SL.Rect = Em.Object.extend({
 
   save: function () {
     //save to server here
+    SL.ioController.pushRectCreate(this);
   },
 
   remove: function() {
@@ -31,6 +32,7 @@ SL.Rect = Em.Object.extend({
     raph_object.remove();
 
     // remove from server
+    SL.ioController.pushRectDestroy(this);
 
     // remove this object
     this.destroy();

@@ -50,9 +50,10 @@ app.get('/editor', app.get('controllers').site.editor);
 // --> GET
 app.get('/users', app.get('controllers').users.index);
 app.get('/users/:id', app.get('controllers').users.show);
+//app.post('/login', app.get('controllers').users.login);
 
 // --> POST
-app.post('/users', app.get('controllers').users.create);
+//app.post('/users', app.get('controllers').users.create);
 app.post('/users/:id', app.get('controllers').users.update);
 
 // --> DELETE
@@ -68,7 +69,7 @@ app.get('/notes/:id', app.get('controllers').notes.show);
 //app.post('/notes/:id', app.get('controllers').notes.update);
 
 // socket io
-app.get('controllers').io.listen(server);
+app.get('controllers').io.listen(server, app.get('db'));
 
 // DATABASE
 app.get('db').sequelize.sync().complete(function(err) {
