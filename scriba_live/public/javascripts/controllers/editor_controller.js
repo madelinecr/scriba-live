@@ -53,11 +53,13 @@ SL.EditorController = Em.Controller.extend({
   },
 
   createPath: function (path) {
+    var controller = SL.get('editorController');
+
     // get page
     var page = controller.get('pages').objectAt(0);
 
     // create raphael object
-    var raph_path = SL.editorController.newRaphRect(page,
+    var raph_path = SL.editorController.newRaphPath(page,
       path.get('path')
     );
 

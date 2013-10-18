@@ -164,8 +164,82 @@ module.exports.listen = function(server, db){
 
 
     });//end if socket.on oval
+  socket.on('path', function(data) {
 
-    });//end of io.on
+  if (data.type == 'create') {
 
-    return io;
+    // save to database?'
+    db.Path.create({
+      x_pos:  data.object.x_pos,
+      y_pos:  data.object.y_pos,
+      value: data.object.path
+    }).success(function(path) {
+
+      var creator_message = {
+        success: true,
+        type: 'affirmCreate',
+        path: path
+      }
+      var broadcast_message = {
+        success: true,
+        type: 'create',
+        path: path
+      }
+
+      // return to single user
+      socket.emit('path', creator_message);
+
+      // return to all users
+      socket.broadcast.emit('path', broadcast_message);
+
+    }).error(function(error){
+      // forget about it
+    });
+  }
+  else if(data.type == 'destroy') {
+
+    db.Path.find(data.object.id).success(function(path) {
+
+      // if path exists
+        if (path) {
+
+        // attempt to destroy path
+        path.destroy().success(function(path) {
+
+        var destroyer_message = {
+          success: true,
+          type: 'affirmDestroy',
+          path: path
+        }
+
+        var broadcast_message = {
+          success: true,
+          type: 'destroy',
+          path: path
+        }
+
+        // return to single user
+        socket.emit('path', destroyer_message);
+
+        // return to all users
+        socket.broadcast.emit('path', broadcast_message);
+
+        });
+      }
+
+    });
+
+
+  }
+
+  else if(data.type == 'update') {
+
+  }
+  else{};
+
+});
+
+  });//end of io.on
+
+  return io;
 }

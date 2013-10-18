@@ -14,6 +14,8 @@ SL.IoController = Em.Controller.extend({
     socket.on('rect', SL.ioController.rectEmitHandler);
     //oval event
     socket.on('oval', SL.ioController.ovalEmitHandler);
+    //path event
+    socket.on('path', SL.ioController.pathEmitHandler);
   },
 
   // push create/edit/destroy object functions to server
@@ -86,6 +88,40 @@ SL.IoController = Em.Controller.extend({
       socket.emit('oval', data);
   },
 
+  pushPathCreate: function(path) {
+    var socket = SL.ioController.get('socket');
+
+
+    var data = {
+      type: 'create',
+      object: {
+        x_pos:  path.get('x_pos'),
+        y_pos:  path.get('y_pos'),
+        path:  path.get('object').node.attributes.d.value,
+      }
+    }
+
+    akharazia5 = path;
+
+    socket.emit('path', data);
+
+  },
+
+  pushPathDestroy: function(path) {
+    var socket = SL.ioController.get('socket');
+
+    var data = {
+      type: 'destroy',
+      object: {
+          id: path.get('id')
+      }
+    }
+
+    console.log(data);
+
+    socket.emit('path', data);
+  },
+
 
     // recieve create/edit/destroy object functions from server
   rectEmitHandler: function(message) {
@@ -145,6 +181,39 @@ SL.IoController = Em.Controller.extend({
         });
 
         SL.editorController.createOval(em_oval);
+      }
+    }
+
+    else if (message.type == "affirmDestroy") {
+      console.log(message);
+    }
+    else if (message.type == "destroy") {
+
+    }
+  },
+
+  pathEmitHandler: function(message) {
+    console.log(message);
+
+    if (message.type == "affirmCreate") {
+      var path = SL.editorController.get('paths').findBy('id', 0);
+      path.set('id', message.path.id);
+    }
+    else if (message.type == "create") {
+      var path = SL.editorController.get('paths').findBy('id', message.path.id);
+
+      if (!path) {
+        var em_path = SL.Path.create({
+          id: message.path.id,
+          page_id: 0,
+          note_id: 0,
+          user_id: 0,
+          x_pos: message.path.x_pos,
+          y_pos: message.path.y_pos,
+          path: message.path.value,
+        });
+
+        SL.editorController.createPath(em_path);
       }
     }
 

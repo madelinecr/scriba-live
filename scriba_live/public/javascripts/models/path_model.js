@@ -3,7 +3,10 @@ SL.Path = Em.Object.extend({
   page_id: 0,
   note_id: 0,
   user_id: 0,
-  path: '',
+  path: function(){
+    return this.get('object').node.attributes.d.value;
+  }.property('this.object.node.attributes.d.value'),
+
   object: null,
 
   element_id: function() {
@@ -11,14 +14,12 @@ SL.Path = Em.Object.extend({
   }.property('this.object.node.id'),
 
   update: function() {
-    this.set('x_pos', this.object.attr('x'));
-    this.set('y_pos', this.object.attr('y'));
-    this.set('width', this.object.attr('width'));
-    this.set('height', this.object.attr('height'));
+    this.set('path', this.object.node.attributes.d);
   },
 
   save: function () {
     //save to server here
+    SL.ioController.pushPathCreate(this);
   },
 
   remove: function() {
@@ -28,6 +29,7 @@ SL.Path = Em.Object.extend({
     raph_object.remove();
 
     // remove from server
+    SL.ioController.pushPathDestroy(this);
 
     // remove this object
     this.destroy();
