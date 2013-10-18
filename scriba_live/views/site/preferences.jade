@@ -1,0 +1,8 @@
+extends ../layout
+
+block content
+  //- Indent the script or it will not render
+  if user
+    p Logged in under: #{user.email}
+  script(type="text/x-handlebars")
+    {{view SL.PreferencesView controllerBinding="SL.preferencesController"}}

@@ -21,12 +21,19 @@ exports.welcome = function(req, res) {
 
 exports.profile = function(req, res) {
   req.app.get("db").User.find(req.params.id).success(function(user){
-    
     res.render('site/profile', { user: user, title: 'Express' } );
   }).error(function(error){
-
   });
 };
+
+/*
+  GET preference page
+*/
+
+exports.preferences = function(req, res) {
+  res.render('site/preferences', { user: req.session.user, title: 'Express' });
+};
+
 
 /*
   GET editor page.
