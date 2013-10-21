@@ -5,5 +5,9 @@ SL.Page = Em.Object.extend({
   width: 0,
   height: 0,
   page_index: 0,
-  object: null
+  object: null,
+
+  save: function () {
+    // save to server here
+  }
 });

@@ -8,9 +8,21 @@ SL.Text = Em.Object.extend({
   text: '',
   object: null,
 
+  element_id: function() {
+    return this.object.attr('id');
+  }.property('this.object.attr("id")'),
+
   update: function() {
     this.set('x_pos', this.object.attr('x'));
     this.set('y_pos', this.object.attr('y'));
-    this.set('text', this.object.attr('text'));
+    this.set('text', this.object.val());
+
+    // push to server here
+
+  },
+
+  save: function() {
+    // save to db
   }
+
 });

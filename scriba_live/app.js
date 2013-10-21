@@ -50,10 +50,12 @@ app.get('/preferences', app.get('controllers').site.preferences);
 // --> GET
 app.get('/users', app.get('controllers').users.index);
 app.get('/users/:id', app.get('controllers').users.show);
+//app.post('/login', app.get('controllers').users.login);
 
 // --> POST
 //app.post('/login', app.get('controllers').users.login);
 app.post('/users', app.get('controllers').users.create);
+//app.post('/users', app.get('controllers').users.create);
 app.post('/users/:id', app.get('controllers').users.update);
 
 // --> DELETE
@@ -96,7 +98,7 @@ app.post('/schools/:id', app.get('controllers').schools.update);
 app.delete('/schools/:id', app.get('controllers').schools.destroy);
 
 // socket io
-app.get('controllers').io.listen(server);
+app.get('controllers').io.listen(server, app.get('db'));
 
 // DATABASE
 app.get('db').sequelize.sync().complete(function(err) {
