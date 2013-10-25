@@ -2,14 +2,15 @@ SL.IoController = Em.Controller.extend({
   // controller variables
   socket: null,
 
-  // event listeners
 
+  // connect to server
   createConnection: function(){
     SL.editorController.startDemo();
 
     var socket = io.connect();
     SL.ioController.set('socket', socket);
 
+    // register handlers to receive events from server
     //rectangle event
     socket.on('rect', SL.ioController.rectEmitHandler);
     //oval event
@@ -18,7 +19,8 @@ SL.IoController = Em.Controller.extend({
     socket.on('path', SL.ioController.pathEmitHandler);
   },
 
-  // push create/edit/destroy object functions to server
+
+  // push create/edit/destroy rect actions to server
   pushRectCreate: function(rect) {
     var socket = SL.ioController.get('socket');
 
@@ -33,7 +35,6 @@ SL.IoController = Em.Controller.extend({
     }
 
     socket.emit('rect', data);
-
   },
 
   pushRectDestroy: function(rect) {
@@ -42,7 +43,7 @@ SL.IoController = Em.Controller.extend({
     var data = {
       type: 'destroy',
       object: {
-          id: rect.get('id')
+        id: rect.get('id')
       }
     }
 
@@ -52,45 +53,44 @@ SL.IoController = Em.Controller.extend({
   },
 
 
-
-    // push create/edit/destroy oval functions to server
-    pushOvalCreate: function(oval) {
-      var socket = SL.ioController.get('socket');
-
-      var data = {
-        type: 'create',
-        object: {
-          x_pos:  oval.get('x_pos'),
-          y_pos:  oval.get('y_pos'),
-          width:  oval.get('width'),
-          height: oval.get('height')
-        }
-      }
-
-      console.log(data);
-
-      socket.emit('oval', data);
-
-    },
-
-    pushOvalDestroy: function(oval) {
-      var socket = SL.ioController.get('socket');
-
-      var data = {
-        type: 'destroy',
-        object: {
-            id: oval.get('id')
-        }
-        }
-
-      console.log(data);
-
-      socket.emit('oval', data);
-  },
-
-  pushPathCreate: function(path) {
+  // push create/edit/destroy oval actions to server
+  pushOvalCreate: function(oval) {
     var socket = SL.ioController.get('socket');
 
+    var data = {
+      type: 'create',
+      object: {
+        x_pos:  oval.get('x_pos'),
+        y_pos:  oval.get('y_pos'),
+        width:  oval.get('width'),
+        height: oval.get('height')
+      }
+    }
+
+    console.log(data);
+
+    socket.emit('oval', data);
+  },
+
+  pushOvalDestroy: function(oval) {
+    var socket = SL.ioController.get('socket');
+
+    var data = {
+      type: 'destroy',
+      object: {
+        id: oval.get('id')
+      }
+    }
+
+    console.log(data);
+
+    socket.emit('oval', data);
+  },
+
+
+  // push create/edit/destroy path actions to server
+  pushPathCreate: function(path) {
+    var socket = SL.ioController.get('socket');
 
     var data = {
       type: 'create',
@@ -101,10 +101,7 @@ SL.IoController = Em.Controller.extend({
       }
     }
 
-    akharazia5 = path;
-
     socket.emit('path', data);
-
   },
 
   pushPathDestroy: function(path) {
@@ -113,7 +110,7 @@ SL.IoController = Em.Controller.extend({
     var data = {
       type: 'destroy',
       object: {
-          id: path.get('id')
+        id: path.get('id')
       }
     }
 
@@ -123,14 +120,16 @@ SL.IoController = Em.Controller.extend({
   },
 
 
-    // recieve create/edit/destroy object functions from server
+  // recieve create/edit/destroy rect actions from server
   rectEmitHandler: function(message) {
     console.log(message);
 
+    // We told server of new object, server responding with new id
     if (message.type == "affirmCreate") {
       var rect = SL.editorController.get('rects').findBy('id', 0);
       rect.set('id', message.rect.id);
     }
+    // Server telling us to add an object
     else if (message.type == "create") {
       var rect = SL.editorController.get('rects').findBy('id', message.rect.id);
 
@@ -148,16 +147,20 @@ SL.IoController = Em.Controller.extend({
 
         SL.editorController.createRect(em_rect);
       }
+      else {
+        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+      }
     }
     else if (message.type == "affirmDestroy") {
-      console.log(message);
+//      console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
 
     }
   },
 
-  // recieve create/edit/destroy oval functions from server
+
+  // recieve create/edit/destroy oval actions from server
   ovalEmitHandler: function(message) {
     console.log(message);
 
@@ -182,16 +185,21 @@ SL.IoController = Em.Controller.extend({
 
         SL.editorController.createOval(em_oval);
       }
+      else {
+        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+      }
     }
 
     else if (message.type == "affirmDestroy") {
-      console.log(message);
+//      console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
 
     }
   },
 
+
+  // recieve create/edit/destroy path actions from server
   pathEmitHandler: function(message) {
     console.log(message);
 
@@ -215,10 +223,13 @@ SL.IoController = Em.Controller.extend({
 
         SL.editorController.createPath(em_path);
       }
+      else {
+        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+      }
     }
 
     else if (message.type == "affirmDestroy") {
-      console.log(message);
+//      console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
 
