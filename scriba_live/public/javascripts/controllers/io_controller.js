@@ -148,7 +148,7 @@ SL.IoController = Em.Controller.extend({
         SL.editorController.createRect(em_rect);
       }
       else {
-        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+        console.error("Error: rect id:%i already exists locally!", message.rect.id);
       }
     }
     else if (message.type == "affirmDestroy") {
@@ -186,7 +186,7 @@ SL.IoController = Em.Controller.extend({
         SL.editorController.createOval(em_oval);
       }
       else {
-        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+        console.error("Error: oval id:%i already exists locally!", message.oval.id);
       }
     }
 
@@ -224,7 +224,7 @@ SL.IoController = Em.Controller.extend({
         SL.editorController.createPath(em_path);
       }
       else {
-        console.error("Error: Couldn't find rect[%i] locally!", message.rect.id);
+        console.error("Error: path id:%i already exists locally!", message.path.id);
       }
     }
 
