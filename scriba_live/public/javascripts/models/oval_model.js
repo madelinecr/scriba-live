@@ -34,7 +34,7 @@ SL.Oval = Em.Object.extend({
     raph_object.remove();
 
     // remove from server
-    SL.ioController.pushOvalDestroy();
+    SL.ioController.pushOvalDestroy(this);
 
     // remove this object
     this.destroy();

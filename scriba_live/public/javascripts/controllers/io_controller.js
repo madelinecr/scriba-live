@@ -125,15 +125,23 @@ SL.IoController = Em.Controller.extend({
     console.log(message);
 
     // We told server of new object, server responding with new id
-    if (message.type == "affirmCreate") {
+    if (message.type == 'affirmCreate') {
       var rect = SL.editorController.get('rects').findBy('id', 0);
       rect.set('id', message.rect.id);
     }
     // Server telling us to add an object
-    else if (message.type == "create") {
-      var rect = SL.editorController.get('rects').findBy('id', message.rect.id);
-
-      if (!rect) {
+    else if (message.type == 'create') {
+      if (SL.editorController.get('rects').findBy('id', message.rect.id)) {
+        console.error("Error: rect id:%i already exists locally!", message.rect.id);
+      }
+      else {
+        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_rect = SL.editorController.newRaphRect(rg_page,
+          message.rect.x_pos,
+          message.rect.y_pos,
+          message.rect.x_size,
+          message.rect.y_size
+        );
         var em_rect = SL.Rect.create({
           id: message.rect.id,
           page_id: 0,
@@ -143,18 +151,15 @@ SL.IoController = Em.Controller.extend({
           y_pos: message.rect.y_pos,
           width: message.rect.x_size,
           height: message.rect.y_size,
+          object: rg_rect
         });
-
-        SL.editorController.createRect(em_rect);
-      }
-      else {
-        console.error("Error: rect id:%i already exists locally!", message.rect.id);
+        SL.editorController.get('rects').pushObject(em_rect);
       }
     }
-    else if (message.type == "affirmDestroy") {
+    else if (message.type == 'affirmDestroy') {
 //      console.log(message); duplicated above
     }
-    else if (message.type == "destroy") {
+    else if (message.type == 'destroy') {
 
     }
   },
@@ -164,14 +169,22 @@ SL.IoController = Em.Controller.extend({
   ovalEmitHandler: function(message) {
     console.log(message);
 
-    if (message.type == "affirmCreate") {
+    if (message.type == 'affirmCreate') {
       var oval = SL.editorController.get('ovals').findBy('id', 0);
       oval.set('id', message.oval.id);
     }
-    else if (message.type == "create") {
-      var oval = SL.editorController.get('ovals').findBy('id', message.oval.id);
-
-      if (!oval) {
+    else if (message.type == 'create') {
+      if (SL.editorController.get('ovals').findBy('id', message.oval.id)) {
+        console.error("Error: oval id:%i already exists locally!", message.oval.id);
+      }
+      else {
+        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_oval = SL.editorController.newRaphOval(rg_page,
+          message.oval.x_pos,
+          message.oval.y_pos,
+          message.oval.x_size,
+          message.oval.y_size
+        );
         var em_oval = SL.Oval.create({
           id: message.oval.id,
           page_id: 0,
@@ -181,19 +194,18 @@ SL.IoController = Em.Controller.extend({
           y_pos: message.oval.y_pos,
           width: message.oval.x_size,
           height: message.oval.y_size,
+          object: rg_oval
         });
-
-        SL.editorController.createOval(em_oval);
-      }
-      else {
-        console.error("Error: oval id:%i already exists locally!", message.oval.id);
+        SL.editorController.get('ovals').pushObject(em_oval);
       }
     }
-
     else if (message.type == "affirmDestroy") {
 //      console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
+      var oval = SL.editorController.get('ovals').findBy('id', message.oval.id);
+      SL.editorController.get('ovals').removeObject(oval);
+      oval.remove(push);
 
     }
   },
@@ -208,9 +220,12 @@ SL.IoController = Em.Controller.extend({
       path.set('id', message.path.id);
     }
     else if (message.type == "create") {
-      var path = SL.editorController.get('paths').findBy('id', message.path.id);
-
-      if (!path) {
+      if (SL.editorController.get('paths').findBy('id', message.path.id)) {
+        console.error("Error: path id:%i already exists locally!", message.path.id);
+      }
+      else {
+        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value);
         var em_path = SL.Path.create({
           id: message.path.id,
           page_id: 0,
@@ -219,15 +234,11 @@ SL.IoController = Em.Controller.extend({
           x_pos: message.path.x_pos,
           y_pos: message.path.y_pos,
           path: message.path.value,
+          object: rg_path
         });
-
-        SL.editorController.createPath(em_path);
-      }
-      else {
-        console.error("Error: path id:%i already exists locally!", message.path.id);
+        SL.editorController.get('paths').pushObject(em_path);
       }
     }
-
     else if (message.type == "affirmDestroy") {
 //      console.log(message); duplicated above
     }

@@ -52,55 +52,6 @@ SL.EditorController = Em.Controller.extend({
 
   },
 
-  createPath: function (path) {
-    var controller = SL.get('editorController');
-
-    // get page
-    var page = controller.get('pages').objectAt(0);
-
-    // create raphael object
-    var raph_path = SL.editorController.newRaphPath(page,
-      path.get('path')
-    );
-
-    // attach raphael object to object on page
-    SL.editorController.get('paths').pushObject(path);
-  },
-
-  createRect: function(rect) {
-    var controller = SL.get("editorController");
-    // get page
-    var page = controller.get('pages').objectAt(0);
-
-    // create raphael object
-    var raph_rect = SL.editorController.newRaphRect(page,
-      rect.get('x_pos'),
-      rect.get('y_pos'),
-      rect.get('width'),
-      rect.get('height')
-    );
-
-    // attach raphael object to object on page
-    SL.editorController.get('rects').pushObject(rect);
-  },
-
-  createOval: function(oval) {
-    var controller = SL.get('editorController');
-    // get page
-    var page = controller.get('pages').objectAt(0);
-
-    // create raphael object
-    var raph_oval = SL.editorController.newRaphOval(page,
-      oval.get('x_pos'),
-      oval.get('y_pos'),
-      oval.get('width'),
-      oval.get('height')
-    );
-
-    // attach raphael object to object on page
-    SL.editorController.get('ovals').pushObject(oval);
-  },
-
   // CRUD FOR USERS TO CREATE THINGS
 
   // create and save a new page
@@ -186,18 +137,18 @@ SL.EditorController = Em.Controller.extend({
     return path;
   },
 
-  newRect: function(obj) {
-    var rect = SL.Rect.create({
-      x_pos: obj.attr('x'),
-      y_pos: obj.attr('y'),
-      width: obj.attr('width'),
-      height: obj.attr('height'),
-      object: obj
+  newRect: function(rg_rect) {
+    var em_rect = SL.Rect.create({
+      x_pos: rg_rect.attr('x'),
+      y_pos: rg_rect.attr('y'),
+      width: rg_rect.attr('width'),
+      height: rg_rect.attr('height'),
+      object: rg_rect
     });
 
-    SL.editorController.get('rects').pushObject(rect);
+    SL.editorController.get('rects').pushObject(em_rect);
 
-    return rect;
+    return em_rect;
   },
 
   newOval: function(obj) {
@@ -328,7 +279,7 @@ SL.EditorController = Em.Controller.extend({
     else if (tool == "oval") {
       SL.editorController.newOvalDown(event);
     }
-    else if (tool == "path" ){
+    else if (tool == "path") {
       SL.editorController.newPathDown(event);
     }
 
@@ -375,7 +326,7 @@ SL.EditorController = Em.Controller.extend({
         controller.moveObject(event.offsetX, event.offsetY);
       }
 
-      // prevent events from propogating
+      // prevent events from propagating
       if (tool =='rect' || tool == 'oval' || tool == 'select') {
         event.preventDefault();
       }
@@ -437,12 +388,12 @@ SL.EditorController = Em.Controller.extend({
     controller.set('oy', event.offsetY);
 
     // create a new rectangle to shape where mouse clicks down
-    var rect = controller.newRaphRect(page, event.offsetX, event.offsetY, 1, 1);
+    var rg_rect = controller.newRaphRect(page, event.offsetX, event.offsetY, 1, 1);
 
     // set active value to rectangle so other events know what to edit
-    controller.set('active', rect);
+    controller.set('active', rg_rect);
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -450,16 +401,16 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // save rectangle to object array
-    var obj = controller.get('active');
-    var rect = controller.newRect(obj);
+    var rg_rect = controller.get('active');
+    var em_rect = controller.newRect(rg_rect);
 
     // save to server
-    rect.save();
+    em_rect.save();
 
     // clear active
     controller.popActive();
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -515,7 +466,7 @@ SL.EditorController = Em.Controller.extend({
     // set active value to ellipse so other events know what to edit
     controller.set('active', oval);
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -532,7 +483,7 @@ SL.EditorController = Em.Controller.extend({
     // clear active
     controller.popActive();
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -587,7 +538,7 @@ SL.EditorController = Em.Controller.extend({
     // set active value to ellipse so other events know what to edit
     controller.set('active', path);
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -604,7 +555,7 @@ SL.EditorController = Em.Controller.extend({
     // clear active
     controller.popActive();
 
-    // prevent event from propogating
+    // prevent event from propagating
     event.preventDefault();
   },
 
@@ -661,7 +612,7 @@ SL.EditorController = Em.Controller.extend({
       // set rect to active
       controller.set('active', rect);
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
@@ -681,7 +632,7 @@ SL.EditorController = Em.Controller.extend({
       // set active to null
       controller.popActive();
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
@@ -720,7 +671,7 @@ SL.EditorController = Em.Controller.extend({
       // set rect to active
       controller.set('active', oval);
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
@@ -740,7 +691,7 @@ SL.EditorController = Em.Controller.extend({
       // set active to null
       controller.popActive();
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
@@ -779,7 +730,7 @@ SL.EditorController = Em.Controller.extend({
       // set rect to active
       controller.set('active', path);
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
@@ -800,7 +751,7 @@ SL.EditorController = Em.Controller.extend({
       // set active to null
       controller.popActive();
 
-      // prevent event from propogating
+      // prevent event from propagating
       event.preventDefault();
     }
   },
