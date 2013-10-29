@@ -526,17 +526,21 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // get current page
-    var page = controller.get('pages').objectAt(0);
+    var rg_page = controller.get('pages').objectAt(0);
 
     // save original starting x and y
+    controller.set('ox', event.offsetX);
+    controller.set('oy', event.offsetY);
     controller.set('lx', event.offsetX);
     controller.set('ly', event.offsetY);
 
     // create a new ellipse to shape where mouse clicks down
-    var path = controller.newRaphPath(page, 'M' + event.offsetX + ' ' + event.offsetY + 'l0 0');
+//    var path = controller.newRaphPath(rg_page, 'M' + event.offsetX + ' ' + event.offsetY + 'l0 0');
+    var rg_path = controller.newRaphPath(rg_page, 'M0,0');
+    rg_path.transform("t"+(event.offsetX)+","+(event.offsetY));
 
     // set active value to ellipse so other events know what to edit
-    controller.set('active', path);
+    controller.set('active', rg_path);
 
     // prevent event from propagating
     event.preventDefault();
@@ -546,11 +550,13 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // save ellipse to object array
-    var obj = controller.get('active');
-    var path = controller.newPath(obj);
+    var rg_obj = controller.get('active');
+    var em_path = controller.newPath(rg_obj);
+    em_path.set('x_pos', controller.get('ox'));
+    em_path.set('y_pos', controller.get('oy'));
 
     // save to server
-    path.save();
+    em_path.save();
 
     // clear active
     controller.popActive();
@@ -561,13 +567,13 @@ SL.EditorController = Em.Controller.extend({
 
   drawPath: function(x, y) {
     var controller = SL.get('editorController');
-    var path = controller.get('active');
+    var rg_path = controller.get('active');
 
     var lx = controller.get('lx');
     var ly = controller.get('ly');
 
-    path.attr({
-      path: path.attr('path') + 'l' + (x - lx) + ' ' + (y - ly)
+    rg_path.attr({
+      path: rg_path.attr('path') + 'l' + (x - lx) + ' ' + (y - ly)
     });
 
     controller.set('lx', x);
@@ -587,7 +593,7 @@ SL.EditorController = Em.Controller.extend({
       controller.ovalMove(x, y);
     }
     else if (active.type == 'path') {
-      //controller.pathMove(x, y);
+      controller.pathMove(x, y);
     }
   },
 
@@ -627,7 +633,7 @@ SL.EditorController = Em.Controller.extend({
       var rect = controller.get('rects').findBy('element_id', element_id);
 
       // update SL.Rect instance values
-      rect.update();
+      rect.update('push');
 
       // set active to null
       controller.popActive();
@@ -659,17 +665,17 @@ SL.EditorController = Em.Controller.extend({
       // get element id
       var element_id = event.target.id;
       // get SL.Rect instance from array, get it's associated raphael object and
-      var oval = controller.get('ovals').findBy('element_id', element_id).get('object');
+      var rg_oval = controller.get('ovals').findBy('element_id', element_id).get('object');
 
       // set current x and y positions
-      controller.set('dx', event.offsetX - oval.attr('cx'));
-      controller.set('dy', event.offsetY - oval.attr('cy'));
+      controller.set('dx', event.offsetX - rg_oval.attr('cx'));
+      controller.set('dy', event.offsetY - rg_oval.attr('cy'));
 
       // bring to front
-      oval.toFront();
+      rg_oval.toFront();
 
       // set rect to active
-      controller.set('active', oval);
+      controller.set('active', rg_oval);
 
       // prevent event from propagating
       event.preventDefault();
@@ -683,10 +689,10 @@ SL.EditorController = Em.Controller.extend({
     if (tool == "select") {
       // get SL.Rect instance
       var element_id = event.target.id;
-      var oval = controller.get('ovals').findBy('element_id', element_id);
+      var em_oval = controller.get('ovals').findBy('element_id', element_id);
 
       // update SL.Rect instance values
-      oval.update();
+      em_oval.update('push');
 
       // set active to null
       controller.popActive();
@@ -698,18 +704,19 @@ SL.EditorController = Em.Controller.extend({
 
   ovalMove: function(cx, cy) {
     var controller = SL.get('editorController');
-    var rect = controller.get('active');
+    var rg_rect = controller.get('active');
 
     var dx = controller.get('dx');
     var dy = controller.get('dy');
 
-    rect.attr({
+    rg_rect.attr({
       cx: cx - dx,
       cy: cy - dy
     });
   },
 
    pathMoveDown: function(event) {
+    console.log('MOUSEDOWN');
     var controller = SL.get('editorController');
     var tool = controller.get('tool');
 
@@ -718,17 +725,21 @@ SL.EditorController = Em.Controller.extend({
       // get element id
       var element_id = event.target.id;
       // get SL.Rect instance from array, get it's associated raphael object and
-      var path = controller.get('paths').findBy('element_id', element_id).get('object');
+      var em_path = controller.get('paths').findBy('element_id', element_id);
+      var rg_path = em_path.get('object');
 
-      // set current x and y positions
+      // cache mouse down x and y positions
       controller.set('x', event.offsetX);
       controller.set('y', event.offsetY);
+      // cache current path origin
+      controller.set('ox', em_path.get('x_pos'));
+      controller.set('oy', em_path.get('y_pos'));
 
       // bring to front
-      path.toFront();
+      rg_path.toFront();
 
       // set rect to active
-      controller.set('active', path);
+      controller.set('active', rg_path);
 
       // prevent event from propagating
       event.preventDefault();
@@ -736,17 +747,17 @@ SL.EditorController = Em.Controller.extend({
   },
 
   pathMoveUp: function(event) {
-    console.log('MOUSUPD');
+    console.log('MOUSEUP');
     var controller = SL.get('editorController');
     var tool = controller.get('tool');
 
     if (tool == "select") {
-      // get SL.Rect instance
+      // Calculate new transform amount (origin) for the path
       var element_id = event.target.id;
-      var path = controller.get('paths').findBy('element_id', element_id);
-
-      // update SL.Rect instance values
-      path.update();
+      var em_path = controller.get('paths').findBy('element_id', element_id);
+      em_path.set('x_pos', controller.get('ox') + event.offsetX - controller.get('x'));
+      em_path.set('y_pos', controller.get('oy') + event.offsetY - controller.get('y'));
+      em_path.update('push');
 
       // set active to null
       controller.popActive();
@@ -760,10 +771,11 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
     var path = controller.get('active');
 
-    var dx = x - controller.get('x');
-    var dy = y - controller.get('y');
+    // Calculate transform amount to track mouse
+    var dx = controller.get('ox') + x - controller.get('x');
+    var dy = controller.get('oy') + y - controller.get('y');
 
-    path.transform("T"+(dx)+","+(dy));
+    path.transform("t"+(dx)+","+(dy));
   },
 
   // EMBER HANDLEBARS ACTIONS
@@ -781,6 +793,10 @@ SL.EditorController = Em.Controller.extend({
       else {
         $('#page-0').css('z-index', '1');
       }
+      // Forget last selected object when user leaves select tool
+      if (tool != 'select') {
+        SL.editorController.popActive();
+      }
     },
   },
 
@@ -797,20 +813,21 @@ SL.EditorController = Em.Controller.extend({
   deleteLast: function() {
     console.log('delete');
     // get last selected raphael object
-    var controller = SL.get('editorController');
-    var last_active = controller.get('last_active');
+    var last_active = SL.editorController.get('last_active');
+    if (last_active) {
+      // translate ellipse -> oval
+      var type = last_active.type == "ellipse" ? "oval": last_active.type;
 
-    var type = last_active.type == "ellipse" ? "oval": last_active.type;
+      // get Ember object
+      var element_id = last_active.node.id;
+      var em_obj = SL.editorController.get(type+'s').findBy('element_id', element_id);
 
-    // get Ember object
-    var element_id = last_active.node.id;
-    var obj = controller.get(type+'s').findBy('element_id', element_id);
+      // remove from array
+      SL.editorController.get(type+'s').removeObject(em_obj);
 
-    // remove from array
-    controller.get(type+'s').removeObject(obj);
-
-    // remove object
-    obj.remove();
+      // remove object
+      em_obj.remove('push');
+    }
   },
 
   // http://stackoverflow.com/questions/3510351/how-do-i-add-text-to-a-textarea-at-the-cursor-location-using-javascript

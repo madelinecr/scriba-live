@@ -13,28 +13,33 @@ SL.Oval = Em.Object.extend({
     return this.get('object').node.id;
   }.property('this.object.node.id'),
 
-  update: function() {
+  update: function(push) {
     this.set('x_pos', this.object.attr('cx'));
     this.set('y_pos', this.object.attr('cy'));
     this.set('width', this.object.attr('rx'));
     this.set('height', this.object.attr('ry'));
 
-    // push to server here
+    // push to server
+    if (push == 'push') {
+      SL.ioController.pushOvalUpdate(this);
+    }
   },
 
   save: function() {
-    // save to server here
+    // save to server
     SL.ioController.pushOvalCreate(this);
   },
 
-  remove: function() {
+  remove: function(push) {
     // delete raphael object
-    var raph_object = this.get('object');
+    var rg_obj = this.get('object');
     this.set('object', null);
-    raph_object.remove();
+    rg_obj.remove();
 
     // remove from server
-    SL.ioController.pushOvalDestroy(this);
+    if (push == 'push') {
+      SL.ioController.pushOvalDestroy(this);
+    }
 
     // remove this object
     this.destroy();

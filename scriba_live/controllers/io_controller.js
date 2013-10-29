@@ -15,7 +15,7 @@ module.exports.listen = function(server, db) {
           y_size: data.object.height
         }).success(function(rect) {
 
-          var creator_message = {
+          var initiator_message = {
             success: true,
             type: 'affirmCreate',
             rect: rect
@@ -26,16 +26,46 @@ module.exports.listen = function(server, db) {
             rect: rect
           }
 
-          // return to single user
-          socket.emit('rect', creator_message);
-
-          // return to all users
+          // respond to initiating user and foward to remaining users
+          socket.emit('rect', initiator_message);
           socket.broadcast.emit('rect', broadcast_message);
 
         }).error(function(error) {
           // forget about it
         });
       } // end create rect
+
+      else if (data.type == 'update') {
+        db.Rect.find(data.object.id).success(function(sq_obj) {
+          // if sq_obj exists
+          if (sq_obj) {
+            // attempt to update rect
+            sq_obj.updateAttributes({
+              x_pos:  data.object.x_pos,
+              y_pos:  data.object.y_pos,
+              x_size: data.object.width,
+              y_size: data.object.height
+            }).success(function(sq_obj) {
+
+              var initiator_message = {
+                success: true,
+                type: 'affirmUpdate',
+                rect: sq_obj
+              }
+              var broadcast_message = {
+                success: true,
+                type: 'update',
+                rect: sq_obj
+              }
+
+              // respond to initiating user and foward to remaining users
+              socket.emit('rect', initiator_message);
+              socket.broadcast.emit('rect', broadcast_message);
+
+            }); // end of sq_obj.updateAttributes()
+          }
+        }); // end of db.Rect.find
+      } // end update rect
 
       else if (data.type == 'destroy') {
         db.Rect.find(data.object.id).success(function(rect) {
@@ -44,7 +74,7 @@ module.exports.listen = function(server, db) {
             // attempt to destroy rect
             rect.destroy().success(function(rect) {
 
-              var destroyer_message = {
+              var initiator_message = {
                 success: true,
                 type: 'affirmDestroy',
                 rect: rect
@@ -55,10 +85,8 @@ module.exports.listen = function(server, db) {
                 rect: rect
               }
 
-              // return to single user
-              socket.emit('rect', destroyer_message);
-
-              // return to all users
+              // respond to initiating user and foward to remaining users
+              socket.emit('rect', initiator_message);
               socket.broadcast.emit('rect', broadcast_message);
 
             }); // end of rect.destroy()
@@ -66,11 +94,7 @@ module.exports.listen = function(server, db) {
         }); // end of db.Rect.find
       } // end create rect
 
-      else if (data.type == 'update') {
-
-      } // end update rect
-
-      else {};
+      else {console.log(rect, data);};
 
     }); // end of socket.on rect
 
@@ -84,7 +108,7 @@ module.exports.listen = function(server, db) {
           y_size: data.object.height
         }).success(function(oval) {
 
-          var creator_message = {
+          var initiator_message = {
             success: true,
             type: 'affirmCreate',
             oval: oval
@@ -95,16 +119,46 @@ module.exports.listen = function(server, db) {
             oval: oval
           }
 
-          // return to single user
-          socket.emit('oval', creator_message);
-
-          // return to all users
+          // respond to initiating user and foward to remaining users
+          socket.emit('oval', initiator_message);
           socket.broadcast.emit('oval', broadcast_message);
 
         }).error(function(error) {
           // forget about it
         });
       } // end create oval
+
+      else if (data.type == 'update') {
+        db.Oval.find(data.object.id).success(function(sq_obj) {
+          // if sq_obj exists
+          if (sq_obj) {
+            // attempt to update oval
+            sq_obj.updateAttributes({
+              x_pos:  data.object.x_pos,
+              y_pos:  data.object.y_pos,
+              x_size: data.object.width,
+              y_size: data.object.height
+            }).success(function(sq_obj) {
+
+              var initiator_message = {
+                success: true,
+                type: 'affirmUpdate',
+                oval: sq_obj
+              }
+              var broadcast_message = {
+                success: true,
+                type: 'update',
+                oval: sq_obj
+              }
+
+              // respond to initiating user and foward to remaining users
+              socket.emit('oval', initiator_message);
+              socket.broadcast.emit('oval', broadcast_message);
+
+            }); // end of sq_obj.updateAttributes()
+          }
+        }); // end of db.Rect.find
+      } // end update oval
 
       else if (data.type == 'destroy') {
         db.Oval.find(data.object.id).success(function(oval) {
@@ -113,7 +167,7 @@ module.exports.listen = function(server, db) {
             // attempt to destroy oval
             oval.destroy().success(function(oval) {
 
-              var destroyer_message = {
+              var initiator_message = {
                 success: true,
                 type: 'affirmDestroy',
                 oval: oval
@@ -124,20 +178,14 @@ module.exports.listen = function(server, db) {
                 oval: oval
               }
 
-              // return to single user
-              socket.emit('oval', destroyer_message);
-
-              // return to all users
+              // respond to initiating user and foward to remaining users
+              socket.emit('oval', initiator_message);
               socket.broadcast.emit('oval', broadcast_message);
 
             }); // end of oval.destroy()
           }
         }); // end of db.Oval.find
       } // end destroy oval
-
-      else if (data.type == 'update') {
-
-      } // end update oval
 
       else {};
 
@@ -153,7 +201,7 @@ module.exports.listen = function(server, db) {
 
         }).success(function(path) {
 
-          var creator_message = {
+          var initiator_message = {
             success: true,
             type: 'affirmCreate',
             path: path
@@ -164,16 +212,46 @@ module.exports.listen = function(server, db) {
             path: path
           }
 
-          // return to single user
-          socket.emit('path', creator_message);
-
-          // return to all users
+          // respond to initiating user and foward to remaining users
+          socket.emit('path', initiator_message);
           socket.broadcast.emit('path', broadcast_message);
 
         }).error(function(error) {
           // forget about it
         });
       } // end create path
+
+      else if (data.type == 'update') {
+        db.Path.find(data.object.id).success(function(sq_obj) {
+          // if sq_obj exists
+          if (sq_obj) {
+            // attempt to update path
+            sq_obj.updateAttributes({
+              x_pos:  data.object.x_pos,
+              y_pos:  data.object.y_pos,
+              value:  data.object.path
+
+            }).success(function(sq_obj) {
+
+              var initiator_message = {
+                success: true,
+                type: 'affirmUpdate',
+                path: sq_obj
+              }
+              var broadcast_message = {
+                success: true,
+                type: 'update',
+                path: sq_obj
+              }
+
+              // respond to initiating user and foward to remaining users
+              socket.emit('path', initiator_message);
+              socket.broadcast.emit('path', broadcast_message);
+
+            }); // end of sq_obj.updateAttributes()
+          }
+        }); // end of db.Path.find
+      } // end update path
 
       else if (data.type == 'destroy') {
         db.Path.find(data.object.id).success(function(path) {
@@ -182,7 +260,7 @@ module.exports.listen = function(server, db) {
             // attempt to destroy path
             path.destroy().success(function(path) {
 
-              var destroyer_message = {
+              var initiator_message = {
                 success: true,
                 type: 'affirmDestroy',
                 path: path
@@ -193,20 +271,14 @@ module.exports.listen = function(server, db) {
                 path: path
               }
 
-              // return to single user
-              socket.emit('path', destroyer_message);
-
-              // return to all users
+              // respond to initiating user and foward to remaining users
+              socket.emit('path', initiator_message);
               socket.broadcast.emit('path', broadcast_message);
 
             }); // end of path.destroy()
           }
         }); // end of db.Path.find
       } // end destroy path
-
-      else if (data.type == 'update') {
-
-      } // end update path
 
       else {};
 

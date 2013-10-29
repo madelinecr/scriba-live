@@ -3,6 +3,8 @@ SL.Path = Em.Object.extend({
   page_id: 0,
   note_id: 0,
   user_id: 0,
+  x_pos: 0,
+  y_pos: 0,
   path: function(){
     return this.get('object').node.attributes.d.value;
   }.property('this.object.node.attributes.d.value'),
@@ -13,23 +15,30 @@ SL.Path = Em.Object.extend({
     return this.get('object').node.id;
   }.property('this.object.node.id'),
 
-  update: function() {
-    this.set('path', this.object.node.attributes.d);
+  update: function(push) {
+    this.set('path', this.object.node.attributes.d.value);
+    // push to server
+    if (push == 'push') {
+      SL.ioController.pushPathUpdate(this);
+    }
+    console.log('path.update')
   },
 
-  save: function () {
-    //save to server here
+  save: function() {
+    //save to server
     SL.ioController.pushPathCreate(this);
   },
 
-  remove: function() {
+  remove: function(push) {
     // delete raphael object
-    var raph_object = this.get('object');
+    var rg_obj = this.get('object');
     this.set('object', null);
-    raph_object.remove();
+    rg_obj.remove();
 
     // remove from server
-    SL.ioController.pushPathDestroy(this);
+    if (push == 'push') {
+      SL.ioController.pushPathDestroy(this);
+    }
 
     // remove this object
     this.destroy();
