@@ -798,6 +798,11 @@ SL.EditorController = Em.Controller.extend({
         SL.editorController.popActive();
       }
     },
+
+    // add a new page
+    newPage: function() {
+      // add a new page to current note
+    }
   },
 
   // GENERAL HELPER FUNCTIONS
