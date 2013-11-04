@@ -106,26 +106,22 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["welcome"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+  var buffer = '', hashContexts, hashTypes, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<h>Welcome to ScribaLive, your favorite real-time note taking software!</h>\n\n");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "controller.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n\n");
+  data.buffer.push("<div class=\"container-fluid\">\n  <div id=\"content\">\n    <div class=\"row-fluid\">\n      <div class=\"span9\">\n        <h1 id=\"welcome-msg\">\n            <span>Welcome to Scriba Live</span>\n        </h1>\n        <img id=\"splash-img\" src=\"/img/welcome3.jpg\"/>\n      </div>\n      <div id=\"welcome-sidebar\" class=\"span3\">\n        ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SigninView", {hash:{
     'controllerBinding': ("SL.signinController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("<br><br>\n<a href=\"/profile/1\">If you signed in correctly, Profile</a>\n");
+  data.buffer.push("<br><br>\n        <a href=\"/profile/1\">If you signed in correctly, Profile</a>\n        ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SignupView", {hash:{
     'controllerBinding': ("SL.signupController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("<br>\n\n");
+  data.buffer.push("<br>\n      </div>\n    </div>\n  </div>\n</div>\n\n");
   return buffer;
   
 });

@@ -1,10 +1,47 @@
 body {
-  padding: 50px;
+  padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+.ember-view {
+  margin: 0;
+  padding: 0;
+}
+
+#content {
+  margin: auto;
+  width: 1350px;
+}
+
+#welcome-msg {
+  position: absolute;
+  top: 20px;
+  z-index: 1;
+  margin: 20px 0 0 235px;
+}
+
+#welcome-msg span {
+  color: black;
+}
+
+#welcome-msg span.spacer {
+  padding: 0 10px;
+}
+
+#welcome-sidebar {
+  margin-top: 40px;
+  padding-left: 2em;
+}
+
+#splash-img {
+  position: relative;
+  margin-top: 20px;
+  min-width: 1000px;
+  width: 1000px;
 }
 
 #editor-menu {

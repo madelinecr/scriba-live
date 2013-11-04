@@ -1,8 +1,18 @@
-<h>Welcome to ScribaLive, your favorite real-time note taking software!</h>
-
-{{controller.title}}
-
-{{ view SL.SigninView controllerBinding="SL.signinController" }}<br><br>
-<a href="/profile/1">If you signed in correctly, Profile</a>
-{{ view SL.SignupView controllerBinding="SL.signupController" }}<br>
+<div class="container-fluid">
+  <div id="content">
+    <div class="row-fluid">
+      <div class="span9">
+        <h1 id="welcome-msg">
+            <span>Welcome to Scriba Live</span>
+        </h1>
+        <img id="splash-img" src="/img/welcome3.jpg"/>
+      </div>
+      <div id="welcome-sidebar" class="span3">
+        {{ view SL.SigninView controllerBinding="SL.signinController" }}<br><br>
+        <a href="/profile/1">If you signed in correctly, Profile</a>
+        {{ view SL.SignupView controllerBinding="SL.signupController" }}<br>
+      </div>
+    </div>
+  </div>
+</div>
 
