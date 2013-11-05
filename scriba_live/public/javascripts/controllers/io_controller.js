@@ -10,6 +10,11 @@ SL.IoController = Em.Controller.extend({
     var socket = io.connect();
     SL.ioController.set('socket', socket);
 
+    //create room "ID" and emit Join room message
+    var room = "Scriba";
+    socket.emit('room', room);
+    //now socket is in room
+
     // register handlers to receive events from server
     //rectangle event
     socket.on('rect', SL.ioController.rectEmitHandler);
