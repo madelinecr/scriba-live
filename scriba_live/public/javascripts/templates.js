@@ -71,15 +71,10 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["signin"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+  
 
 
-  data.buffer.push("<h3>Sign in</h3>\n<form action=\"/signin\" method=\"post\">\n  <label for=\"signin_email\">E-Mail</label>\n  <input type=\"text\" name=\"signin_email\"><br>\n  <label for=\"signin_password\">Password</label>\n  <input type=\"password\" name=\"signin_password\"><br>\n  <input type=\"submit\" formaction=\"/signin\" value=\"Submit\">\n</form>\n\n<button ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.action.call(depth0, "fireButton", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Fire!</button>\n");
-  return buffer;
+  data.buffer.push("<h3>Sign in</h3>\n<form action=\"/signin\" method=\"post\">\n  <label for=\"signin_email\">E-Mail</label>\n  <input type=\"text\" name=\"signin_email\"><br>\n  <label for=\"signin_password\">Password</label>\n  <input type=\"password\" name=\"signin_password\"><br>\n  <input class=\"btn\" type=\"submit\" formaction=\"/signin\" value=\"Submit\">\n</form>\n");
   
 });
 
@@ -126,11 +121,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SignupView", {hash:{
     'controllerBinding': ("SL.signupController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n      </div>\n    </div>\n  </div>\n</div>\n\n<button ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.action.call(depth0, "fireButton", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Fire!</button>\n");
+  data.buffer.push("\n      </div>\n    </div>\n  </div>\n</div>\n");
   return buffer;
   
 });
