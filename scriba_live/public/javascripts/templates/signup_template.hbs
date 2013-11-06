@@ -1,14 +1,12 @@
-<h3>Sign Up:</h3>
+<h3>Sign up</h3>
 <form action="/users" method="post">
-  <label for="first_name">First Name</label>
-  <input type="text" name="first_name"><br>
-  <label for="last_name">Last Name</label>
-  <input type="text" name="last_name"><br>
+  <label>Name</label>
+  <input class="firstname" type="text" name="first_name">
+  <input class="lastname" type="text" name="last_name"><br>
   <label for="email">E-Mail</label>
   <input type="text" name="email"><br>
-  <label for="password">Password</label>
-  <input type="password" name="password"><br>
-  <label for="password_confirmation">Confirm</label>
+  <label for="password">Password and confirmation</label>
+  <input type="password" name="password">
   <input type="password" name="password_confirmation"><br>
-  <input type="submit" formaction="/users" value="Submit">
+  <input class="btn" type="submit" formaction="/users" value="Submit">
 </form>

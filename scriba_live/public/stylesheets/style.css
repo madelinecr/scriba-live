@@ -1,35 +1,44 @@
 body {
-  padding: 0px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding-top: 60px;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
 
-.ember-view {
-  margin: 0;
-  padding: 0;
-}
-
 #content {
   margin: auto;
-  width: 1350px;
+  width: 960px;
+  max-width: 960px;
 }
 
-#welcome-msg {
-  position: absolute;
-  top: 20px;
-  z-index: 1;
-  margin: 20px 0 0 235px;
+#hero-unit {
+  width: 90%;
+  padding: 2.5em;
+  display: block;
+  background-color: #EEEEEE;
+  border-radius: 5px;
+  color: #000000;
 }
 
-#welcome-msg span {
-  color: black;
+#hero-unit h1 {
+  font-size: 60px;
+  font-style: bold;
 }
 
-#welcome-msg span.spacer {
-  padding: 0 10px;
+#hero-unit p {
+  font-size: 18px;
+  line-height: 30px;
+  margin: 1em 0 0 0;
+}
+
+#signin .ember-view {
+  padding-left: 2em;
+}
+
+#signup .ember-view {
+  padding-left: 2em;
 }
 
 #welcome-sidebar {
@@ -39,8 +48,7 @@ a {
 
 #splash-img {
   position: relative;
-  margin-top: 20px;
-  min-width: 1000px;
+  margin-top: 100px;
   width: 1000px;
 }
 
@@ -65,4 +73,12 @@ a {
   background-color: transparent;
   z-index: 0;
   tab-size: 4;
+}
+
+.firstname {
+  width: 95px;
+}
+
+.lastname {
+  width: 95px;
 }

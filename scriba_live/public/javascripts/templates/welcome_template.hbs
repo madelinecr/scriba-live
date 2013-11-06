@@ -1,18 +1,17 @@
-<div class="container-fluid">
+<div id="container">
   <div id="content">
-    <div class="row-fluid">
-      <div class="span9">
-        <h1 id="welcome-msg">
-            <span>Welcome to Scriba Live</span>
-        </h1>
-        <img id="splash-img" src="/img/welcome3.jpg"/>
+    <div id="hero-unit">
+      <h1>Welcome to ScribaLive!</h1>
+      <p>Scriba-Live lets you share your notes as you take them, and other 
+         cool stuff. Copy needed.</p>
+    </div>
+    <div class="row">
+      <div id="signin" class="span4">
+        {{ view SL.SigninView controllerBinding="SL.signinController" }}
       </div>
-      <div id="welcome-sidebar" class="span3">
-        {{ view SL.SigninView controllerBinding="SL.signinController" }}<br><br>
-        <a href="/profile/1">If you signed in correctly, Profile</a>
-        {{ view SL.SignupView controllerBinding="SL.signupController" }}<br>
+      <div id="signup" class="span4 offset4">
+        {{ view SL.SignupView controllerBinding="SL.signupController" }}
       </div>
     </div>
   </div>
 </div>
-

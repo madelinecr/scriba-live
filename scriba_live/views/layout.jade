@@ -8,6 +8,7 @@ html(lang="en")
     script(src="/javascripts/ember.js")
     script(src="/socket.io/socket.io.js")
     script(src="/javascripts/raphael.js")
+    <!-- script(src="/javascripts/bootstrap.min.js") caused some issues -->
     <!-- uncomment for bootstrap js
     script(src="/javascripts/bootstrap.min.js") -->
     <!-- EMBERJS TEMPLATES -->
@@ -46,7 +47,25 @@ html(lang="en")
     script(src="/javascripts/onload.js")
     <!-- CSS -->
     link(rel='stylesheet', href="/stylesheets/style.css")
-    link(rel='stylesheet', href="/stylesheets/bootstrap.min.css")
+    link(rel='stylesheet', href="/stylesheets/bootstrap.min.css", media="screen")
 
   body
+  
+    div(class="navbar navbar-inverse navbar-fixed-top")
+      div(class="navbar-inner")
+        div(class="container")
+          button(type="button",class="btn btn-navbar",data-toggle="collapse",data-target=".nav-collapse")
+            span(class="icon-bar")
+            span(class="icon-bar")
+            span(class="icon-bar")
+          a(class="brand",href="#") ScribaLive
+          div(class="nav-collapse collapse")
+            ul(class="nav")
+              li(class="active")
+                a(href="#") Home
+              li
+                a(href="#about") About
+              li
+                a(href="#contact") Contact
+
     block content
