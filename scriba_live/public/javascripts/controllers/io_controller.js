@@ -22,6 +22,12 @@ SL.IoController = Em.Controller.extend({
     socket.on('oval', SL.ioController.ovalEmitHandler);
     //path event
     socket.on('path', SL.ioController.pathEmitHandler);
+
+    // Retrieve existing objects
+    SL.ioController.get('socket').emit('rect', {type: 'getAll'});
+    SL.ioController.get('socket').emit('oval', {type: 'getAll'});
+    SL.ioController.get('socket').emit('path', {type: 'getAll'});
+
   },
 
 

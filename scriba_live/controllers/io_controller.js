@@ -94,7 +94,21 @@ module.exports.listen = function(server, db) {
               }); // end of rect.destroy()
             }
           }); // end of db.Rect.find
-        } // end create rect
+        } // end destroy rect
+
+        // Dump existing objects to client
+        else if (data.type == 'getAll') {
+          db.Rect.findAll().success(function(sq_objs) {
+            // Send each object to the joining client
+            for (idx in sq_objs) {
+              socket.emit('rect', {
+                success: true,
+                type: 'create',
+                rect: sq_objs[idx]
+              }); // end of socket.emit
+            }
+          }); // end of db.Rect.findAll
+        }
 
         else {console.log(rect, data);};
 
@@ -189,6 +203,20 @@ module.exports.listen = function(server, db) {
           }); // end of db.Oval.find
         } // end destroy oval
 
+        // Dump existing objects to client
+        else if (data.type == 'getAll') {
+          db.Oval.findAll().success(function(sq_objs) {
+            // Send each object to the joining client
+            for (idx in sq_objs) {
+              socket.emit('oval', {
+                success: true,
+                type: 'create',
+                oval: sq_objs[idx]
+              }); // end of socket.emit
+            }
+          }); // end of db.Oval.findAll
+        }
+
         else {};
 
       }); // end of socket.on oval
@@ -282,13 +310,27 @@ module.exports.listen = function(server, db) {
           }); // end of db.Path.find
         } // end destroy path
 
-        else {};
+        // Dump existing objects to client
+        else if (data.type == 'getAll') {
+          db.Path.findAll().success(function(sq_objs) {
+            // Send each object to the joining client
+            for (idx in sq_objs) {
+              socket.emit('path', {
+                success: true,
+                type: 'create',
+                path: sq_objs[idx]
+              }); // end of socket.emit
+            }
+          }); // end of db.Path.findAll
+        }
 
-    });//end of socket.join  room
+        else {};
 
       }); // end of socket.on path
 
+    });//end of socket.join  room
 
-    }); // end of io.on
-    return io;
+
+  }); // end of io.on
+  return io;
 }
