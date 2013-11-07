@@ -1,3 +1,14 @@
-<div>
-  <p>My name is {{controller.name}}</p>
+<div class="row">
+  <div class="span12">
+    <table>
+      {{#each}}
+        <tr>
+          <td>{{id}}</td>
+          <td>{{first_name}}</td>
+          <td>{{last_name}}</td>
+          <td>{{email}}</td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
 </div>

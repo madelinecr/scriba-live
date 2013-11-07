@@ -19,7 +19,6 @@ exports.index = function(req, res){
     // if no errors, send users (users == zero length array if no matches)
 
     res.send({
-      success: true,
       users: users
     });
 

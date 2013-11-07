@@ -91,14 +91,37 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["users"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this;
 
-
-  data.buffer.push("<div>\n  <p>My name is ");
+function program1(depth0,data) {
+  
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n        <tr>\n          <td>");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "controller.name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</p>\n</div>");
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</td>\n          <td>");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "first_name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</td>\n          <td>");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "last_name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</td>\n          <td>");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "email", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</td>\n        </tr>\n      ");
+  return buffer;
+  }
+
+  data.buffer.push("<div class=\"row\">\n  <div class=\"span12\">\n    <table>\n      ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers.each.call(depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n    </table>\n  </div>\n</div>\n");
   return buffer;
   
 });
@@ -109,19 +132,23 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', hashContexts, hashTypes, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div id=\"container\">\n  <div id=\"content\">\n    <div id=\"hero-unit\">\n      <h1>Welcome to ScribaLive!</h1>\n      <p>Scriba-Live lets you share your notes as you take them, and other \n         cool stuff. Copy needed.</p>\n    </div>\n    <div class=\"row\">\n      <div id=\"signin\" class=\"span4\">\n        ");
+  data.buffer.push("<div class=\"container\">\n  <div id=\"hero-unit\">\n    <h1>Welcome to ScribaLive!</h1>\n    <p>ScribaLive lets you share your notes as you take them.</p>\n  </div>\n  <div class=\"row\">\n    <div id=\"signin\" class=\"span4\">\n      ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SigninView", {hash:{
     'controllerBinding': ("SL.signinController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n      </div>\n      <div id=\"signup\" class=\"span4 offset4\">\n        ");
+  data.buffer.push("\n    </div>\n    <div id=\"splash_image\" class=\"span4\">\n      <img src=\"/img/welcome1.jpg\"/>\n    </div>\n    <h1>random image ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "random_image", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("</h1>\n    <div id=\"signup\" class=\"span4\">\n      ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SignupView", {hash:{
     'controllerBinding': ("SL.signupController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n      </div>\n    </div>\n  </div>\n</div>\n");
+  data.buffer.push("\n    </div>\n  </div>\n</div>\n");
   return buffer;
   
 });

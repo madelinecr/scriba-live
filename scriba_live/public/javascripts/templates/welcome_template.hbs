@@ -1,17 +1,17 @@
-<div id="container">
-  <div id="content">
-    <div id="hero-unit">
-      <h1>Welcome to ScribaLive!</h1>
-      <p>Scriba-Live lets you share your notes as you take them, and other 
-         cool stuff. Copy needed.</p>
+<div class="container">
+  <div id="hero-unit">
+    <h1>Welcome to ScribaLive!</h1>
+    <p>ScribaLive lets you share your notes as you take them.</p>
+  </div>
+  <div class="row">
+    <div id="signin" class="span4">
+      {{ view SL.SigninView controllerBinding="SL.signinController" }}
     </div>
-    <div class="row">
-      <div id="signin" class="span4">
-        {{ view SL.SigninView controllerBinding="SL.signinController" }}
-      </div>
-      <div id="signup" class="span4 offset4">
-        {{ view SL.SignupView controllerBinding="SL.signupController" }}
-      </div>
+    <div id="splash_image" class="span4">
+      <img src="/img/welcome1.jpg"/>
+    </div>
+    <div id="signup" class="span4">
+      {{ view SL.SignupView controllerBinding="SL.signupController" }}
     </div>
   </div>
 </div>

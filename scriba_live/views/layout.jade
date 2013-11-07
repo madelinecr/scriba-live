@@ -6,6 +6,7 @@ html(lang="en")
     script(src="/javascripts/jquery-2.0.3.js")
     script(src="/javascripts/handlebars-1.0.0.js")
     script(src="/javascripts/ember.js")
+    script(src="/javascripts/ember-data.js")
     script(src="/socket.io/socket.io.js")
     script(src="/javascripts/raphael.js")
     <!-- script(src="/javascripts/bootstrap.min.js") caused some issues -->
@@ -15,6 +16,7 @@ html(lang="en")
     script(src="/javascripts/templates.js")
     <!-- EMBERJS APP -->
     script(src="/javascripts/scriba.js")
+    script(src="/javascripts/routes.js")
     <!-- EMBERJS MODELS -->
     script(src="/javascripts/models/user_model.js")
     script(src="/javascripts/models/page_model.js")
@@ -67,5 +69,5 @@ html(lang="en")
                 a(href="#about") About
               li
                 a(href="#contact") Contact
-
-    block content
+    div(class="container")
+      block content
