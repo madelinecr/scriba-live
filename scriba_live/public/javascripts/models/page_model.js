@@ -7,7 +7,23 @@ SL.Page = Em.Object.extend({
   page_index: 0,
   object: null,
 
-  save: function () {
-    // save to server here
-  }
+  save: function() {
+    // save to server
+    SL.ioController.pushPageCreate(this);
+  }/*,
+
+  remove: function(push) {
+    // delete raphael object
+    var rg_obj = this.get('object');
+    this.set('object', null);
+    rg_obj.remove();
+
+    // remove from server
+    if (push == 'push') {
+      SL.ioController.pushRectDestroy(this);
+    }
+
+    // remove this object
+    this.destroy();
+  }*/
 });

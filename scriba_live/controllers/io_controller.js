@@ -8,32 +8,113 @@ module.exports.listen = function(server, db) {
     socket.on('room', function(room) {
       socket.join(room);
 
-      socket.on('rect', function(data) {
+      socket.on('page', function(data) {
         if (data.type == 'create') {
-          db.Rect.create({
-            x_pos:  data.object.x_pos,
-            y_pos:  data.object.y_pos,
-            x_size: data.object.width,
-            y_size: data.object.height
-          }).success(function(rect) {
-
-            var initiator_message = {
-              success: true,
-              type: 'affirmCreate',
-              rect: rect
-            }
-            var broadcast_message = {
-              success: true,
-              type: 'create',
-              rect: rect
-            }
+          db.Page.create({
+            page_index:  data.object.page_index,
+          }).success(function(page) {
 
             // respond to initiating user and foward to remaining users
-            socket.emit('rect', initiator_message);
-            socket.broadcast.to(room).emit('rect', broadcast_message);
+            socket.emit('page', {
+              success: true,
+              type: 'affirmCreate',
+              page: page
+            });
+            socket.broadcast.to(room).emit('page', {
+              success: true,
+              type: 'create',
+              page: page
+            });
 
           }).error(function(error) {
             // forget about it
+          });
+        } // end create page
+        else if (data.type == 'destroy') {
+          db.Page.find(data.object.id).success(function(page) {
+            // if page exists
+            if (page) {
+              // attempt to destroy page
+              page.destroy().success(function(page) {
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmDestroy',
+                  page: page
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'destroy',
+                  page: page
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('page', initiator_message);
+                socket.broadcast.to(room).emit('page', broadcast_message);
+
+              }); // end of page.destroy()
+            }
+          }); // end of db.Page.find
+        } // end destroy page
+
+        // Dump existing objects to client
+        else if (data.type == 'getAll') {
+          db.Page.findAll().success(function(sq_objs) {
+            // Send each object to the joining client
+            for (idx in sq_objs) {
+              socket.emit('page', {
+                success: true,
+                type: 'create',
+                page: sq_objs[idx]
+              }); // end of socket.emit
+            }
+            socket.emit('page', {
+              success: true,
+              type: 'initPages'
+            });
+          }); // end of db.Page.findAll
+        }
+
+        else {console.log(page, data);};
+
+      }); // end of socket.on page
+
+      socket.on('rect', function(data) {
+        if (data.type == 'create') {
+          db.Page.find(data.object.page_id).success(function(page){
+            if (page) {
+              db.Rect.create({
+                page_id: data.object.page_id,
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                x_size: data.object.width,
+                y_size: data.object.height
+              }).success(function(rect) {
+
+                page.addRect(rect);
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmCreate',
+                  rect: rect
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'create',
+                  rect: rect
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('rect', initiator_message);
+                socket.broadcast.to(room).emit('rect', broadcast_message);
+
+              }).error(function(error) {
+                // forget about it
+              });
+            }
+            else {
+
+            }
           });
         } // end create rect
 
@@ -117,31 +198,43 @@ module.exports.listen = function(server, db) {
 
       socket.on('oval', function(data) {
         if (data.type == 'create') {
-          db.Oval.create({
-            x_pos:  data.object.x_pos,
-            y_pos:  data.object.y_pos,
-            x_size: data.object.width,
-            y_size: data.object.height
-          }).success(function(oval) {
+          db.Page.find(data.object.page_id).success(function(page){
+            if (page) {
+              db.Oval.create({
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                x_size: data.object.width,
+                y_size: data.object.height
+              }).success(function(oval) {
 
-            var initiator_message = {
-              success: true,
-              type: 'affirmCreate',
-              oval: oval
-              }
-            var broadcast_message = {
-              success: true,
-              type: 'create',
-              oval: oval
+
+                page.addOval(oval);
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmCreate',
+                  oval: oval
+                  }
+                var broadcast_message = {
+                  success: true,
+                  type: 'create',
+                  oval: oval
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('oval', initiator_message);
+                socket.broadcast.to(room).emit('oval', broadcast_message);
+
+              }).error(function(error) {
+                // forget about it
+              });
+            }
+            else {
+
             }
 
-            // respond to initiating user and foward to remaining users
-            socket.emit('oval', initiator_message);
-            socket.broadcast.to(room).emit('oval', broadcast_message);
-
-          }).error(function(error) {
-            // forget about it
           });
+
         } // end create oval
 
         else if (data.type == 'update') {
@@ -224,30 +317,40 @@ module.exports.listen = function(server, db) {
 
       socket.on('path', function(data) {
         if (data.type == 'create') {
-          db.Path.create({
-            x_pos:  data.object.x_pos,
-            y_pos:  data.object.y_pos,
-            value:  data.object.path
 
-          }).success(function(path) {
+          db.Page.find(data.object.page_id).success(function(page){
+            if (page) {
+              db.Path.create({
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                value:  data.object.path
 
-            var initiator_message = {
-              success: true,
-              type: 'affirmCreate',
-              path: path
+              }).success(function(path) {
+
+                page.addPaths(path);
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmCreate',
+                  path: path
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'create',
+                  path: path
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('path', initiator_message);
+                socket.broadcast.to(room).emit('path', broadcast_message);
+
+              }).error(function(error) {
+                // forget about it
+              });
             }
-            var broadcast_message = {
-              success: true,
-              type: 'create',
-              path: path
+            else {
+
             }
-
-            // respond to initiating user and foward to remaining users
-            socket.emit('path', initiator_message);
-            socket.broadcast.to(room).emit('path', broadcast_message);
-
-          }).error(function(error) {
-            // forget about it
           });
         } // end create path
 

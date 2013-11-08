@@ -10,18 +10,21 @@ a {
 #editor-menu {
 }
 
-#editor-canvas {
+#editor-canvases {
+  position: relative;
+}
+.canvas-page {
   position: relative;
 }
 
-#page-0 {
+svg {
   left: 0;
   top: 0;
   position: absolute;
   z-index: 1;
 }
 
-#editor-canvas-textarea {
+.editor-canvas-textarea {
   left: 0;
   top: 0;
   position: absolute;

@@ -1,11 +1,12 @@
 SL.IoController = Em.Controller.extend({
   // controller variables
   socket: null,
+  initialized_pages: false,
 
 
   // connect to server
   createConnection: function(){
-    SL.editorController.startDemo();
+    SL.editorController.startEditor();
 
     var socket = io.connect();
     SL.ioController.set('socket', socket);
@@ -16,26 +17,58 @@ SL.IoController = Em.Controller.extend({
     //now socket is in room
 
     // register handlers to receive events from server
+    socket.on('page', SL.ioController.pageEmitHandler);
     //rectangle event
     socket.on('rect', SL.ioController.rectEmitHandler);
     //oval event
     socket.on('oval', SL.ioController.ovalEmitHandler);
     //path event
     socket.on('path', SL.ioController.pathEmitHandler);
+    //text event
+    socket.on('text', SL.ioController.textEmitHandler);
 
     // Retrieve existing objects
+    SL.ioController.get('socket').emit('page', {type: 'getAll'});
+  },
+
+  initPageObjects: function() {
     SL.ioController.get('socket').emit('rect', {type: 'getAll'});
     SL.ioController.get('socket').emit('oval', {type: 'getAll'});
     SL.ioController.get('socket').emit('path', {type: 'getAll'});
-
+    SL.ioController.get('socket').emit('text', {type: 'getAll'});
   },
 
+  // push create/edit/destroy page actions to server
+  pushPageCreate: function(page) {
+    var data = {
+      type: 'create',
+      object: {
+        page_index: page.get('page_index')
+      }
+    }
+
+    SL.ioController.get('socket').emit('page', data);
+  },
+
+  pushPageDestroy: function(page) {
+    var data = {
+      type: 'destroy',
+      object: {
+        id: page.get('id')
+      }
+    }
+
+    console.log(data);
+
+    SL.ioController.get('socket').emit('page', data);
+  },
 
   // push create/edit/destroy rect actions to server
   pushRectCreate: function(rect) {
     var data = {
       type: 'create',
       object: {
+        page_id: rect.get('page_id'),
         x_pos:  rect.get('x_pos'),
         y_pos:  rect.get('y_pos'),
         width:  rect.get('width'),
@@ -51,6 +84,7 @@ SL.IoController = Em.Controller.extend({
       type: 'update',
       object: {
         id: em_obj.get('id'),
+        page_id: em_obj.get('page_id'),
         x_pos:  em_obj.get('x_pos'),
         y_pos:  em_obj.get('y_pos'),
         width:  em_obj.get('width'),
@@ -80,10 +114,11 @@ SL.IoController = Em.Controller.extend({
     var data = {
       type: 'create',
       object: {
-        x_pos:  oval.get('x_pos'),
-        y_pos:  oval.get('y_pos'),
-        width:  oval.get('width'),
-        height: oval.get('height')
+        page_id: oval.get('page_id'),
+        x_pos:   oval.get('x_pos'),
+        y_pos:   oval.get('y_pos'),
+        width:   oval.get('width'),
+        height:  oval.get('height')
       }
     }
 
@@ -97,6 +132,7 @@ SL.IoController = Em.Controller.extend({
       type: 'update',
       object: {
         id: em_obj.get('id'),
+        page_id: em_obj.get('page_id'),
         x_pos:  em_obj.get('x_pos'),
         y_pos:  em_obj.get('y_pos'),
         width:  em_obj.get('width'),
@@ -126,6 +162,7 @@ SL.IoController = Em.Controller.extend({
     var data = {
       type: 'create',
       object: {
+        page_id: path.get('page_id'),
         x_pos:  path.get('x_pos'),
         y_pos:  path.get('y_pos'),
         path:   path.get('object').node.attributes.d.value
@@ -163,6 +200,46 @@ SL.IoController = Em.Controller.extend({
     SL.ioController.get('socket').emit('path', data);
   },
 
+  // push create/edit/destroy text actions to server
+  pushTextCreate: function(text) {
+    var data = {
+      type: 'create',
+      object: {
+        text:  text.get('text'),
+        x_pos:  text.get('x_pos'),
+        y_pos:  text.get('y_pos')
+      }
+    }
+
+    SL.ioController.get('socket').emit('text', data);
+  },
+
+  pushTextUpdate: function(em_obj) {
+    var data = {
+      type: 'update',
+      object: {
+        id: em_obj.get('id'),
+        text:  text.get('text'),
+        x_pos:  text.get('x_pos'),
+        y_pos:  text.get('y_pos')
+      }
+    }
+
+    SL.ioController.get('socket').emit('text', data);
+  },
+
+  pushTextDestroy: function(text) {
+    var data = {
+      type: 'destroy',
+      object: {
+        id: text.get('id')
+      }
+    }
+
+    console.log(data);
+
+    SL.ioController.get('socket').emit('text', data);
+  },
 
   // recieve create/edit/destroy rect actions from server
   rectEmitHandler: function(message) {
@@ -179,7 +256,7 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: rect id:%i already exists locally!", message.rect.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.rect.page_id);
         var rg_rect = SL.editorController.newRaphRect(rg_page,
           message.rect.x_pos,
           message.rect.y_pos,
@@ -188,7 +265,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_rect = SL.Rect.create({
           id: message.rect.id,
-          page_id: 0,
+          page_id: message.rect.page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.rect.x_pos,
@@ -220,7 +297,7 @@ SL.IoController = Em.Controller.extend({
       }
     }
     else if (message.type == 'affirmDestroy') {
-//      console.log(message); duplicated above
+      //console.log(message); duplicated above
     }
     else if (message.type == 'destroy') {
       var em_obj = SL.editorController.get('rects').findBy('id', message.rect.id);
@@ -243,7 +320,7 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: oval id:%i already exists locally!", message.oval.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.oval.page_id);
         var rg_oval = SL.editorController.newRaphOval(rg_page,
           message.oval.x_pos,
           message.oval.y_pos,
@@ -252,7 +329,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_oval = SL.Oval.create({
           id: message.oval.id,
-          page_id: 0,
+          page_id: message.oval.page_id,
           note_id: 0,
           user_id: 0,
           x_pos:  message.oval.x_pos,
@@ -284,7 +361,7 @@ SL.IoController = Em.Controller.extend({
       }
     }
     else if (message.type == "affirmDestroy") {
-//      console.log(message); duplicated above
+      //console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
       var em_obj = SL.editorController.get('ovals').findBy('id', message.oval.id);
@@ -307,11 +384,11 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: path id:%i already exists locally!", message.path.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').objectAt(0);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.path.page_id);
         var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value);
         var em_path = SL.Path.create({
           id: message.path.id,
-          page_id: 0,
+          page_id: message.path.page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.path.x_pos,
@@ -340,7 +417,7 @@ SL.IoController = Em.Controller.extend({
       }
     }
     else if (message.type == "affirmDestroy") {
-//      console.log(message); duplicated above
+      //console.log(message); duplicated above
     }
     else if (message.type == "destroy") {
       var em_obj = SL.editorController.get('paths').findBy('id', message.path.id);
@@ -349,6 +426,49 @@ SL.IoController = Em.Controller.extend({
     }
   },
 
+  // recieve create/edit/destroy page actions from server
+  pageEmitHandler: function(message) {
+    console.log(message);
+
+    // We told server of new object, server responding with new id
+    if (message.type == 'initPages') {
+      // if there are pages, init
+      if (SL.editorController.get('pages').get('length')) {
+        console.log("length");
+        SL.ioController.initPageObjects();
+      }
+      // else create a new page & save to server
+      else {
+        console.log("empty");
+        SL.editorController.newPage('editor-canvases', 600, 600, true, 0);
+      }
+    }
+    else if (message.type == 'affirmCreate') {
+      var page = SL.editorController.get('pages').findBy('id', 0);
+      page.set('id', message.page.id);
+    }
+    // Server telling us to add an object
+    else if (message.type == 'create') {
+      if (SL.editorController.get('pages').findBy('id', message.page.id)) {
+        console.error("Error: page id:%i already exists locally!", message.page.id);
+      }
+      else {
+        SL.editorController.newPage('editor-canvases', 600, 600, false, message.page.id);
+      }
+    }
+    // We told server to update object
+    else if (message.type == 'affirmUpdate') {
+    }
+    // Server telling us to update an object
+    else if (message.type == 'affirmDestroy') {
+      //console.log(message); duplicated above
+    }
+    else if (message.type == 'destroy') {
+      /*var em_obj = SL.editorController.get('pages').findBy('id', message.page.id);
+      SL.editorController.get('pages').removeObject(em_obj);
+      em_obj.remove('local');*/
+    }
+  },
 
   // helpers
   someHelper: function() {

@@ -14,6 +14,7 @@ SL.EditorController = Em.Controller.extend({
   tool: 'text',
   active: null,
   last_active: null,
+  active_page: null,
   is_down: false,
   is_tool: false,
 
@@ -26,12 +27,8 @@ SL.EditorController = Em.Controller.extend({
     this._super();
   },
 
-  // this funciton will initialize a demo paper (should be done from socket code)
-  startDemo: function() {
-
-    // initalize a new page to draw on
-    var page = this.newPage('editor-canvas', 600, 600);
-
+  // general required start functions
+  startEditor: function() {
     window.onkeydown = SL.editorController.keyDown;
   },
 
@@ -55,25 +52,35 @@ SL.EditorController = Em.Controller.extend({
   // CRUD FOR USERS TO CREATE THINGS
 
   // create and save a new page
-  newPage: function(id, width, height) {
+  newPage: function(container_id, width, height, save, page_id) {
     var controller = SL.editorController;
 
+    console.log(container_id);
+
+    // inject new div for page
+    var canvas_page_id = "canvas-page-"+controller.get('pages').get('length');
+    $('#'+container_id).append('<div class="canvas-page" id="'+canvas_page_id+'"></div>');
+
     // create a new raphael paper to draw stuff on
-    var paper = controller.newRaphPage(id, width, height);
+    var paper = controller.newRaphPage(canvas_page_id, width, height);
 
     // set paper id
     paper.canvas.id = "page-"+controller.get('pages').get('length');
 
-    controller.newTextArea(id, width, height);
-
+    controller.newTextArea(canvas_page_id, width, height);
 
     // create new page
     var page = SL.Page.create({
+      id: page_id,
       width: width,
       height: height,
       page_index: controller.get('pages').get('length'),
       object: paper // associated raphael object
     });
+
+    // save to server
+    if (save)
+      page.save();
 
     // push new page into pages array
     controller.get('pages').pushObject(page);
@@ -83,7 +90,7 @@ SL.EditorController = Em.Controller.extend({
   newTextArea: function(id, width, height) {
     var controller = SL.get('editorController');
 
-    $("#"+id).append("<textarea id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
+    $("#"+id).append("<textarea class='editor-canvas-textarea' id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
 
     var textarea = $("#"+id+"-textarea");
 
@@ -115,6 +122,7 @@ SL.EditorController = Em.Controller.extend({
 
   newText: function(obj) {
     var text = SL.Text.create({
+      page_id: SL.editorController.get('active_page.id'),
       x_pos: obj.attr('x'),
       y_pos: obj.attr('y'),
       text: '',
@@ -128,6 +136,7 @@ SL.EditorController = Em.Controller.extend({
 
   newPath: function(obj) {
     var path = SL.Path.create({
+      page_id: SL.editorController.get('active_page.id'),
       path: '',
       object: obj
     });
@@ -139,6 +148,7 @@ SL.EditorController = Em.Controller.extend({
 
   newRect: function(rg_rect) {
     var em_rect = SL.Rect.create({
+      page_id: SL.editorController.get('active_page.id'),
       x_pos: rg_rect.attr('x'),
       y_pos: rg_rect.attr('y'),
       width: rg_rect.attr('width'),
@@ -153,6 +163,7 @@ SL.EditorController = Em.Controller.extend({
 
   newOval: function(obj) {
     var oval = SL.Oval.create({
+      page_id: SL.editorController.get('active_page.id'),
       x_pos: obj.attr('cx'),
       y_pos: obj.attr('cy'),
       width: obj.attr('rx'),
@@ -176,6 +187,7 @@ SL.EditorController = Em.Controller.extend({
     paper.canvas.onmousedown = SL.editorController.useToolDown;
     paper.canvas.onmouseup = SL.editorController.useToolUp;
     paper.canvas.onmousemove = SL.editorController.mouseMove;
+    paper.canvas.onmouseover = SL.editorController.mouseOver;
 
     // return index of new paper
     return paper;
@@ -333,6 +345,12 @@ SL.EditorController = Em.Controller.extend({
     }
   },
 
+  mouseOver: function(event) {
+    var page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
+
+    SL.editorController.set('active_page', page);
+  },
+
   // lisents to keypress events
   keyDown: function(event) {
     // http://www.javascripter.net/faq/keycodes.htm for keycodes
@@ -381,7 +399,10 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // get current page
-    var page = controller.get('pages').objectAt(0);
+    var page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
+    //var page = controller.get('pages').objectAt(0);
+
+    console.log(page);
 
     // save original starting x and y
     controller.set('ox', event.offsetX);
@@ -392,6 +413,7 @@ SL.EditorController = Em.Controller.extend({
 
     // set active value to rectangle so other events know what to edit
     controller.set('active', rg_rect);
+
 
     // prevent event from propagating
     event.preventDefault();
@@ -454,7 +476,7 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // get current page
-    var page = controller.get('pages').objectAt(0);
+    var page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
 
     // save original starting x and y
     controller.set('ox', event.offsetX);
@@ -465,6 +487,7 @@ SL.EditorController = Em.Controller.extend({
 
     // set active value to ellipse so other events know what to edit
     controller.set('active', oval);
+
 
     // prevent event from propagating
     event.preventDefault();
@@ -526,7 +549,7 @@ SL.EditorController = Em.Controller.extend({
     var controller = SL.get('editorController');
 
     // get current page
-    var rg_page = controller.get('pages').objectAt(0);
+    var rg_page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
 
     // save original starting x and y
     controller.set('ox', event.offsetX);
@@ -541,6 +564,7 @@ SL.EditorController = Em.Controller.extend({
 
     // set active value to ellipse so other events know what to edit
     controller.set('active', rg_path);
+
 
     // prevent event from propagating
     event.preventDefault();
@@ -618,6 +642,7 @@ SL.EditorController = Em.Controller.extend({
       // set rect to active
       controller.set('active', rect);
 
+
       // prevent event from propagating
       event.preventDefault();
     }
@@ -674,7 +699,7 @@ SL.EditorController = Em.Controller.extend({
       // bring to front
       rg_oval.toFront();
 
-      // set rect to active
+      // set oval to active
       controller.set('active', rg_oval);
 
       // prevent event from propagating
@@ -788,10 +813,10 @@ SL.EditorController = Em.Controller.extend({
       console.log(tool);
 
       if (tool == 'text') {
-        $('#page-0').css('z-index', '-1');
+        $('.page').css('z-index', '-1');
       }
       else {
-        $('#page-0').css('z-index', '1');
+        $('.page').css('z-index', '1');
       }
       // Forget last selected object when user leaves select tool
       if (tool != 'select') {
@@ -800,8 +825,9 @@ SL.EditorController = Em.Controller.extend({
     },
 
     // add a new page
-    newPage: function() {
+    addPage: function() {
       // add a new page to current note
+      var page = this.newPage('editor-canvases', 600, 600, true, 0);
     }
   },
 
