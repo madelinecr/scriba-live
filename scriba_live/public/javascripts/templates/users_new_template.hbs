@@ -1,12 +1,13 @@
 <h3>Sign up</h3>
-<form action="/users" method="post">
+<form>
   <label>Name</label>
   <input class="firstname" type="text" name="first_name">
   <input class="lastname" type="text" name="last_name"><br>
   <label for="email">E-Mail</label>
   <input type="text" name="email"><br>
   <label for="password">Password and confirmation</label>
-  <input type="password" name="password">
+  <input type="password" name="password"><br>
   <input type="password" name="password_confirmation"><br>
-  <input class="btn" type="submit" formaction="/users" value="Submit">
+  <input class="btn" type="submit" {{action create_user}} value="Submit">
 </form>
+

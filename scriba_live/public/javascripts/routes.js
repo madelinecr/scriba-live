@@ -1,5 +1,7 @@
 SL.Router.map(function() {
-  this.route("users", { path: "/users" });
+  this.resource("users", { path: "/users" }, function() {
+    this.route('new');
+  });
   this.route("user", { path: "/user/:user_id" });
   this.route("welcome", { path: "/" });
   //this.route("favorites", { path: "/favs" });

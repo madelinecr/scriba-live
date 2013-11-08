@@ -29,10 +29,10 @@ html(lang="en")
     <!-- EMBERJS CONTROLLERS -->
     script(src="/javascripts/controllers/application_controller.js")
     script(src="/javascripts/controllers/users_controller.js")
+    script(src="/javascripts/controllers/users_new_controller.js")
     script(src="/javascripts/controllers/io_controller.js")
     script(src="/javascripts/controllers/welcome_controller.js")
     script(src="/javascripts/controllers/signin_controller.js")
-    script(src="/javascripts/controllers/signup_controller.js")
     script(src="/javascripts/controllers/editor_controller.js")
     script(src="/javascripts/controllers/profile_controller.js")
     script(src="/javascripts/controllers/preferences_controller.js")
@@ -41,10 +41,10 @@ html(lang="en")
     script(src="/javascripts/init_controllers.js")
     <!-- EMBERJS VIEWS -->
     script(src="/javascripts/views/users_view.js")
+    script(src="/javascripts/views/users_new_view.js")
     script(src="/javascripts/views/welcome_view.js")
     script(src="/javascripts/views/profile_view.js")
     script(src="/javascripts/views/signin_view.js")
-    script(src="/javascripts/views/signup_view.js")
     script(src="/javascripts/views/editor_view.js")
     script(src="/javascripts/views/preferences_view.js")
     <!-- ONLOAD -->
@@ -54,22 +54,5 @@ html(lang="en")
     link(rel='stylesheet', href="/stylesheets/bootstrap.min.css", media="screen")
 
   body
-  
-    div(class="navbar navbar-inverse navbar-fixed-top")
-      div(class="navbar-inner")
-        div(class="container")
-          button(type="button",class="btn btn-navbar",data-toggle="collapse",data-target=".nav-collapse")
-            span(class="icon-bar")
-            span(class="icon-bar")
-            span(class="icon-bar")
-          a(class="brand",href="#") ScribaLive
-          div(class="nav-collapse collapse")
-            ul(class="nav")
-              li(class="active")
-                a(href="#") Home
-              li
-                a(href="#about") About
-              li
-                a(href="#contact") Contact
     div(class="container")
       block content

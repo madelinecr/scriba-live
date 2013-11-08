@@ -1,17 +1,44 @@
 <div class="container">
-  <div id="hero-unit">
+  <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="navbar-inner">
+      <div class="container">
+        <a href="/" class="brand">ScribaLive</a>
+        <ul class="nav topbar">
+          <li>
+          </li>
+          <li class="">
+            <a href="/" class="navbar">Home</a>
+          </li>
+          <li>
+            <a href="/editor" class="navbar">Editor</a>
+          </li>
+          <li>
+            <a href="/profile" class="navbar">Profile</a>
+          </li>
+          <li>
+            <a href="/preferences" class="navbar">Account Preferences</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container content">
+  <div class="hero-unit">
     <h1>Welcome to ScribaLive!</h1>
     <p>ScribaLive lets you share your notes as you take them.</p>
   </div>
-  <div class="row">
-    <div id="signin" class="span4">
-      {{ view SL.SigninView controllerBinding="SL.signinController" }}
-    </div>
-    <div id="splash_image" class="span4">
-      <img src="/img/welcome1.jpg"/>
-    </div>
-    <div id="signup" class="span4">
-      {{ view SL.SignupView controllerBinding="SL.signupController" }}
+  <div class="container">
+    <div class="row">
+      <div class="span4">
+        {{ view SL.SigninView controllerBinding="SL.signinController" }}
+      </div>
+      <div id="splash_image" class="span4">
+        <img src="/img/welcome1.jpg"/>
+      </div>
+      <div class="span4">
+        {{ view SL.UsersNewView controllerBinding="SL.usersNewController" }}
+      </div>
     </div>
   </div>
 </div>

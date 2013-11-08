@@ -1,8 +1,11 @@
 <h3>Sign in</h3>
-<form action="/signin" method="post">
+{{#if loginFailed}}
+  <div class="alert alert-danger">Invalid username or password</div>
+{{/if}}
+<form>
   <label for="signin_email">E-Mail</label>
-  <input type="text" name="signin_email"><br>
+  {{input value=signin_email type="text"}}
   <label for="signin_password">Password</label>
-  <input type="password" name="signin_password"><br>
-  <input class="btn" type="submit" formaction="/signin" value="Submit">
+  {{input value=signin_password type="password"}}
+  <button class="btn" {{action "submitSignin"}}>Signin</button>
 </form>

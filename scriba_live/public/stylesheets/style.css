@@ -1,5 +1,5 @@
 body {
-  padding-top: 60px;
+  //padding-top: 60px;
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -7,10 +7,17 @@ a {
   color: #00B7FF;
 }
 
-#content {
-  margin: auto;
-  width: 960px;
-  max-width: 960px;
+.navbar {
+  height: 55px;
+  margin-bottom: 1em;
+}
+
+.content {
+  padding-top: 5em;
+}
+
+.topbar {
+  height: 40px;
 }
 
 #hero-unit {
@@ -33,8 +40,12 @@ a {
   margin: 1em 0 0 0;
 }
 
-#signin .ember-view {
-  padding-left: 2em;
+#signin {
+  //width: 30%;
+}
+
+#signup {
+  //width: 30%;
 }
 
 #splash_image {
@@ -48,19 +59,9 @@ a {
   border-radius: 6px;
 }
 
-#signup .ember-view {
-  padding-left: 2em;
-}
-
 #welcome-sidebar {
   margin-top: 40px;
   padding-left: 2em;
-}
-
-#splash-img {
-  position: relative;
-  margin-top: 100px;
-  width: 1000px;
 }
 
 #editor-menu {
@@ -81,7 +82,6 @@ a {
   left: 0;
   top: 0;
   position: absolute;
-<<<<<<< HEAD
   background-color: transparent;
   z-index: 0;
   tab-size: 4;
