@@ -12,24 +12,66 @@ exports.index = function(req, res){
   // try $.get('/dinoes', { ids: [1,2,3] }, function(response) {console.log(response)})
   // you can use req.body.ids to get the passed ids
 
-  // query database for dino
-  req.app.get('db').Dino.findAll( { where: { id: req.query.id } }).success(function(dinoes){
-    // if no errors, send dinoes (dinoes == zero length array if no matches)
+  if(req.query.school_id != undefined){
+    req.app.get('db').School.find(req.query.school_id).success(function(school){
+      if(school){
+        // query database for dinoes
+        school.getDinoes().success(function(dinoes){
 
-    res.send({
-      success: true,
-      dinoes: dinoes
+          var filtered_dinoes = []; // filter dinoes by the correct semester
+          for(var i=0; i<dinoes.length; i++)
+            if(req.query.semester==dinoes[i].semester)
+              filtered_dinoes.push(dinoes[i]);
+
+            res.send({
+            success: true,
+            dinoes: filtered_dinoes,
+          });
+        });
+      }
+      else{
+        res.send({
+          success: false
+        });
+      }
+    });
+  }
+  else if(req.query.user_id != undefined){
+    req.app.get('db').User.find(req.query.user_id).success(function(user){
+      if(user){
+        user.getDinoes().success(function(dinoes){
+          res.send({
+            success: true,
+            dinoes: dinoes
+          });
+        });
+      }
+      else{
+        res.send({
+          success: false
+        });
+      }
     });
 
-  }).error(function(error){
-    // if error, send error w/ request params
+  }
+  else{
+    req.app.get('db').Dino.findAll().success(function(dinoes){
+      // if no errors, send dinoes (dinoes == zero length array if no matches)
 
-    res.send({
-      success: false,
-      error: error
+      res.send({
+        success: true,
+        dinoes: dinoes
+      });
+
+    }).error(function(error){
+      // if error, send error w/ request params
+
+      res.send({
+        success: false,
+        error: error
+      });
     });
-  });
-
+  }
 };
 
 /*
@@ -71,21 +113,25 @@ exports.create = function(req, res) {
   // .success( function(dino) { ... }) is called on a success and the created dino is passed
   // .error(function(error) { ... }) is called when an error occurs and the error is passed
   req.app.get('db').Dino.create({
-
-    department: req.body.department,  // (e.g. CSCI)
-    course: req.body.course,  // (e.g. 430)
+    semester:              req.body.semester,
+    department:            req.body.department,
+    course:                req.body.course,
     instructor_first_name: req.body.instructor_first_name,
-    instructor_last_name: req.body.instructor_last_name, 
-    days: req.body.days, 
-    start_time: req.body.start_time,
-    end_time: req.body.end_time
+    instructor_last_name:  req.body.instructor_last_name, 
 
   }).success(function(dino) {
-    // if successfully inserted into database
-    res.send({
-      success: true,
-      dino: dino
-    });
+     
+    if(req.body.school_id != undefined){
+      req.app.get('db').School.find(req.body.school_id).success(function(current_school){
+      
+        current_school.addDino(dino); 
+        res.send({
+          success: true,
+          dino: dino
+        });
+
+      });
+    }
 
   }).error(function(error){
     // if an error occurs
@@ -104,54 +150,61 @@ exports.create = function(req, res) {
 */
 
 exports.update = function(req, res) {
-  // try $.post('/dinoes', { department: 'CSCI', course: '430', instructor_first_name: 'David', instructor_last_name: 'Zeichick', days: '42', start_time: '11', end_time:'11.8333'}, function(response) {console.log(response)}) in javascript console
+  // try $.post('/dinoes/1', { department: 'CSCI', course: '430', instructor_first_name: 'David', instructor_last_name: 'Zeichick', days: '42', start_time: '11', end_time:'11.8333'}, function(response) {console.log(response)}) in javascript console
+  
+  if(req.params.id){
+    console.log(req.params.id);
+    req.app.get('db').Dino.find(req.params.id).success(function(dino) {
+      if (dino) {
+        if(!req.body.user_id){
+          dino.updateAttributes({
+            semester:              req.body.semester,
+            department:            req.body.title,
+            course:                req.body.course, 
+            instructor_first_name: req.body.instructor_first_name,
+            instructor_last_name:  req.body.instructor_last_name, 
+          }).success(function(dino) {
+            res.send({
+              success: true,
+              dino: dino
+            });
+          }).error(function(error){
+            res.send({
+              success: false,
+              error: error
+            });
+          });
+        }
+        else
+        {
+          req.app.get('db').User.find(req.body.user_id).success(function(user){
+            // Do we want to add or drop this class?
 
-  // fetch dino
-  req.app.get('db').Dino.find(req.params.id).success(function(dino) {
+            if(req.body.enroll=='true')
+              dino.addUser(user);
+            else
+              dino.removeUser(user);
 
-    // if dino exists
-    if (dino) {
-
-      // try to update dino
-      dino.updateAttributes({
-
-        department: req.body.title,
-        course: req.body.course, 
-        instructor_first_name: req.body.instructor_first_name,
-        instructor_last_name: req.body.instructor_last_name, 
-        days: req.body.days, 
-        start_time: req.body.start_time,
-        end_time: req.body.end_time
-
-      }).success(function(dino) {
-        // if successfully updated in database
-
-        res.send({
-          success: true,
-          dino: dino
-        });
-
-      }).error(function(error){
-        // if an error occurs
-
-        res.send({
-          success: false,
-          error: error
-        });
-
+            res.send({
+              success: true,
+              dino: dino
+            });
+          }).error(function(error){
+            res.send({
+              success: false,
+              error: error
+            });
+          });
+        }
+      }
+    }).error(function(error){
+      res.send({
+        success: false,
+        error: error
       });
-    }
-  }).error(function(error){
-    // in the error / failure callback function return error
-
-    res.send({
-      success: false,
-      error: error
     });
-  });
-
+  }
 }
-
 
 /*
   DELETE destroy existing (single) dino
@@ -168,30 +221,19 @@ exports.destroy = function(req, res) {
 
     // if dino exists
     if (dino) {
-
-      // attempt to destroy dino
       dino.destroy().success(function(dino) {
-
-        // if successfully deleted
         res.send({
           success: true,
           dino: dino
         });
-
       }).error(function(error){
-        // if an error occurs
-
         res.send({
           success: false,
           error: error
         });
-
       });
     }
-
   }).error(function(error){
-    // in the error / failure callback function return error
-
     res.send({
       success: false,
       error: error

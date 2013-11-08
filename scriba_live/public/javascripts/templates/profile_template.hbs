@@ -1,12 +1,134 @@
-<h1>Search for an existing class</h1>
-<input type="text" id="search-field">
-<input type="button" value="Find" {{action findCurrent}} />
 
-<input type=>
 
-<h1>Create a new class</h1>
-<input type="text" id="create-class">
-<input type="button" value="Create Class" {{action createClass}} />
+<input type="button" value="Home" {{action "setTab" "home_tab"}} />
+<input type="button" value="Enroll" {{action "setTab" "enroll_tab"}} />
+<input type="button" value="Settings" {{action "setTab" "settings_tab"}} />
 
-<br><br><a href="/preferences">Preferences</a>
+<div id="subnavinfo">
+{{#if controller.is_home}}
+  <h1>My Schools</h1>
+  <ul class="l" style="list-style: none;">
+    {{#unless controller.home_schools.length}}
+      You are not enrolled in any schools
+    {{/unless}}
+    {{#each school in controller.home_schools}}
+      <li>
+        School: {{school.title}}<br>
+        Location: {{school.city}}, {{school.state}}<br>{{school.country}}<br>
+        <input type="button" value="Remove school" {{action "removeSchool" school}} /><br><br>
+      </li>  
+    {{/each}}
+  </ul>
+  <h1>My Classes</h1>
+
+  <ul class="r" style="list-style: none;">
+    {{#unless controller.home_dinoes.length}}
+    You are not enrolled in any classes
+    {{/unless}}
+    {{#each dino in controller.home_dinoes}}
+      <li>
+        Department: {{dino.department}}<br> 
+        Course: {{dino.course}}<br>
+        Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
+        <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
+      </li>  
+    {{/each}}
+  </ul>
+{{/if}}
+</div>
+
+{{#if controller.is_enroll}}
+<h1>Class Search and Creation</h1>
+
+{{#if controller.is_semester}}
+  <a href='# '{{action "toStart"}} >Start</a>
+  -> 
+  {{controller.current_school.title}}
+{{/if}}
+{{#if controller.is_dino}}
+  <a href='# '{{action "toStart"}} >Start</a>
+  -> 
+  <a href='# '{{action "toSemester"}} >{{controller.current_school.title}}</a>
+  ->
+  {{controller.current_semester.title}}
+{{/if}}
+<ul style="list-style: none;">
+{{#each current in controller.current_list}}
+  <li>
+    {{#if controller.is_school}}
+      School: {{current.title}}<br>
+      Location: {{current.city}}, {{current.state}} -- {{current.country}}<br>
+      <input type="button" value="View Classes" {{action "addCurrent" current}} />
+      <input type="button" value="Join School" {{action "joinSchool" current}} /><br><br>
+    {{/if}}
+    {{#if controller.is_semester}}
+      {{current.title}}<br>
+      <input type="button" value="Filter" {{action "addCurrent" current}} /><br><br>
+    {{/if}}
+    {{#if controller.is_dino}}
+      Department: {{current.department}}<br> 
+      Course: {{current.course}}<br>
+      Instructor: {{current.instructor_last_name}}, {{current.instructor_first_name}}<br>
+      <input type="button" value="Enroll" {{action "enrollDino" current}} />
+    {{/if}}
+  </li>
+  {{/each}}
+  </ul>
+  {{#if controller.is_school}}
+    {{#unless controller.schools.length}}ScribaLive does not have any schools created yet!<br><br>{{/unless}}
+    Create a New School<br>
+    <input type="text" placeholder="Title" id="title-id">
+    <input type="text" placeholder="City" id="city-id">
+    <input type="text" placeholder="State" id="state-id">
+    <input type="text" placeholder="Country" id="country-id">
+    <input type="button" value="Create" id="create_school-id" {{action "createSchool"}} />
+  {{/if}}
+  {{#if controller.is_dino}}
+
+      {{#unless controller.dinoes.length}}This school does not have any {{controller.current_semester.title}} classes<br><br>{{/unless}}
+    Create a New Class<br>
+    <input type="text" placeholder="Department" id="department-id">
+    <input type="text" placeholder="Course"     id="course-id">
+    <input type="text" placeholder="Instructor First Name" id="ins_f_n-id">
+    <input type="text" placeholder="Instructor Last Name" id="ins_l_n-id">
+    <input type="button" value="Create" id="create_class-id" {{action "createClass"}} />
+  {{/if}}
+{{/if}}
+
+{{#if controller.is_settings}}
+  <h1>Settings</h1>
+  <h4>Naming:</h4>
+    <form action="/users" method="get">
+    <label for="first_name">First Name</label>
+    <input type="text" name="first_name" value="">
+    <input type="submit" formaction="/users" value="Change First Name"><br>
+  </form>
+
+  <form action="/users" method="get">
+    <label for="last_name">Last Name</label>
+    <input type="text" name="last_name" value="">
+    <input type="submit" formaction="/users" value="Change Last Name"><br>
+  </form>
+
+  <form action="/users" method="get">
+    <label for="email">E-Mail</label>
+    <input type="text" name="email" value="">
+    <input type="submit" formaction="/users" value="Change Email"><br><br>
+  </form>
+
+  <h4>Change your password:</h4>
+  <form action="/users" method="get">
+    <label for="password">Old Password</label>
+    <input type="password" name="password"><br>
+    <label for="password_confirmation">Old Password Confirm</label>
+    <input type="password" name="password_confirmation"><br>
+    <label for="password">New Password</label>
+    <input type="password" name="new_password"><br>
+    <label for="password_confirmation">New Password Confirm</label>
+    <input type="password" name="new_password_confirmation"><br>
+    <input type="submit" formaction="/users" value="Change Password">
+  </form>
+{{/if}}
+                                                                        
+
 

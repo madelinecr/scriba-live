@@ -10,25 +10,43 @@
 exports.index = function(req, res){
 
   // try $.get('/schools', { ids: [1,2,3] }, function(response) {console.log(response)})
-
+//console.log(req.query);
   // query database for school
-  req.app.get('db').School.findAll( { where: { id: req.query.id } }).success(function(schools){
-    // if no errors, send schools (schools == zero length array if no matches)
-
-    res.send({
-      success: true,
-      schools: schools
+  if(req.query.user_id != undefined){
+    req.app.get('db').User.find(req.query.user_id).success(function(user){
+      if(user){
+        user.getSchools().success(function(schools){
+          res.send({
+            success: true,
+            schools: schools
+          });
+        });
+      }
+      else{
+        res.send({
+          success: false
+        });
+      }
     });
+  }
+  else{
+    req.app.get('db').School.findAll().success(function(schools){
+    //req.app.get('db').School.findAll( { where: { id: req.query.id } }).success(function(schools){
+      // if no errors, send schools (schools == zero length array if no matches)
 
-  }).error(function(error){
-    // if error, send error w/ request params
+      res.send({
+        success: true,
+        schools: schools
+      });
 
-    res.send({
-      success: false,
-      error: error
+    }).error(function(error){
+      // if error, send error w/ request params
+      res.send({
+        success: false,
+        error: error
+      });
     });
-  });
-
+  }
 };
 
 /*
@@ -45,16 +63,13 @@ exports.show = function(req, res){
       success: true,
       school: school
     });
-
   }).error(function(error){
     // if error, send error w/ request params
-
     res.send({
       success: false,
       error: error
     });
   });
-
 }
 
 /*
@@ -62,31 +77,27 @@ exports.show = function(req, res){
 */
 
 exports.create = function(req, res) {
-   // try $.post('/schools', { title: 'CSU, Chico', city: 'Chico', state: 'California', country: 'Amurica' }, function(response) {console.log(response)}) in javascript console
-
+  /*  
+  $.post('/schools', { title: 'UC Davis', city: 'Davis', state: 'California', country: 'United States' }, function(response) {console.log(response)})
+  */
+  console.log("Creating a school -----");
   req.app.get('db').School.create({
-
-    title: req.body.title,
-    city: req.body.city,
-    state: req.body.state,
+    title:   req.body.title,
+    city:    req.body.city,
+    state:   req.body.state,
     country: req.body.country
-
   }).success(function(school) {
-    // if successfully inserted into database
     res.send({
       success: true,
       school: school
     });
-
   }).error(function(error){
     // if an error occurs
     res.send({
       success: false,
       error: error
     });
-
   });
-
 }
 
 
@@ -95,49 +106,60 @@ exports.create = function(req, res) {
 */
 
 exports.update = function(req, res) {
-   // try $.post('/schools', { title: 'CSU, Chico', city: 'Chico', state: 'California', country: 'Amurica' }, function(response) {console.log(response)}) in javascript console
-
+   // try $.post('/schools/1', { title: 'CSU, Chico', city: 'Chico', state: 'California', country: 'Amurica' }, function(response) {console.log(response)}) in javascript console
   // fetch school
-  req.app.get('db').School.find(req.params.id).success(function(school) {
+  if(req.params.id){
+    req.app.get('db').School.find(req.params.id).success(function(school) {
+      if (school){
+        if(!req.body.user_id){
+          // Updating a school's attributes
+          school.updateAttributes({
+            title:   req.body.title,
+            city:    req.body.city,
+            state:   req.body.state,
+            country: req.body.country
+          }).success(function(school) {
+            res.send({
+              success: true,
+              school: school
+            });
+          }).error(function(error){
+            res.send({
+              success: false,
+              error: error
+            });
+          });
+        }
+        else{     // We want to add the user to this school
+          req.app.get('db').User.find(req.body.user_id).success(function(user){
 
-    // if school exists
-    if (school) {
+            if(req.body.join=='true')
+              school.addUser(user);
+            else
+              school.removeUser(user);
 
-      // try to update school
-      school.updateAttributes({
-
-        title: req.body.title,
-        city: req.body.city,
-        state: req.body.state,
-        country: req.body.country
-
-      }).success(function(school) {
-        // if successfully updated in database
-
-        res.send({
-          success: true,
-          school: school
-        });
-
-      }).error(function(error){
-        // if an error occurs
-
-        res.send({
-          success: false,
-          error: error
-        });
-
+            res.send({
+              success: true,
+              school: school
+            });
+          }).error(function(error){
+            res.send({
+              success: false,
+              error: error
+            });
+          });
+        }
+      }
+    }).error(function(error){
+      res.send({
+        success: false,
+        error: error
       });
-    }
-  }).error(function(error){
-    // in the error / failure callback function return error
-
-    res.send({
-      success: false,
-      error: error
     });
-  });
-
+  }
+  else{
+    console.log("Could not update school because no school_id was passed");
+  }
 }
 
 
