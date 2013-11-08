@@ -67,7 +67,7 @@ SL.EditorController = Em.Controller.extend({
     // set paper id
     paper.canvas.id = "page-"+controller.get('pages').get('length');
 
-    controller.newTextArea(canvas_page_id, width, height);
+    var text = controller.newTextArea(canvas_page_id, width, height, page_id);
 
     // create new page
     var page = SL.Page.create({
@@ -79,15 +79,16 @@ SL.EditorController = Em.Controller.extend({
     });
 
     // save to server
-    if (save)
-      page.save();
+    if (save) {
+      page.save('push');
+    }
 
     // push new page into pages array
     controller.get('pages').pushObject(page);
   },
 
   // add a new text area to editor
-  newTextArea: function(id, width, height) {
+  newTextArea: function(id, width, height, page_id) {
     var controller = SL.get('editorController');
 
     $("#"+id).append("<textarea class='editor-canvas-textarea' id='"+id+"-textarea' style='width: "+width+"px; height: "+height+"px;'></textarea>");
@@ -98,6 +99,10 @@ SL.EditorController = Em.Controller.extend({
     textarea.keydown(SL.editorController.textKeyDown);
 
     var text = controller.newText(textarea);
+
+    text.set('page_id', page_id);
+
+    return text;
   },
 
   textKeyDown: function(event) {
@@ -116,7 +121,7 @@ SL.EditorController = Em.Controller.extend({
     var text = controller.get('texts').findBy('element_id', event.target.id);
 
     if (text) {
-      text.update();
+      text.update('push');
     }
   },
 
@@ -813,10 +818,10 @@ SL.EditorController = Em.Controller.extend({
       console.log(tool);
 
       if (tool == 'text') {
-        $('.page').css('z-index', '-1');
+        $('svg').css('z-index', '-1');
       }
       else {
-        $('.page').css('z-index', '1');
+        $('svg').css('z-index', '1');
       }
       // Forget last selected object when user leaves select tool
       if (tool != 'select') {

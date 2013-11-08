@@ -206,7 +206,7 @@ SL.IoController = Em.Controller.extend({
       type: 'create',
       object: {
         page_id: text.get('page_id'),
-        text:  text.get('text'),
+        text:  "",
         x_pos:  text.get('x_pos'),
         y_pos:  text.get('y_pos')
       }
@@ -220,9 +220,9 @@ SL.IoController = Em.Controller.extend({
       type: 'update',
       object: {
         id: em_obj.get('id'),
-        text:  text.get('text'),
-        x_pos:  text.get('x_pos'),
-        y_pos:  text.get('y_pos')
+        text:  em_obj.get('text'),
+        x_pos:  em_obj.get('x_pos'),
+        y_pos:  em_obj.get('y_pos')
       }
     }
 
@@ -449,7 +449,11 @@ SL.IoController = Em.Controller.extend({
     }
     else if (message.type == 'affirmCreate') {
       var page = SL.editorController.get('pages').findBy('id', 0);
+      var text = SL.editorController.get('texts').findBy('page_id', 0);
       page.set('id', message.page.id);
+      text.set('page_id', message.page.id);
+      // check if text is empty
+      var text = SL.editorController.get('texts').objectAt(0).save('push');
     }
     // Server telling us to add an object
     else if (message.type == 'create') {
@@ -474,8 +478,55 @@ SL.IoController = Em.Controller.extend({
     }
   },
 
-  // helpers
-  someHelper: function() {
-    var socket = SL.ioController.get('socket');
+  // recieve create/edit/destroy text actions from server
+  textEmitHandler: function(message) {
+    console.log(message);
+
+    // We told server of new object, server responding with new id
+    if (message.type == 'affirmCreate') {
+      var text = SL.editorController.get('texts').findBy('id', 0);
+      text.set('id', message.text.id);
+    }
+    // Server telling us to add an object
+    else if (message.type == 'create') {
+      if (SL.editorController.get('texts').findBy('id', message.text.id)) {
+        console.error("Error: text id:%i already exists locally!", message.text.id);
+      }
+      else {
+        var page_id = message.page_id == undefined ? message.text.page_id : message.page_id;
+        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
+        var em_text = SL.editorController.get('texts').findBy('id', 0);
+        em_text.setProperties({
+          id: message.text.id,
+          page_id: page_id,
+          x_pos: message.text.x_pos,
+          y_pos: message.text.y_pos,
+        });
+
+        em_text.get('object').val(message.text.value);
+      }
+    }
+    // We told server to update object
+    else if (message.type == 'affirmUpdate') {
+    }
+    // Server telling us to update an object
+    else if (message.type == 'update') {
+      var em_obj = SL.editorController.get('texts').findBy('id', message.text.id);
+      if (!em_obj) {
+        console.error("Error: text id:%i does not exists locally!", message.text.id);
+      }
+      else {
+        em_obj.setProperties({
+          text:  message.text.value,
+          x_pos:  message.text.x_pos,
+          y_pos:  message.text.y_pos
+        });
+        em_obj.update('local');
+      }
+    }
+    else if (message.type == 'affirmDestroy') {
+    }
+    else if (message.type == 'destroy') {
+    }
   }
 });

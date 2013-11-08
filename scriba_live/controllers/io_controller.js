@@ -14,29 +14,19 @@ module.exports.listen = function(server, db) {
             page_index:  data.object.page_index,
           }).success(function(page) {
 
-            db.Text.create({
-                x_pos:  data.object.x_pos,
-                y_pos:  data.object.y_pos,
-                value:  data.object.text
-
-              }).success(function(text) {
-
-                page.addText(text);
-
-                // respond to initiating user and foward to remaining users
-                socket.emit('page', {
-                  success: true,
-                  type: 'affirmCreate',
-                  page: page,
-                  page_id: page.id
-                });
-                socket.broadcast.to(room).emit('page', {
-                  success: true,
-                  type: 'create',
-                  page: page,
-                  page_id: page.id
-                });
-              });
+            // respond to initiating user and foward to remaining users
+            socket.emit('page', {
+              success: true,
+              type: 'affirmCreate',
+              page: page,
+              page_id: page.id
+            });
+            socket.broadcast.to(room).emit('page', {
+              success: true,
+              type: 'create',
+              page: page,
+              page_id: page.id
+            });
           }).error(function(error) {
             // forget about it
           });
@@ -91,7 +81,7 @@ module.exports.listen = function(server, db) {
       }); // end of socket.on page
 
       socket.on('text', function(data) {
-        /*if (data.type == 'create') {
+        if (data.type == 'create') {
 
           db.Page.find(data.object.page_id).success(function(page){
             if (page) {
@@ -102,17 +92,19 @@ module.exports.listen = function(server, db) {
 
               }).success(function(text) {
 
-                page.addTexts(text);
+                page.addText(text);
 
                 var initiator_message = {
                   success: true,
                   type: 'affirmCreate',
-                  text: text
+                  text: text,
+                  page_id: page.id
                 }
                 var broadcast_message = {
                   success: true,
                   type: 'create',
-                  text: text
+                  text: text,
+                  page_id: page.id
                 }
 
                 // respond to initiating user and foward to remaining users
@@ -129,15 +121,15 @@ module.exports.listen = function(server, db) {
           });
         } // end create text
 
-        else */if (data.type == 'update') {
+        else if (data.type == 'update') {
           db.Text.find(data.object.id).success(function(sq_obj) {
             // if sq_obj exists
             if (sq_obj) {
               // attempt to update text
               sq_obj.updateAttributes({
+                value:  data.object.text,
                 x_pos:  data.object.x_pos,
-                y_pos:  data.object.y_pos,
-                value:  data.object.text
+                y_pos:  data.object.y_pos
 
               }).success(function(sq_obj) {
 
