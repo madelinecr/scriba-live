@@ -464,11 +464,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SigninView", {hash:{
     'controllerBinding': ("SL.signinController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n    </div>\n    <div id=\"splash_image\" class=\"span4\">\n      <img src=\"/img/welcome1.jpg\"/>\n    </div>\n    <h1>random image ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "random_image", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</h1>\n    <div id=\"signup\" class=\"span4\">\n      ");
+  data.buffer.push("\n    </div>\n    <div id=\"splash_image\" class=\"span4\">\n      <img src=\"/img/welcome1.jpg\"/>\n    </div>\n    <div id=\"signup\" class=\"span4\">\n      ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SignupView", {hash:{
