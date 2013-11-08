@@ -81,6 +81,7 @@ a {
   left: 0;
   top: 0;
   position: absolute;
+<<<<<<< HEAD
   background-color: transparent;
   z-index: 0;
   tab-size: 4;
@@ -93,3 +94,55 @@ a {
 .lastname {
   width: 95px;
 }
+
+#subnavinfo
+{
+margin: 0 auto;
+width: 954px;
+background-color: #f0f0f0;
+border-right: 1px solid #d0d0d0;
+border-left: 1px solid #d0d0d0;
+border-bottom: 1px solid #d0d0d0;
+font-size: 11px;
+padding: 6px 0;
+/*margin-top:expression(-2+"px"); causing problems in IE Win*/
+}
+
+#subnavinfo ul
+{
+list-style: none;
+margin: 0;
+padding: 0 15px 0 0;
+overflow: hidden;
+}
+
+#subnavinfo ul.r li
+{
+clear: none;
+float: left;
+padding: 0 15px 0 0;
+}
+
+#subnavinfo ul li a
+{
+padding: 0 0.7em;
+}
+
+#subnavinfo ul li a.hedge
+{
+padding: 0 0.7em;
+}
+
+#subnavinfo span
+{
+float: left;
+padding: 0 0 0 12px;
+}
+
+#subnavinfo ul.l li
+{
+clear: none;
+float: left;
+padding: 0 15px 0 0;
+}
+
