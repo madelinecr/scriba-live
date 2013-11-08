@@ -17,12 +17,30 @@ SL.Text = Em.Object.extend({
     this.set('y_pos', this.object.attr('y'));
     this.set('text', this.object.val());
 
-    // push to server here
-
+     // push to server
+    if (push == 'push') {
+      SL.ioController.pushTextUpdate(this);
+    }
   },
 
   save: function() {
-    // save to db
+    // save to server
+    SL.ioController.pushTextCreate(this);
+  },
+
+  remove: function(push) {
+    // delete raphael object
+    var rg_obj = this.get('object');
+    this.set('object', null);
+    rg_obj.remove();
+
+    // remove from server
+    if (push == 'push') {
+      SL.ioController.pushTextDestroy(this);
+    }
+
+    // remove this object
+    this.destroy();
   }
 
 });

@@ -27,7 +27,6 @@ SL.Rect = Em.Object.extend({
 
   save: function() {
     // save to server
-    akharazia1=this;
     SL.ioController.pushRectCreate(this);
   },
 

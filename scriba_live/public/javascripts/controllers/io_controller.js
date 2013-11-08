@@ -205,6 +205,7 @@ SL.IoController = Em.Controller.extend({
     var data = {
       type: 'create',
       object: {
+        page_id: text.get('page_id'),
         text:  text.get('text'),
         x_pos:  text.get('x_pos'),
         y_pos:  text.get('y_pos')
@@ -256,7 +257,8 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: rect id:%i already exists locally!", message.rect.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').findBy('id', message.rect.page_id);
+        var page_id = message.page_id == undefined ? message.rect.page_id : message.page_id;
+        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
         var rg_rect = SL.editorController.newRaphRect(rg_page,
           message.rect.x_pos,
           message.rect.y_pos,
@@ -265,7 +267,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_rect = SL.Rect.create({
           id: message.rect.id,
-          page_id: message.rect.page_id,
+          page_id: page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.rect.x_pos,
@@ -320,7 +322,8 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: oval id:%i already exists locally!", message.oval.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').findBy('id', message.oval.page_id);
+        var page_id = message.page_id == undefined ? message.oval.page_id : message.page_id;
+        var rg_page = SL.editorController.get('pages').findBy('id',page_id);
         var rg_oval = SL.editorController.newRaphOval(rg_page,
           message.oval.x_pos,
           message.oval.y_pos,
@@ -329,7 +332,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_oval = SL.Oval.create({
           id: message.oval.id,
-          page_id: message.oval.page_id,
+          page_id: page_id,
           note_id: 0,
           user_id: 0,
           x_pos:  message.oval.x_pos,
@@ -384,11 +387,12 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: path id:%i already exists locally!", message.path.id);
       }
       else {
-        var rg_page = SL.editorController.get('pages').findBy('id', message.path.page_id);
+        var page_id = message.page_id == undefined ? message.path.page_id : message.page_id;
+        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
         var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value);
         var em_path = SL.Path.create({
           id: message.path.id,
-          page_id: message.path.page_id,
+          page_id: page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.path.x_pos,

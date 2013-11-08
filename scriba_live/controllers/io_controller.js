@@ -14,18 +14,29 @@ module.exports.listen = function(server, db) {
             page_index:  data.object.page_index,
           }).success(function(page) {
 
-            // respond to initiating user and foward to remaining users
-            socket.emit('page', {
-              success: true,
-              type: 'affirmCreate',
-              page: page
-            });
-            socket.broadcast.to(room).emit('page', {
-              success: true,
-              type: 'create',
-              page: page
-            });
+            db.Text.create({
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                value:  data.object.text
 
+              }).success(function(text) {
+
+                page.addText(text);
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('page', {
+                  success: true,
+                  type: 'affirmCreate',
+                  page: page,
+                  page_id: page.id
+                });
+                socket.broadcast.to(room).emit('page', {
+                  success: true,
+                  type: 'create',
+                  page: page,
+                  page_id: page.id
+                });
+              });
           }).error(function(error) {
             // forget about it
           });
@@ -79,6 +90,122 @@ module.exports.listen = function(server, db) {
 
       }); // end of socket.on page
 
+      socket.on('text', function(data) {
+        /*if (data.type == 'create') {
+
+          db.Page.find(data.object.page_id).success(function(page){
+            if (page) {
+              db.Text.create({
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                value:  data.object.text
+
+              }).success(function(text) {
+
+                page.addTexts(text);
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmCreate',
+                  text: text
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'create',
+                  text: text
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('text', initiator_message);
+                socket.broadcast.to(room).emit('text', broadcast_message);
+
+              }).error(function(error) {
+                // forget about it
+              });
+            }
+            else {
+
+            }
+          });
+        } // end create text
+
+        else */if (data.type == 'update') {
+          db.Text.find(data.object.id).success(function(sq_obj) {
+            // if sq_obj exists
+            if (sq_obj) {
+              // attempt to update text
+              sq_obj.updateAttributes({
+                x_pos:  data.object.x_pos,
+                y_pos:  data.object.y_pos,
+                value:  data.object.text
+
+              }).success(function(sq_obj) {
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmUpdate',
+                  text: sq_obj
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'update',
+                  text: sq_obj
+               }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('text', initiator_message);
+                socket.broadcast.to(room).emit('text', broadcast_message);
+
+              }); // end of sq_obj.updateAttributes()
+            }
+          }); // end of db.Text.find
+        } // end update text
+
+        /*else if (data.type == 'destroy') {
+          db.Text.find(data.object.id).success(function(text) {
+            // if text exists
+            if (text) {
+              // attempt to destroy text
+              text.destroy().success(function(text) {
+
+                var initiator_message = {
+                  success: true,
+                  type: 'affirmDestroy',
+                  text: text
+                }
+                var broadcast_message = {
+                  success: true,
+                  type: 'destroy',
+                  text: text
+                }
+
+                // respond to initiating user and foward to remaining users
+                socket.emit('text', initiator_message);
+                socket.broadcast.to(room).emit('text', broadcast_message);
+
+              }); // end of text.destroy()
+            }
+          }); // end of db.Text.find
+        }*/ // end destroy text
+
+        // Dump existing objects to client
+        else if (data.type == 'getAll') {
+          db.Text.findAll().success(function(sq_objs) {
+            // Send each object to the joining client
+            for (idx in sq_objs) {
+              socket.emit('text', {
+                success: true,
+                type: 'create',
+                text: sq_objs[idx]
+              }); // end of socket.emit
+            }
+          }); // end of db.Text.findAll
+        }
+
+        else {};
+
+      }); // end of socket.on text
+
       socket.on('rect', function(data) {
         if (data.type == 'create') {
           db.Page.find(data.object.page_id).success(function(page){
@@ -96,12 +223,14 @@ module.exports.listen = function(server, db) {
                 var initiator_message = {
                   success: true,
                   type: 'affirmCreate',
-                  rect: rect
+                  rect: rect,
+                  page_id: page.id
                 }
                 var broadcast_message = {
                   success: true,
                   type: 'create',
-                  rect: rect
+                  rect: rect,
+                  page_id: page.id
                 }
 
                 // respond to initiating user and foward to remaining users
@@ -213,12 +342,14 @@ module.exports.listen = function(server, db) {
                 var initiator_message = {
                   success: true,
                   type: 'affirmCreate',
-                  oval: oval
-                  }
+                  oval: oval,
+                  page_id: page.id
+                }
                 var broadcast_message = {
                   success: true,
                   type: 'create',
-                  oval: oval
+                  oval: oval,
+                  page_id: page.id
                 }
 
                 // respond to initiating user and foward to remaining users
@@ -327,17 +458,19 @@ module.exports.listen = function(server, db) {
 
               }).success(function(path) {
 
-                page.addPaths(path);
+                page.addPath(path);
 
                 var initiator_message = {
                   success: true,
                   type: 'affirmCreate',
-                  path: path
+                  path: path,
+                  page_id: page.id
                 }
                 var broadcast_message = {
                   success: true,
                   type: 'create',
-                  path: path
+                  path: path,
+                  page_id: page.id
                 }
 
                 // respond to initiating user and foward to remaining users
