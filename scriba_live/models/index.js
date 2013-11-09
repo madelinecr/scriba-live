@@ -37,17 +37,18 @@ module.exports.Rect   = sequelize.import(__dirname + '/rect_model');
   m.User.hasMany(m.Dino);
   m.User.hasMany(m.School);
 
-  // Dino (this is a class ex: CSCI430)
+  // Dino (this is a course ex: CSCI430)
+  m.Dino.belongsTo(m.School);
   m.Dino.hasMany(m.User);
-  m.Dino.hasMany(m.School);
+  m.Dino.hasMany(m.Note);
 
   // School
   m.School.hasMany(m.User);
   m.School.hasMany(m.Dino);
 
-
   // Note
   m.Note.belongsTo(m.User);
+  m.Note.belongsTo(m.Dino);
   m.Note.hasMany(m.Page);
 
   // Page
