@@ -7,7 +7,7 @@ var Sequelize = require('sequelize');
 var sequelize = new Sequelize('development', 'username', null, {
   dialect: 'sqlite',
   storage: __dirname + '/../db/development.sqlite3', // path to sqlite database file
-
+  
   define: {
     underscored: true
   }

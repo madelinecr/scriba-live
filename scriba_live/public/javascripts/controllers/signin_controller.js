@@ -2,53 +2,23 @@
 
 SL.SigninController = Em.Controller.extend({
 
-//  actions: {   
-//    login: function() {
-//      var username = $('#login-username').val();
-//      var password = $('#login-password').val();
-//      
-//      SL.signinController.validateLogin(username, password);
-//      
-//    }
-//  },
-//  
-//  validateLogin: function(username, password){
-//    var data = {
-//      username: username, 
-//      password: password
-//    }
-//            
-//    $.ajax({
-//      type: "POST",
-//      url: '/login',
-//      data: {
-//        username: username,
-//        password: password
-//      },
-//      success: function(data)
-//      {
-//         if (data === '???') {
-//           window.location.replace('/home');
-//         }
-//         else {
-//           alert(data);
-//         }
-//       }
-//     });
-//
-//
-// SL.profileController.set('username', response.username)
-//    /*
-//
-//    $.post('/login', data, function(response){
-//      if(response.success){
-//        //window.location = '/home';
-//      }
-//      else{
-//        alert(response.error);
-//      }
-//      console.log(response);
-//    });  */
-//  }
+  loginFailed: false,
+
+  actions: {
+  
+    submitSignin: function() {
+      SL.signinController.signin();
+    }
+  },
+
+  signin: function() {
+    $.post("/signin", {
+      username: this.get("signin_username"),
+      password: this.get("signin_password")
+    },function(reponse) {
+      alert("signed in");
+      document.location = "/preferences";
+    });
+  },
 
 });

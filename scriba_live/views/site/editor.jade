@@ -2,5 +2,6 @@ extends ../layout
 
 block content
   //- Indent the script or it will not render
+  <div hidden id='class-id'>#{class.id}</div>
   script(type="text/x-handlebars")
     {{view SL.EditorView controllerBinding="SL.editorController"}}
