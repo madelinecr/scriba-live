@@ -259,38 +259,41 @@ SL.ProfileController = Em.Controller.extend({
       var user_id = SL.profileController.get('current_user_id');
       //var dinoes_to_remove = [];
 
-      // Start by removing any dinoes associated with this school
-      for(var i=0; i<SL.profileController.get('home_dinoes').length; i++)
-      {
-        var dino = SL.profileController.get('home_dinoes').objectAt(i);
+      var ok = confirm("Warning: Dropping youself from a school will also drop you from any classes that you are enrolled in at that school.");
 
-        if(dino.school_id==school.id)
+      if(ok){
+        // Start by removing any dinoes associated with this school
+        for(var i=0; i<SL.profileController.get('home_dinoes').length; i++)
         {
-          this.send('removeDino', dino);
-          /*console.log("removing a class");
-          // Ajax callbacks return too fast, so just push objects to an array
-          dinoes_to_remove.pushObject(dino);
-          $.ajax({
-            type:'POST',
-            url:"/dinoes/"+dino.id,
-            data: {school_id: school.id, user_id: user_id, enroll: false},
-            success:function(response){
-              SL.profileController.get('home_dinoes').removeObjects(dinoes_to_remove);
-            }
-          });*/
+          var dino = SL.profileController.get('home_dinoes').objectAt(i);
+
+          if(dino.school_id==school.id)
+          {
+            this.send('removeDino', dino);
+            /*console.log("removing a class");
+            // Ajax callbacks return too fast, so just push objects to an array
+            dinoes_to_remove.pushObject(dino);
+            $.ajax({
+              type:'POST',
+              url:"/dinoes/"+dino.id,
+              data: {school_id: school.id, user_id: user_id, enroll: false},
+              success:function(response){
+                SL.profileController.get('home_dinoes').removeObjects(dinoes_to_remove);
+              }
+            });*/
+          }
         }
+
+        // Now remove the school itself
+        $.ajax({
+          type:'POST',
+          url:"/schools/"+school.id,
+          data: {user_id: user_id, enroll: false},
+          success:function(response){
+            SL.profileController.get('home_schools').removeObject(school);
+          }
+        });
       }
-
-      // Now remove the school itself
-      $.ajax({
-        type:'POST',
-        url:"/schools/"+school.id,
-        data: {user_id: user_id, enroll: false},
-        success:function(response){
-          SL.profileController.get('home_schools').removeObject(school);
-        }
-      });
-
     },
     enrollDino: function(dino){
 
