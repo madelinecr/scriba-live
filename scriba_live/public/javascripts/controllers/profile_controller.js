@@ -5,90 +5,119 @@ SL.ProfileController = Em.Controller.extend({
    // Can be 'home_tab', 'enroll_tab', or 'settings_tab'
   current_tab: 'home_tab', 
 
-  // Schools and classes the user belongs to
+  // Schools and classes the user is enrolled in
   home_schools: [],
-  home_dinoes: [],
+  home_dinoes:  [],
 
   // Every school registered with ScribaLive and display information
-  all_schools: [],
-  schools_display_count: 10,
+  all_schools:           [],
+  // number of schools per page
+  schools_display_count: 5,
+  // current page
   schools_display_index: 0,
-  num_debug_schools: 7,
+  num_debug_schools:     200,
 
-  // Can be 'schools', 'semseters', or 'dinoes'
-  search_state: 'schools', 
-  current_school: null,
+  // Can be 'schools', 'years', semseters', or 'dinoes'
+  search_state:     'schools', 
+  current_school:   null,
   current_semester: null,
-  creating_school: false, 
-  creating_class: false, 
+  current_year:     null,
+  creating_school:  false, 
+  creating_class:   false, 
 
   // Dinoes that belong to the selected school, year, and semester
   filtered_dinoes: [],
 
   // User information
-  current_user_id: 0,
+  current_user_id:         0,
   current_user_first_name: '',
-  current_user_last_name: '',
-  current_user_email: '',
+  current_user_last_name:  '',
+  current_user_email:      '',
 
   // Used for updating user settings
   updated_user_first_name: '',
-  updated_user_last_name: '',
-  updated_user_email: '',
+  updated_user_last_name:  '',
+  updated_user_email:      '',
   updated_first_name_info: false, 
-  updated_last_name_info: false, 
-  updated_email_info: false, 
-  updated_user_info: false,
-  updating_user: false,
+  updated_last_name_info:  false, 
+  updated_email_info:      false, 
+  updated_user_info:       false,
+  updating_user:           false,
  
-  is_home: function(){
+  is_home_tab: function(){
     return this.get('current_tab') == 'home_tab';
   }.property('current_tab'),
 
-  is_enroll: function(){
+  is_enroll_tab: function(){
     return this.get('current_tab') == 'enroll_tab';
   }.property('current_tab'),
 
-  is_settings: function(){
+  is_settings_tab: function(){
     return this.get('current_tab') == 'settings_tab';
   }.property('current_tab'),
 
   // Every school that is registered to ScribaLive 
   all_schools_list: function(){
-    count_per_page  =  SL.profileController.get('schools_display_count');
-    index           =  SL.profileController.get('schools_display_index');
+    var index           =  SL.profileController.get('schools_display_index');
+    var count_per_page  =  SL.profileController.get('schools_display_count');
     return this.get('all_schools').slice(count_per_page*index, count_per_page*(index+1));
   }.property('all_schools.@each.school', 'schools_display_index', 'schools_display_count'),
 
-  // A static list of semesters/seasons
-  all_semesters_list: function(){
-    var semesters = [{title: 'Summer', type: 'semester'},
-                     {title: 'Fall',   type: 'semester'},
-                     {title: 'Winter', type: 'semester'},
-                     {title: 'Spring', type: 'semester'}];
-    return semesters;
-  }.property(),
+  // The list of page numbers underneath the list of schools
+  school_pages_list: function(){
+    var all_schools_len  =  SL.profileController.get('all_schools').length;
+    var count_per_page   =  SL.profileController.get('schools_display_count');
+    var num_pages        =  Math.ceil(all_schools_len / count_per_page);
+
+    // This could probably be done more efficiently
+    var school_pages = [];
+    for(var i=1; i<=num_pages; i++){
+      var school_page        = new Object();
+      school_page.number     = i;
+      school_page.is_current = (this.get('current_school_page') == i);
+
+      school_pages.pushObject(school_page);
+    }
+    return school_pages;
+  }.property('all_schools.@each.school', 'schools_display_count', 'current_school_page'),
+
+  current_school_page: function(){
+    return this.get('schools_display_index')+1;
+  }.property('schools_display_index'),
 
   // A static list of years
   all_years_list: function(){
     var years = [{title: '2013', type: 'year'},
-                 {title: '2014',   type: 'semester'},
+                 {title: '2014', type: 'year'},
                 ];
     return years;
+  }.property(),
+
+  // A static list of semesters/seasons
+  all_semesters_list: function(){
+    var semesters = [{title: 'Summer', type: 'semester'},
+                    {title: 'Fall',    type: 'semester'},
+                    {title: 'Winter',  type: 'semester'},
+                    {title: 'Spring',  type: 'semester'}];
+    return semesters;
   }.property(),
 
   // List of dinoes based on search filter of school, year, and semester
   filtered_dinoes_list: function(){
     return this.get('filtered_dinoes');
-  }.property('filtered_dinoes'),
+  }.property('filtered_dinoes.@each.dino'),
 
   // My schools
   home_schools_list: function(){
     return this.get('home_schools');
-  }.property('home_schools.length'),
+  }.property('home_schools'),
 
   searching_schools: function(){
     return this.get('search_state') == 'schools';
+  }.property('search_state'),
+
+  searching_years: function(){
+    return this.get('search_state') == 'years';
   }.property('search_state'),
 
   searching_semesters: function(){
@@ -154,32 +183,39 @@ SL.ProfileController = Em.Controller.extend({
   actions: {
     setTab: function(tab_name){
       SL.profileController.set('current_tab', tab_name);
-
-      // Reload home schools and dinoes
-      if(SL.profileController.get('current_tab')==="home_tab")
-      {
-        SL.profileController.getEnrolledSchools(SL.profileController.get('current_user_id'));
-        SL.profileController.getDinoesByUser(SL.profileController.get('current_user_id'));
-      }
     },
     toStart: function(){
       SL.profileController.set('search_state', 'schools');
-      SL.profileController.set('filtered_dinoes', []);
       SL.profileController.set('current_school', null);
+      SL.profileController.set('current_year', null);
       SL.profileController.set('current_semester', null);
+      SL.profileController.set('filtered_dinoes', []);
+    },
+    toYear: function(){;
+      SL.profileController.set('search_state', 'years');
+      SL.profileController.set('current_year', null);
+      SL.profileController.set('current_semester', null);
+      SL.profileController.set('filtered_dinoes', []);
     },
     toSemester: function(){;
       SL.profileController.set('search_state', 'semesters');
       SL.profileController.set('current_semester', null);
       SL.profileController.set('filtered_dinoes', []);
     },
-    setUpdateUserInfo: function(state)
-    {
+    setSchoolsPageIndex: function(page){
+      // index-1 because actual array starts at 0
+      SL.profileController.set('schools_display_index', page.number-1);
+    },
+    setUpdateUserInfo: function(state){
       SL.profileController.set('updated_user_info', state);
     },
     viewSemestersBySchool: function(school){
       SL.profileController.set('current_school', school);
-      SL.profileController.set('search_state', 'semesters'); 
+      SL.profileController.set('search_state', 'years'); 
+    },
+    viewSemestersByYear: function(year){
+      SL.profileController.set('current_year', year);
+      SL.profileController.set('search_state', 'semesters');  
     },
     viewDinoesBySemester: function(semester){
       SL.profileController.set('current_semester', semester);
@@ -189,58 +225,110 @@ SL.ProfileController = Em.Controller.extend({
                                              SL.profileController.get('current_semester'));
     },
     enrollSchool: function(school){
+
+      // Validation: check home_schools to see if already enrolled
+      for(var i=0; i<SL.profileController.get('home_schools').length; i++)
+      {
+        var id = SL.profileController.get('home_schools').objectAt(i).id
+        if(school.id == id){
+          console.log("Already enrolled in this school");
+          return;
+        }
+      }
+
+      // If not, create via server and push object to home_schools
       var school_id = school.id;
       var user_id   = SL.profileController.get('current_user_id');
       $.ajax({
         type:'POST',
         url:"/schools/"+school_id,
-        data: {user_id: user_id, join: true},
+        data: {user_id: user_id, enroll: true},
         success:function(response){
-          var school = SL.School.create({
+          var response_school = SL.School.create({
             id:      response.school.id,
             title:   response.school.title, 
             city:    response.school.city, 
             state:   response.school.state, 
             country: response.school.country
           });
-          console.log(school);
-          SL.profileController.get('home_schools').pushObject(school);
+            SL.profileController.get('home_schools').pushObject(response_school);
         }
       });
     },
     removeSchool: function(school){
-      console.log(school);
-      var school_id = school.id;
       var user_id = SL.profileController.get('current_user_id');
+      //var dinoes_to_remove = [];
+
+      // Start by removing any dinoes associated with this school
+      for(var i=0; i<SL.profileController.get('home_dinoes').length; i++)
+      {
+        var dino = SL.profileController.get('home_dinoes').objectAt(i);
+
+        if(dino.school_id==school.id)
+        {
+          this.send('removeDino', dino);
+          /*console.log("removing a class");
+          // Ajax callbacks return too fast, so just push objects to an array
+          dinoes_to_remove.pushObject(dino);
+          $.ajax({
+            type:'POST',
+            url:"/dinoes/"+dino.id,
+            data: {school_id: school.id, user_id: user_id, enroll: false},
+            success:function(response){
+              SL.profileController.get('home_dinoes').removeObjects(dinoes_to_remove);
+            }
+          });*/
+        }
+      }
+
+      // Now remove the school itself
       $.ajax({
         type:'POST',
-        url:"/schools/"+school_id,
-        data: {user_id: user_id, join: false},
+        url:"/schools/"+school.id,
+        data: {user_id: user_id, enroll: false},
         success:function(response){
-          var index = SL.profileController.get('home_schools').indexOf(school);
-          if(index > -1){
-            SL.profileController.get('home_schools').splice(index, 1);
-          }
-          //SL.profileController.getEnrolledSchools(SL.profileController.get('current_user_id'));
+          SL.profileController.get('home_schools').removeObject(school);
         }
       });
+
     },
     enrollDino: function(dino){
-      var current_school = SL.profileController.get('current_school');
 
-      // Handle the case where a user tries to enroll in a class, but is not in that school
+      // Validation: check home_dinoes to see if already enrolled
+      for(var i=0; i<SL.profileController.get('home_dinoes').length; i++)
+      {
+        var id = SL.profileController.get('home_dinoes').objectAt(i).id
+        if(dino.id == id){
+          console.log("Already enrolled in this dino");
+          return;
+        }
+      }
+
+      // Add the school if needed
+      var current_school = SL.profileController.get('current_school');
       this.send('enrollSchool', current_school);
 
-      var dino_id = dino.id;
+      // Create via server and push object to home_schools
       var user_id = SL.profileController.get('current_user_id');
       $.ajax({
         type:'POST',
-        url:"/dinoes/"+dino_id,
+        url:"/dinoes/"+dino.id,
         data: {user_id: user_id, enroll: true},
         success:function(response){
-          SL.profileController.get('home_dinoes').pushObject(response.dino);
+          var response_dino = SL.Dino.create({
+            id:                    response.dino.id,
+            school_id:             response.dino.school_id, 
+            year:                  response.dino.year,
+            semester:              response.dino.semester,
+            department:            response.dino.department, 
+            course:                response.dino.course, 
+            instructor_first_name: response.dino.instructor_first_name, 
+            instructor_last_name:  response.dino.instructor_last_name
+          });
+          SL.profileController.get('home_dinoes').pushObject(response_dino);
         }
       });
+
     },
     removeDino: function(dino){
       var dino_id = dino.id;
@@ -250,15 +338,14 @@ SL.ProfileController = Em.Controller.extend({
         url:"/dinoes/"+dino_id,
         data: {user_id: user_id, enroll: false},
         success:function(response){
-          //SL.profileController.getDinoes(null, SL.profileController.get('current_user_id'));
-          SL.profileController.getDinoesByUser(SL.profileController.get('current_user_id'));
+          SL.profileController.get('home_dinoes').removeObject(dino);
         }
       });
     },
-    fireCreateSchool: function(){
+    callCreateSchool: function(){
       SL.profileController.createSchool();
     },
-    fireCreateDino: function(){
+    callCreateDino: function(){
       SL.profileController.createDino();
     },
     updateUser: function(){
@@ -328,10 +415,15 @@ SL.ProfileController = Em.Controller.extend({
   initProfile: function(){
     var controller = SL.get('profileController');
 
+    // Set user information like name, email, etc
     controller.initUser();
-    controller.getAllSchools();
+
+    // Prepare arrays for home_tab
     controller.getEnrolledSchools(SL.profileController.get('current_user_id'));
     controller.getDinoesByUser(SL.profileController.get('current_user_id'));
+
+    // Prepare array for enroll_tab
+    controller.getAllSchools();
   },
   initUser: function()
   {
@@ -384,7 +476,7 @@ SL.ProfileController = Em.Controller.extend({
     }
   },
   debug_destroyAllSchools: function(){
-    console.log(SL.profileController.get('all_schools').length);
+    /*console.log(SL.profileController.get('all_schools').length);
     for(var i=1; i<=SL.profileController.get('all_schools').length; i++){
       $.ajax({
         type:'DELETE',
@@ -394,7 +486,7 @@ SL.ProfileController = Em.Controller.extend({
         }
       });
     }
-    SL.profileController.set('all_schools', []);
+    SL.profileController.set('all_schools', []);*/
   },
   createSchool: function(){   //GOOD
     if(SL.profileController.get('creating_school')==true)
@@ -446,7 +538,7 @@ SL.ProfileController = Em.Controller.extend({
       });
     }
   }, 
-  createDino: function(){     //GOOD
+  createDino: function(){ 
     if(SL.profileController.get('creating_class')==true)
       return;
 
@@ -454,6 +546,7 @@ SL.ProfileController = Em.Controller.extend({
 
     // Get information from text fields
     var current_school_id     = SL.profileController.get('current_school').id;
+    var current_year          = SL.profileController.get('current_year').title;
     var current_semester      = SL.profileController.get('current_semester').title;
     var department            = $('#department-id');
     var course                = $('#course-id');
@@ -472,6 +565,7 @@ SL.ProfileController = Em.Controller.extend({
       instructor_last_name.attr("readonly", true);   
       $.post('/dinoes', { 
         school_id:             current_school_id, 
+        year:                  current_year,
         semester:              current_semester,
         department:            department.val(), 
         course:                course.val(), 
@@ -481,7 +575,9 @@ SL.ProfileController = Em.Controller.extend({
         if(response.success){
           // Create a new client side dino based on server's response dino
           var dino = SL.Dino.create({
+            id:                    response.dino.id,
             school_id:             response.dino.school_id, 
+            year:                  response.dino.year,
             semester:              response.dino.semester,
             department:            response.dino.department, 
             course:                response.dino.course, 
@@ -501,10 +597,6 @@ SL.ProfileController = Em.Controller.extend({
         instructor_last_name.attr("readonly", false); 
 
         SL.profileController.set('creating_class', false);
-        /*SL.profileController.getFilteredDinoes(SL.profileController.get('current_school'),
-                                               SL.profileController.get('current_year'),
-                                               SL.profileController.get('current_semester'));*/
-
       });
     }
   },
@@ -517,13 +609,12 @@ SL.ProfileController = Em.Controller.extend({
       success:function(response){
         SL.profileController.set('home_schools',[]);
         for(i=0; i<response.schools.length; i++){
-          var responseSchool = response.schools[i];
           var school = SL.School.create({
-            id:      responseSchool.id,
-            title:   responseSchool.title,
-            city:    responseSchool.city,
-            state:   responseSchool.state,
-            country: responseSchool.country,
+            id:      response.schools[i].id,
+            title:   response.schools[i].title,
+            city:    response.schools[i].city,
+            state:   response.schools[i].state,
+            country: response.schools[i].country,
           });
           // Populate array with current school
           SL.profileController.get('home_schools').pushObject(school);
@@ -558,20 +649,20 @@ SL.ProfileController = Em.Controller.extend({
       url:"/dinoes",
       data: {
         school_id: school.get('id'),
-        // year
+        year:      year.title,
         semester:  semester.title,
       },
       success: function(response){
         SL.profileController.set('filtered_dinoes',[]);
         for(i=0; i<response.dinoes.length; i++){
-          var response_dino = response.dinoes[i];
           var dino = SL.Dino.create({
-            id:                    response_dino.id,
-            department:            response_dino.department,
-            semester:              response_dino.semester,
-            course:                response_dino.course,
-            instructor_first_name: response_dino.instructor_first_name,
-            instructor_last_name:  response_dino.instructor_last_name,
+            id:                    response.dinoes[i].id,
+            year:                  response.dinoes[i].year,
+            semester:              response.dinoes[i].semester,
+            department:            response.dinoes[i].department,
+            course:                response.dinoes[i].course,
+            instructor_first_name: response.dinoes[i].instructor_first_name,
+            instructor_last_name:  response.dinoes[i].instructor_last_name,
           });
           SL.profileController.get('filtered_dinoes').pushObject(dino);
         }
@@ -586,14 +677,14 @@ SL.ProfileController = Em.Controller.extend({
       success: function(response){
         SL.profileController.set('home_dinoes', []); // empty array because we will refill it
         for(i=0; i<response.dinoes.length; i++){
-          var response_dino = response.dinoes[i];
           var dino = SL.Dino.create({
-            id:                    response_dino.id,
-            department:            response_dino.department,
-            semester:              response_dino.semester,
-            course:                response_dino.course,
-            instructor_first_name: response_dino.instructor_first_name,
-            instructor_last_name:  response_dino.instructor_last_name,
+            id:                    response.dinoes[i].id,
+            year:                  response.dinoes[i].year,
+            semester:              response.dinoes[i].semester,
+            department:            response.dinoes[i].department,
+            course:                response.dinoes[i].course,
+            instructor_first_name: response.dinoes[i].instructor_first_name,
+            instructor_last_name:  response.dinoes[i].instructor_last_name,
           });
           SL.profileController.get('home_dinoes').pushObject(dino);
         }

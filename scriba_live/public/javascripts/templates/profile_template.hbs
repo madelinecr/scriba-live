@@ -5,7 +5,7 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
 <input type="button" value="Settings" {{action "setTab" "settings_tab"}} />
 
 <div id="subnavinfo">
-{{#if controller.is_home}}
+{{#if controller.is_home_tab}}
 
   <h1>My Schools</h1>
   {{#unless controller.home_schools_list.length}}
@@ -30,6 +30,7 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
       <li>
         Department: {{dino.department}}<br> 
         Course: {{dino.course}}<br>
+        Scheduled: {{dino.semester}}&nbsp;{{dino.year}}<br>
         Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
         <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
       </li>  
@@ -38,20 +39,26 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
 {{/if}}
 </div>
 
-{{#if controller.is_enroll}}
+{{#if controller.is_enroll_tab}}
   <h1>Class Search and Creation</h1>
 
-  {{#if controller.searching_semesters}}
-    <a href='# '{{action "toStart"}} >Start</a>
+  {{#if controller.searching_years}}
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
     -> 
-    {{controller.current_school.title}}
+  {{/if}}
+  {{#if controller.searching_semesters}}
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
+    -> 
+    <a href='# '{{action "toYear"}} >Year</a> ({{controller.current_year.title}})
+    ->
   {{/if}}
   {{#if controller.searching_dinoes}}
-    <a href='# '{{action "toStart"}} >Start</a>
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
     -> 
-    <a href='# '{{action "toSemester"}} >{{controller.current_school.title}}</a>
+    <a href='# '{{action "toYear"}} >Year</a> ({{controller.current_year.title}})
     ->
-    {{controller.current_semester.title}}
+    <a href='# '{{action "toSemester"}} >Semester</a> ({{controller.current_semester.title}})
+    ->
   {{/if}}
 
   {{#if controller.searching_schools}}
@@ -62,6 +69,24 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
             Location: {{school.city}}, {{school.state}} -- {{school.country}}<br>
             <input type="button" value="View Classes" {{action "viewSemestersBySchool" school}} />
             <input type="button" value="Join School" {{action "enrollSchool" school}} /><br><br>
+        </li>
+      {{/each}}
+    </ul>
+    {{#each page in controller.school_pages_list}}
+      {{#if page.is_current}}
+        {{page.number}}
+      {{else}}
+        <a href='# '{{action "setSchoolsPageIndex" page}} >{{page.number}}</a>
+      {{/if}}
+    {{/each}}
+    <br>
+  {{/if}}
+  {{#if controller.searching_years}}
+    <ul style="list-style: none;">
+      {{#each year in controller.all_years_list}}
+        <li>
+          {{year.title}}<br>
+          <input type="button" value="Filter" {{action "viewSemestersByYear" year}} /><br><br>
         </li>
       {{/each}}
     </ul>
@@ -91,11 +116,12 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
 
   {{#if controller.searching_schools}}
     {{#if controller.show_schools_back_button}}
-      <input type="button" value="Back" {{action "schoolsBack"}} /><br>
+      <input type="button" value="Back" {{action "schoolsBack"}} />
     {{/if}}
     {{#if controller.show_schools_forward_button}}
-      <input type="button" value="Next" {{action "schoolsForward"}} /><br>
+      <input type="button" value="Next" {{action "schoolsForward"}} />
     {{/if}}
+    <br><br>
   {{/if}}
 
   {{#if controller.searching_schools}}
@@ -105,7 +131,7 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
     <input type="text" placeholder="City" id="city-id">
     <input type="text" placeholder="State" id="state-id">
     <input type="text" placeholder="Country" id="country-id">
-    <input type="button" value="Create" id="create_school-id" {{action "fireCreateSchool"}} />
+    <input type="button" value="Create" id="create_school-id" {{action "callCreateSchool"}} />
   {{/if}}
   {{#if controller.searching_dinoes}}
       {{#unless controller.filtered_dinoes.length}}This school does not have any {{controller.current_semester.title}} classes<br><br>{{/unless}}
@@ -114,11 +140,11 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
     <input type="text" placeholder="Course"     id="course-id">
     <input type="text" placeholder="Instructor First Name" id="ins_f_n-id">
     <input type="text" placeholder="Instructor Last Name" id="ins_l_n-id">
-    <input type="button" value="Create" id="create_dino-id" {{action "fireCreateDino"}} />
+    <input type="button" value="Create" id="create_dino-id" {{action "callCreateDino"}} />
   {{/if}}
 {{/if}}
 
-{{#if controller.is_settings}}
+{{#if controller.is_settings_tab}}
   <h1>Settings</h1>
     <h4>My Information:</h4>
 

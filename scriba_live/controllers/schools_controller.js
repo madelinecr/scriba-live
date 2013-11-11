@@ -132,7 +132,7 @@ exports.update = function(req, res) {
         else{     // We want to add the user to this school
           req.app.get('db').User.find(req.body.user_id).success(function(user){
 
-            if(req.body.join=='true')
+            if(req.body.enroll=='true')
               school.addUser(user);
             else
               school.removeUser(user);
