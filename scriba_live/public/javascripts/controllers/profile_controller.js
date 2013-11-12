@@ -9,12 +9,10 @@ SL.ProfileController = Em.Controller.extend({
   home_schools: [],
   home_dinoes:  [],
 
-  // Every school registered with ScribaLive and display information
-  all_schools:           [],
-  // number of schools per page
-  schools_display_count: 5,
-  // current page
-  schools_display_index: 0,
+  // School search
+  all_schools:           [],  // Every school registered with ScribaLive and display information
+  schools_display_count: 5,   // number of schools per page
+  schools_display_index: 0,   // current page
   num_debug_schools:     200,
 
   // Can be 'schools', 'years', semseters', or 'dinoes'
@@ -660,6 +658,7 @@ SL.ProfileController = Em.Controller.extend({
         for(i=0; i<response.dinoes.length; i++){
           var dino = SL.Dino.create({
             id:                    response.dinoes[i].id,
+            school_id:             response.dinoes[i].school_id, 
             year:                  response.dinoes[i].year,
             semester:              response.dinoes[i].semester,
             department:            response.dinoes[i].department,
@@ -682,6 +681,7 @@ SL.ProfileController = Em.Controller.extend({
         for(i=0; i<response.dinoes.length; i++){
           var dino = SL.Dino.create({
             id:                    response.dinoes[i].id,
+            school_id:             response.dinoes[i].school_id, 
             year:                  response.dinoes[i].year,
             semester:              response.dinoes[i].semester,
             department:            response.dinoes[i].department,

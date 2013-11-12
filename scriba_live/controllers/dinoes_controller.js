@@ -117,6 +117,7 @@ exports.create = function(req, res) {
   // .error(function(error) { ... }) is called when an error occurs and the error is passed
   req.app.get('db').Dino.create({
     year:                  req.body.year,
+    school_id:             req.body.school_id,
     semester:              req.body.semester,
     department:            req.body.department,
     course:                req.body.course,
@@ -164,6 +165,7 @@ exports.update = function(req, res) {
           
           dino.updateAttributes({
             year:                  req.body.year,
+            school_id:             req.body.school_id,
             semester:              req.body.semester,
             department:            req.body.title,
             course:                req.body.course, 

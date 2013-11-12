@@ -5,38 +5,38 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
 <input type="button" value="Settings" {{action "setTab" "settings_tab"}} />
 
 <div id="subnavinfo">
-{{#if controller.is_home_tab}}
+  {{#if controller.is_home_tab}}
 
-  <h1>My Schools</h1>
-  {{#unless controller.home_schools_list.length}}
-    You are not enrolled in any schools
-  {{/unless}}
-  <ul class="l" style="list-style: none;">
-    {{#each school in controller.home_schools_list}}
-      <li>
-        School: {{school.title}}<br>
-        Location: {{school.city}}, {{school.state}}<br>{{school.country}}<br>
-        <input type="button" value="Remove school" {{action "removeSchool" school}} /><br><br>
-      </li>  
-    {{/each}}
-  </ul>
-  <h1>My Classes</h1>
-
-  <ul class="r" style="list-style: none;">
-    {{#unless controller.home_dinoes.length}}
-      You are not enrolled in any classes
+    <h1>My Schools</h1>
+    {{#unless controller.home_schools_list.length}}
+      You are not enrolled in any schools
     {{/unless}}
-    {{#each dino in controller.home_dinoes}}
-      <li>
-        Department: {{dino.department}}<br> 
-        Course: {{dino.course}}<br>
-        Scheduled: {{dino.semester}}&nbsp;{{dino.year}}<br>
-        Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
-        <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
-      </li>  
-    {{/each}}
-  </ul>
-{{/if}}
+    <ul class="l" style="list-style: none;">
+      {{#each school in controller.home_schools_list}}
+        <li>
+          School: {{school.title}}<br>
+          Location: {{school.city}}, {{school.state}}<br>{{school.country}}<br>
+          <input type="button" value="Remove school" {{action "removeSchool" school}} /><br><br>
+        </li>  
+      {{/each}}
+    </ul>
+    <h1>My Classes</h1>
+
+    <ul class="r" style="list-style: none;">
+      {{#unless controller.home_dinoes.length}}
+        You are not enrolled in any classes
+      {{/unless}}
+      {{#each dino in controller.home_dinoes}}
+        <li>
+          Department: {{dino.department}}<br> 
+          Course: {{dino.course}}<br>
+          Scheduled: {{dino.semester}}&nbsp;{{dino.year}}<br>
+          Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
+          <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
+        </li>  
+      {{/each}}
+    </ul>
+  {{/if}}
 </div>
 
 {{#if controller.is_enroll_tab}}
