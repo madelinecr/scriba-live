@@ -352,8 +352,13 @@ SL.EditorController = Em.Controller.extend({
 
   mouseOver: function(event) {
     var page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
-
-    SL.editorController.set('active_page', page);
+    if (page)
+    {
+//      console.log("-x- Page Valid: ", page);
+      SL.editorController.set('active_page', page);
+    }
+//    else
+//      console.log("-x- Invalid Page: ", page);
   },
 
   // lisents to keypress events
