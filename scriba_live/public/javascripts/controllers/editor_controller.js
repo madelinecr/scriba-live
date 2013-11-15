@@ -70,7 +70,7 @@ SL.EditorController = Em.Controller.extend({
     var text = controller.newTextArea(canvas_page_id, width, height, page_id);
 
     // create new page
-    var page = SL.Page.create({
+    var em_page = SL.Page.create({
       id: page_id,
       width: width,
       height: height,
@@ -80,11 +80,11 @@ SL.EditorController = Em.Controller.extend({
 
     // save to server
     if (save) {
-      page.save('push');
+      em_page.save('push');
     }
 
     // push new page into pages array
-    controller.get('pages').pushObject(page);
+    controller.get('pages').pushObject(em_page);
   },
 
   // add a new text area to editor
@@ -139,16 +139,16 @@ SL.EditorController = Em.Controller.extend({
     return text;
   },
 
-  newPath: function(obj) {
-    var path = SL.Path.create({
+  newPath: function(rg_path) {
+    var em_path = SL.Path.create({
       page_id: SL.editorController.get('active_page.id'),
       path: '',
-      object: obj
+      object: rg_path
     });
 
-    SL.editorController.get('paths').pushObject(path);
+    SL.editorController.get('paths').pushObject(em_path);
 
-    return path;
+    return em_path;
   },
 
   newRect: function(rg_rect) {
@@ -166,19 +166,19 @@ SL.EditorController = Em.Controller.extend({
     return em_rect;
   },
 
-  newOval: function(obj) {
-    var oval = SL.Oval.create({
+  newOval: function(rg_oval) {
+    var em_oval = SL.Oval.create({
       page_id: SL.editorController.get('active_page.id'),
-      x_pos: obj.attr('cx'),
-      y_pos: obj.attr('cy'),
-      width: obj.attr('rx'),
-      height: obj.attr('ry'),
-      object: obj
+      x_pos: rg_oval.attr('cx'),
+      y_pos: rg_oval.attr('cy'),
+      width: rg_oval.attr('rx'),
+      height: rg_oval.attr('ry'),
+      object: rg_oval
     });
 
-    SL.editorController.get('ovals').pushObject(oval);
+    SL.editorController.get('ovals').pushObject(em_oval);
 
-    return oval;
+    return em_oval;
   },
 
   // CRUD FOR RAPHAEL OBJECTS
@@ -855,7 +855,7 @@ SL.EditorController = Em.Controller.extend({
     console.log('delete');
     // get last selected raphael object
     var last_active = SL.editorController.get('last_active');
-    if (last_active) {
+    if (last_active && last_active.node) {
       // translate ellipse -> oval
       var type = last_active.type == "ellipse" ? "oval": last_active.type;
 

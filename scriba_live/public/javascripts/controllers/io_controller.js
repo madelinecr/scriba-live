@@ -41,10 +41,7 @@ SL.IoController = Em.Controller.extend({
   // push create/edit/destroy page actions to server
   pushPageCreate: function(page) {
     var data = {
-      type: 'create',
-      object: {
-        page_index: page.get('page_index')
-      }
+      type: 'create'
     }
 
     SL.ioController.get('socket').emit('page', data);
@@ -257,8 +254,7 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: rect id:%i already exists locally!", message.rect.id);
       }
       else {
-        var page_id = message.page_id == undefined ? message.rect.page_id : message.page_id;
-        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.rect.page_id);
         var rg_rect = SL.editorController.newRaphRect(rg_page,
           message.rect.x_pos,
           message.rect.y_pos,
@@ -267,7 +263,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_rect = SL.Rect.create({
           id: message.rect.id,
-          page_id: page_id,
+          page_id: message.rect.page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.rect.x_pos,
@@ -322,8 +318,7 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: oval id:%i already exists locally!", message.oval.id);
       }
       else {
-        var page_id = message.page_id == undefined ? message.oval.page_id : message.page_id;
-        var rg_page = SL.editorController.get('pages').findBy('id',page_id);
+        var rg_page = SL.editorController.get('pages').findBy('id',message.oval.page_id);
         var rg_oval = SL.editorController.newRaphOval(rg_page,
           message.oval.x_pos,
           message.oval.y_pos,
@@ -332,7 +327,7 @@ SL.IoController = Em.Controller.extend({
         );
         var em_oval = SL.Oval.create({
           id: message.oval.id,
-          page_id: page_id,
+          page_id: message.oval.page_id,
           note_id: 0,
           user_id: 0,
           x_pos:  message.oval.x_pos,
@@ -387,12 +382,11 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: path id:%i already exists locally!", message.path.id);
       }
       else {
-        var page_id = message.page_id == undefined ? message.path.page_id : message.page_id;
-        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.path.page_id);
         var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value);
         var em_path = SL.Path.create({
           id: message.path.id,
-          page_id: page_id,
+          page_id: message.path.page_id,
           note_id: 0,
           user_id: 0,
           x_pos: message.path.x_pos,
@@ -434,7 +428,7 @@ SL.IoController = Em.Controller.extend({
   pageEmitHandler: function(message) {
     console.log(message);
 
-    // We told server of new object, server responding with new id
+    // Server done sending pages, we can now request objects
     if (message.type == 'initPages') {
       // if there are pages, init
       if (SL.editorController.get('pages').get('length')) {
@@ -447,13 +441,15 @@ SL.IoController = Em.Controller.extend({
         SL.editorController.newPage('editor-canvases', 600, 600, true, 0);
       }
     }
+    // We told server of new object, server responding with new id
     else if (message.type == 'affirmCreate') {
-      var page = SL.editorController.get('pages').findBy('id', 0);
+      var em_page = SL.editorController.get('pages').findBy('id', 0);
       var text = SL.editorController.get('texts').findBy('page_id', 0);
-      page.set('id', message.page.id);
+      em_page.set('id', message.page.id);
       text.set('page_id', message.page.id);
-      // check if text is empty
-      var text = SL.editorController.get('texts').objectAt(0).save('push');
+      text.save('push');
+      // check if text is empty - why? Do you mean query the server (already done by getAll)?
+//      var text = SL.editorController.get('texts').objectAt(0).save('push');
     }
     // Server telling us to add an object
     else if (message.type == 'create') {
@@ -493,12 +489,11 @@ SL.IoController = Em.Controller.extend({
         console.error("Error: text id:%i already exists locally!", message.text.id);
       }
       else {
-        var page_id = message.page_id == undefined ? message.text.page_id : message.page_id;
-        var rg_page = SL.editorController.get('pages').findBy('id', page_id);
+        var rg_page = SL.editorController.get('pages').findBy('id', message.text.page_id);
         var em_text = SL.editorController.get('texts').findBy('id', 0);
         em_text.setProperties({
           id: message.text.id,
-          page_id: page_id,
+          page_id: message.text.page_id,
           x_pos: message.text.x_pos,
           y_pos: message.text.y_pos,
         });
