@@ -1,8 +1,18 @@
 <div class="container">
   <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-    <div class="navbar-inner">
-      <div class="container">
-        <a href="/" class="brand">ScribaLive</a>
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand">ScribaLive</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/editor">Editor</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/preferences">Preferences</a></li>
+        </ul>
+      </div>
+      <!--
+      <div class="navbar-header navbar-right">
         <ul class="nav topbar">
           <li>
           </li>
@@ -20,7 +30,7 @@
           </li>
         </ul>
       </div>
-    </div>
+      -->
   </div>
 </div>
 <div class="container content">
@@ -30,13 +40,13 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="span4">
+      <div class="col-md-4">
         {{ view SL.SigninView controllerBinding="SL.signinController" }}
       </div>
-      <div id="splash_image" class="span4">
+      <div id="splash_image" class="col-md-4">
         <img src="/img/welcome1.jpg"/>
       </div>
-      <div class="span4">
+      <div class="col-md-4">
         {{ view SL.UsersNewView controllerBinding="SL.usersNewController" }}
       </div>
     </div>
