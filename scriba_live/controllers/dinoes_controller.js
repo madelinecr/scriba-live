@@ -18,10 +18,13 @@ exports.index = function(req, res){
         // query database for dinoes
         school.getDinoes().success(function(dinoes){
 
-          var filtered_dinoes = []; // filter dinoes by the correct semester
+           // filter dinoes by the correct year and semester
+          var filtered_dinoes = [];
           for(var i=0; i<dinoes.length; i++)
-            if(req.query.semester==dinoes[i].semester)
+            //console.log(dinoes[i].year);
+            if(req.query.semester==dinoes[i].semester && req.query.year==dinoes[i].year){
               filtered_dinoes.push(dinoes[i]);
+            }
 
             res.send({
             success: true,
@@ -113,6 +116,8 @@ exports.create = function(req, res) {
   // .success( function(dino) { ... }) is called on a success and the created dino is passed
   // .error(function(error) { ... }) is called when an error occurs and the error is passed
   req.app.get('db').Dino.create({
+    year:                  req.body.year,
+    school_id:             req.body.school_id,
     semester:              req.body.semester,
     department:            req.body.department,
     course:                req.body.course,
@@ -157,7 +162,10 @@ exports.update = function(req, res) {
     req.app.get('db').Dino.find(req.params.id).success(function(dino) {
       if (dino) {
         if(!req.body.user_id){
+          
           dino.updateAttributes({
+            year:                  req.body.year,
+            school_id:             req.body.school_id,
             semester:              req.body.semester,
             department:            req.body.title,
             course:                req.body.course, 
@@ -174,9 +182,24 @@ exports.update = function(req, res) {
               error: error
             });
           });
+
         }
-        else
+        else // user_id exists, remove this dino from user
         {
+          /*// Remove dino from school
+          if(req.body.school_id && !req.body.enroll)
+          {
+            console.log("Hola2");
+            req.app.get('db').School.find(req.body.school_id).success(function(school){
+              school.removeDino(dino);
+            console.log("Hola3");
+              res.send({
+                success: true,
+              });
+            });
+          }*/
+
+
           req.app.get('db').User.find(req.body.user_id).success(function(user){
             // Do we want to add or drop this class?
 

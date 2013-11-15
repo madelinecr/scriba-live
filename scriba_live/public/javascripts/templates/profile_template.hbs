@@ -1,133 +1,179 @@
-
+Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_last_name}}!<br><br>
 
 <input type="button" value="Home" {{action "setTab" "home_tab"}} />
 <input type="button" value="Enroll" {{action "setTab" "enroll_tab"}} />
 <input type="button" value="Settings" {{action "setTab" "settings_tab"}} />
 
 <div id="subnavinfo">
-{{#if controller.is_home}}
-  <h1>My Schools</h1>
-  <ul class="l" style="list-style: none;">
-    {{#unless controller.home_schools.length}}
+  {{#if controller.is_home_tab}}
+
+    <h1>My Schools</h1>
+    {{#unless controller.home_schools_list.length}}
       You are not enrolled in any schools
     {{/unless}}
-    {{#each school in controller.home_schools}}
-      <li>
-        School: {{school.title}}<br>
-        Location: {{school.city}}, {{school.state}}<br>{{school.country}}<br>
-        <input type="button" value="Remove school" {{action "removeSchool" school}} /><br><br>
-      </li>  
-    {{/each}}
-  </ul>
-  <h1>My Classes</h1>
+    <ul class="l" style="list-style: none;">
+      {{#each school in controller.home_schools_list}}
+        <li>
+          School: {{school.title}}<br>
+          Location: {{school.city}}, {{school.state}}<br>{{school.country}}<br>
+          <input type="button" value="Remove school" {{action "removeSchool" school}} /><br><br>
+        </li>  
+      {{/each}}
+    </ul>
+    <h1>My Classes</h1>
 
-  <ul class="r" style="list-style: none;">
-    {{#unless controller.home_dinoes.length}}
-    You are not enrolled in any classes
-    {{/unless}}
-    {{#each dino in controller.home_dinoes}}
-      <li>
-        Department: {{dino.department}}<br> 
-        Course: {{dino.course}}<br>
-        Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
-        <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
-      </li>  
-    {{/each}}
-  </ul>
-{{/if}}
+    <ul class="r" style="list-style: none;">
+      {{#unless controller.home_dinoes.length}}
+        You are not enrolled in any classes
+      {{/unless}}
+      {{#each dino in controller.home_dinoes}}
+        <li>
+          Department: {{dino.department}}<br> 
+          Course: {{dino.course}}<br>
+          Scheduled: {{dino.semester}}&nbsp;{{dino.year}}<br>
+          Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
+          <input type="button" value="Remove class" {{action "removeDino" dino}} /><br><br>
+        </li>  
+      {{/each}}
+    </ul>
+  {{/if}}
 </div>
 
-{{#if controller.is_enroll}}
-<h1>Class Search and Creation</h1>
+{{#if controller.is_enroll_tab}}
+  <h1>Class Search and Creation</h1>
 
-{{#if controller.is_semester}}
-  <a href='# '{{action "toStart"}} >Start</a>
-  -> 
-  {{controller.current_school.title}}
-{{/if}}
-{{#if controller.is_dino}}
-  <a href='# '{{action "toStart"}} >Start</a>
-  -> 
-  <a href='# '{{action "toSemester"}} >{{controller.current_school.title}}</a>
-  ->
-  {{controller.current_semester.title}}
-{{/if}}
-<ul style="list-style: none;">
-{{#each current in controller.current_list}}
-  <li>
-    {{#if controller.is_school}}
-      School: {{current.title}}<br>
-      Location: {{current.city}}, {{current.state}} -- {{current.country}}<br>
-      <input type="button" value="View Classes" {{action "addCurrent" current}} />
-      <input type="button" value="Join School" {{action "joinSchool" current}} /><br><br>
+  {{#if controller.searching_years}}
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
+    -> 
+  {{/if}}
+  {{#if controller.searching_semesters}}
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
+    -> 
+    <a href='# '{{action "toYear"}} >Year</a> ({{controller.current_year.title}})
+    ->
+  {{/if}}
+  {{#if controller.searching_dinoes}}
+    <a href='# '{{action "toStart"}} >School</a> ({{controller.current_school.title}})
+    -> 
+    <a href='# '{{action "toYear"}} >Year</a> ({{controller.current_year.title}})
+    ->
+    <a href='# '{{action "toSemester"}} >Semester</a> ({{controller.current_semester.title}})
+    ->
+  {{/if}}
+
+  {{#if controller.searching_schools}}
+    <ul style="list-style: none;">
+      {{#each school in controller.all_schools_list}}
+        <li>
+            School: {{school.title}}<br>
+            Location: {{school.city}}, {{school.state}} -- {{school.country}}<br>
+            <input type="button" value="View Classes" {{action "viewSemestersBySchool" school}} />
+            <input type="button" value="Join School" {{action "enrollSchool" school}} /><br><br>
+        </li>
+      {{/each}}
+    </ul>
+    {{#each page in controller.school_pages_list}}
+      {{#if page.is_current}}
+        {{page.number}}
+      {{else}}
+        <a href='# '{{action "setSchoolsPageIndex" page}} >{{page.number}}</a>
+      {{/if}}
+    {{/each}}
+    <br>
+  {{/if}}
+  {{#if controller.searching_years}}
+    <ul style="list-style: none;">
+      {{#each year in controller.all_years_list}}
+        <li>
+          {{year.title}}<br>
+          <input type="button" value="Filter" {{action "viewSemestersByYear" year}} /><br><br>
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+  {{#if controller.searching_semesters}}
+    <ul style="list-style: none;">
+      {{#each semester in controller.all_semesters_list}}
+        <li>
+          {{semester.title}}<br>
+          <input type="button" value="Filter" {{action "viewDinoesBySemester" semester}} /><br><br>
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+  {{#if controller.searching_dinoes}}
+    <ul style="list-style: none;">
+      {{#each dino in controller.filtered_dinoes_list}}
+        <li>
+            Department: {{dino.department}}<br> 
+            Course: {{dino.course}}<br>
+            Instructor: {{dino.instructor_last_name}}, {{dino.instructor_first_name}}<br>
+            <input type="button" value="Enroll" {{action "enrollDino" dino}} />
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+
+  {{#if controller.searching_schools}}
+    {{#if controller.show_schools_back_button}}
+      <input type="button" value="Back" {{action "schoolsBack"}} />
     {{/if}}
-    {{#if controller.is_semester}}
-      {{current.title}}<br>
-      <input type="button" value="Filter" {{action "addCurrent" current}} /><br><br>
+    {{#if controller.show_schools_forward_button}}
+      <input type="button" value="Next" {{action "schoolsForward"}} />
     {{/if}}
-    {{#if controller.is_dino}}
-      Department: {{current.department}}<br> 
-      Course: {{current.course}}<br>
-      Instructor: {{current.instructor_last_name}}, {{current.instructor_first_name}}<br>
-      <input type="button" value="Enroll" {{action "enrollDino" current}} />
-    {{/if}}
-  </li>
-  {{/each}}
-  </ul>
-  {{#if controller.is_school}}
-    {{#unless controller.schools.length}}ScribaLive does not have any schools created yet!<br><br>{{/unless}}
+    <br><br>
+  {{/if}}
+
+  {{#if controller.searching_schools}}
+    {{#unless controller.all_schools.length}}ScribaLive does not have any schools created yet!<br><br>{{/unless}}
     Create a New School<br>
     <input type="text" placeholder="Title" id="title-id">
     <input type="text" placeholder="City" id="city-id">
     <input type="text" placeholder="State" id="state-id">
     <input type="text" placeholder="Country" id="country-id">
-    <input type="button" value="Create" id="create_school-id" {{action "createSchool"}} />
+    <input type="button" value="Create" id="create_school-id" {{action "callCreateSchool"}} />
   {{/if}}
-  {{#if controller.is_dino}}
-
-      {{#unless controller.dinoes.length}}This school does not have any {{controller.current_semester.title}} classes<br><br>{{/unless}}
+  {{#if controller.searching_dinoes}}
+      {{#unless controller.filtered_dinoes.length}}This school does not have any {{controller.current_semester.title}} classes<br><br>{{/unless}}
     Create a New Class<br>
     <input type="text" placeholder="Department" id="department-id">
     <input type="text" placeholder="Course"     id="course-id">
     <input type="text" placeholder="Instructor First Name" id="ins_f_n-id">
     <input type="text" placeholder="Instructor Last Name" id="ins_l_n-id">
-    <input type="button" value="Create" id="create_class-id" {{action "createClass"}} />
+    <input type="button" value="Create" id="create_dino-id" {{action "callCreateDino"}} />
   {{/if}}
 {{/if}}
 
-{{#if controller.is_settings}}
+{{#if controller.is_settings_tab}}
   <h1>Settings</h1>
-  <h4>Naming:</h4>
+    <h4>My Information:</h4>
+
+    First Name: {{controller.info_first_name}}<br>
+    Last Name: {{controller.info_last_name}}<br>
+    Email: {{controller.info_email}}<br>
+    {{#if controller.has_updated_info}}
+      <input type="button" value="Update" id="update_user_button-id" {{action "updateUser"}} />
+    {{/if}}
+
+    <br><h4>Change My Information:</h4>
+    First Name:{{input type="text" value=controller.updated_user_first_name placeholder="First Name" id="updated_first_name-id"}}<br>
+    Last Name:{{input type="text" value=controller.updated_user_last_name placeholder="Last Name" id="updated_last_name-id"}}<br>
+    Email:{{input type="text" value=controller.updated_user_email placeholder="Email" id="updated_email-id"}}<br>
+
+    {{!-- ASK BLAINE
+    <h4>Change your password:</h4>
     <form action="/users" method="get">
-    <label for="first_name">First Name</label>
-    <input type="text" name="first_name" value="">
-    <input type="submit" formaction="/users" value="Change First Name"><br>
-  </form>
-
-  <form action="/users" method="get">
-    <label for="last_name">Last Name</label>
-    <input type="text" name="last_name" value="">
-    <input type="submit" formaction="/users" value="Change Last Name"><br>
-  </form>
-
-  <form action="/users" method="get">
-    <label for="email">E-Mail</label>
-    <input type="text" name="email" value="">
-    <input type="submit" formaction="/users" value="Change Email"><br><br>
-  </form>
-
-  <h4>Change your password:</h4>
-  <form action="/users" method="get">
-    <label for="password">Old Password</label>
-    <input type="password" name="password"><br>
-    <label for="password_confirmation">Old Password Confirm</label>
-    <input type="password" name="password_confirmation"><br>
-    <label for="password">New Password</label>
-    <input type="password" name="new_password"><br>
-    <label for="password_confirmation">New Password Confirm</label>
-    <input type="password" name="new_password_confirmation"><br>
-    <input type="submit" formaction="/users" value="Change Password">
-  </form>
+      <label for="password">Old Password</label>
+      <input type="password" name="password"><br>
+      <label for="password_confirmation">Old Password Confirm</label>
+      <input type="password" name="password_confirmation"><br>
+      <label for="password">New Password</label>
+      <input type="password" name="new_password"><br>
+      <label for="password_confirmation">New Password Confirm</label>
+      <input type="password" name="new_password_confirmation"><br>
+      <input type="submit" formaction="/users" value="Change Password">
+    </form>
+  --}}
 {{/if}}
                                                                         
 

@@ -9,4 +9,8 @@ window.onload = function() {
   if(element.html()=='PROFILE'){
     SL.profileController.initProfile();
   }
+  else if(element.html()=='WELCOME'){
+    //SL.welcomeController.initWelcome();
+  }
+  
 }

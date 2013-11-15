@@ -1,6 +1,7 @@
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define("Dino", {
-    //school_id:             DataTypes.INTEGER,
+  	year:                  DataTypes.STRING,
+  	school_id:             DataTypes.STRING,
     semester:              DataTypes.STRING,
     department:            DataTypes.STRING, 
     course:                DataTypes.STRING, 

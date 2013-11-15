@@ -4,6 +4,13 @@ SL.SigninController = Em.Controller.extend({
 
   loginFailed: false,
 
+  actions: {
+  
+    submitSignin: function() {
+      SL.signinController.signin();
+    }
+  },
+
   signin: function() {
     $.post("/signin", {
       username: this.get("signin_username"),
@@ -71,4 +78,9 @@ SL.SigninController = Em.Controller.extend({
       SL.signinController.signin();
     }
   }
+=======
+    });
+  },
+
+>>>>>>> origin/s1_site_profile
 });

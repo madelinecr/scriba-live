@@ -1,7 +1,7 @@
 SL.School = Em.Object.extend({
   id: 0,
   title: '',
-  semesters: 0,
+  semesters: '',
   city: '',
   state: '',
   country: ''

@@ -80,7 +80,6 @@ exports.create = function(req, res) {
   /*  
   $.post('/schools', { title: 'UC Davis', city: 'Davis', state: 'California', country: 'United States' }, function(response) {console.log(response)})
   */
-  console.log("Creating a school -----");
   req.app.get('db').School.create({
     title:   req.body.title,
     city:    req.body.city,
@@ -133,7 +132,7 @@ exports.update = function(req, res) {
         else{     // We want to add the user to this school
           req.app.get('db').User.find(req.body.user_id).success(function(user){
 
-            if(req.body.join=='true')
+            if(req.body.enroll=='true')
               school.addUser(user);
             else
               school.removeUser(user);
@@ -178,11 +177,11 @@ exports.destroy = function(req, res) {
 
     // if school exists
     if (school) {
-
       // attempt to destroy dino
       school.destroy().success(function(school) {
 
         // if successfully deleted
+        console.log("Deleted school");
         res.send({
           success: true,
           school: school

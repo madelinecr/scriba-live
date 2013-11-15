@@ -121,8 +121,9 @@ exports.update = function(req, res) {
 
       // try to update user
       user.updateAttributes({
-        username: req.body.username,
-        password: req.body.password,
+        //ask Blaine to help with these
+        //username: req.body.username,
+        //password: req.body.password,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email: req.body.email
