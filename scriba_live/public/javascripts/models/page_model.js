@@ -5,6 +5,7 @@ SL.Page = Em.Object.extend({
   width: 0,
   height: 0,
   page_index: 0,
+  jq_id: "",
   object: null,
 
   save: function() {

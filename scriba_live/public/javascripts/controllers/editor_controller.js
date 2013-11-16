@@ -74,7 +74,7 @@ SL.EditorController = Em.Controller.extend({
       id: page_id,
       width: width,
       height: height,
-      page_index: controller.get('pages').get('length'),
+      jq_id: '#'+canvas_page_id,
       object: paper // associated raphael object
     });
 
@@ -83,8 +83,32 @@ SL.EditorController = Em.Controller.extend({
       em_page.save('push');
     }
 
+    // hide additional pages received from server
+    if (page_id && SL.editorController.get('pages').get('length')) {
+      $(em_page.jq_id).hide();
+    }
+    else {
+      // make new page active if first or created locally
+      em_active = SL.editorController.get('active_page');
+      if (em_active) {
+        $(em_active.jq_id).hide();
+      }
+      SL.editorController.set('active_page', em_page);
+    }
     // push new page into pages array
     controller.get('pages').pushObject(em_page);
+    // update displayed page number and total (active may have changed)
+    SL.editorController.dispPageNum(SL.editorController.get('active_page', em_page));
+  },
+
+  // sort pages array and update "Page m of n" text
+  // pages pending affirmCreate placed at end
+  dispPageNum: function(em_page) {
+    em_pages = SL.editorController.get('pages');
+    em_pages.sort(function(a,b) { return (a.id==0) ? 1 : a.id - b.id } );
+    page_index = 1+ em_pages.indexOf(em_page);
+    page_total = em_pages.get('length');
+    $('#page-num').text("Page "+page_index+" of "+page_total);
   },
 
   // add a new text area to editor
@@ -348,17 +372,6 @@ SL.EditorController = Em.Controller.extend({
         event.preventDefault();
       }
     }
-  },
-
-  mouseOver: function(event) {
-    var page = SL.editorController.get('pages').findBy('object.canvas.id', event.target.id);
-    if (page)
-    {
-//      console.log("-x- Page Valid: ", page);
-      SL.editorController.set('active_page', page);
-    }
-//    else
-//      console.log("-x- Invalid Page: ", page);
   },
 
   // lisents to keypress events
@@ -838,7 +851,44 @@ SL.EditorController = Em.Controller.extend({
     addPage: function() {
       // add a new page to current note
       var page = this.newPage('editor-canvases', 600, 600, true, 0);
-    }
+    },
+
+    prevPage: function() {
+      em_page = SL.editorController.get('active_page');
+      if (em_page)
+      {
+        page_index = SL.editorController.get('pages').indexOf(em_page);
+        if (page_index > 0)
+        {
+          $(em_page.jq_id).hide();
+          --page_index;
+          em_page = SL.editorController.get('pages').objectAt(page_index);
+          $(em_page.jq_id).show();
+
+          SL.editorController.set('active_page', em_page);
+          SL.editorController.dispPageNum(em_page);
+        }
+      }
+    },
+
+    nextPage: function() {
+      em_page = SL.editorController.get('active_page');
+      if (em_page)
+      {
+        page_index = SL.editorController.get('pages').indexOf(em_page);
+        if (page_index+1 < SL.editorController.get('pages').get('length'))
+        {
+          $(em_page.jq_id).hide();
+          ++page_index;
+          em_page = SL.editorController.get('pages').objectAt(page_index);
+          $(em_page.jq_id).show();
+
+          SL.editorController.set('active_page', em_page);
+          SL.editorController.dispPageNum(em_page);
+        }
+      }
+    },
+
   },
 
   // GENERAL HELPER FUNCTIONS

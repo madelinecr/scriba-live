@@ -446,6 +446,8 @@ SL.IoController = Em.Controller.extend({
       var em_page = SL.editorController.get('pages').findBy('id', 0);
       var text = SL.editorController.get('texts').findBy('page_id', 0);
       em_page.set('id', message.page.id);
+      SL.editorController.dispPageNum(SL.editorController.get('active_page'));
+
       text.set('page_id', message.page.id);
       text.save('push');
       // check if text is empty - why? Do you mean query the server (already done by getAll)?
