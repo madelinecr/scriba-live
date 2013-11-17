@@ -2,10 +2,10 @@
 {{#if loginFailed}}
   <div class="alert alert-danger">Invalid username or password</div>
 {{/if}}
-<form>
+<form action="signin" method="post">
   <label for="signin_email">E-Mail</label>
-  {{input value=signin_email type="text"}}
+  <input name="signin_email" type="text">
   <label for="signin_password">Password</label>
-  {{input value=signin_password type="password"}}
-  <button class="btn" {{action "submitSignin"}}>Signin</button>
+  <input name=signin_password type="password">
+  <button class="btn" formaction="signin" value="Sign In">Sign In</button>
 </form>

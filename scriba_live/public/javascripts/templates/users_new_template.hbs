@@ -1,5 +1,5 @@
 <h3>Sign up</h3>
-<form>
+<form action="/users" method="post">
   <label>Name</label>
   <input class="firstname" type="text" name="first_name">
   <input class="lastname" type="text" name="last_name"><br>
@@ -8,6 +8,6 @@
   <label for="password">Password and confirmation</label>
   <input type="password" name="password"><br>
   <input type="password" name="password_confirmation"><br>
-  <input class="btn" type="submit" {{action create_user}} value="Submit">
+  <input class="btn" type="submit" formation="/users" value="Submit">
 </form>
 
