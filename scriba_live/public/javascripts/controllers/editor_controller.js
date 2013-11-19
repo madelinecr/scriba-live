@@ -3,7 +3,6 @@
 SL.EditorController = Em.Controller.extend({
 
   // object arrays
-  notes: [],
   pages: [],
   texts: [],
   rects: [],
@@ -895,6 +894,28 @@ SL.EditorController = Em.Controller.extend({
       em_obj.remove('push');
     }
   },
+
+  // Clear out the old pages
+  clearNote: function() {
+    var controller = SL.editorController;
+
+    while (em_obj = controller.get('paths').pop()) {
+      em_obj.remove('local');
+    }
+    while (em_obj = controller.get('rects').pop()) {
+      em_obj.remove('local');
+    }
+    while (em_obj = controller.get('ovals').pop()) {
+      em_obj.remove('local');
+    }
+    while (em_obj = controller.get('texts').pop()) {
+      em_obj.remove('local');
+    }
+    while (em_obj = controller.get('pages').pop()) {
+      em_obj.remove('local');
+    }
+  },
+
 
   // http://stackoverflow.com/questions/3510351/how-do-i-add-text-to-a-textarea-at-the-cursor-location-using-javascript
   // code for inserting at cursor

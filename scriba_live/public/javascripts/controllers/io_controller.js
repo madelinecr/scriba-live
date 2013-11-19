@@ -1,6 +1,7 @@
 SL.IoController = Em.Controller.extend({
   // controller variables
   socket: null,
+  note_id: null,
   initialized_pages: false,
 
 
@@ -11,12 +12,10 @@ SL.IoController = Em.Controller.extend({
     var socket = io.connect();
     SL.ioController.set('socket', socket);
 
-    //create room "ID" and emit Join room message
-    var room = "Scriba";
-    socket.emit('room', room);
-    //now socket is in room
-
     // register handlers to receive events from server
+    // note (room) event
+    socket.on('note', SL.ioController.noteEmitHandler);
+    //rectangle event
     socket.on('page', SL.ioController.pageEmitHandler);
     //rectangle event
     socket.on('rect', SL.ioController.rectEmitHandler);
@@ -27,24 +26,34 @@ SL.IoController = Em.Controller.extend({
     //text event
     socket.on('text', SL.ioController.textEmitHandler);
 
-    // Retrieve existing objects
-    SL.ioController.get('socket').emit('page', {type: 'getAll'});
+    // Find note to connect to
+    socket.emit('getNoteID', {course: 'CSCI430'});
   },
 
-  initPageObjects: function() {
-    SL.ioController.get('socket').emit('rect', {type: 'getAll'});
-    SL.ioController.get('socket').emit('oval', {type: 'getAll'});
-    SL.ioController.get('socket').emit('path', {type: 'getAll'});
-    SL.ioController.get('socket').emit('text', {type: 'getAll'});
+
+  changeNotes: function(course) {
+    SL.ioController.set('note_id', null);
+    SL.ioController.get('socket').emit('leaveNote');
+    SL.editorController.clearNote();
+
+    SL.ioController.get('socket').emit('getNoteID', {course: course});
+  },
+  note1: function() {SL.ioController.changeNotes('CSCI430');},
+  note2: function() {SL.ioController.changeNotes('MATH217');},
+
+  initPageObjects: function(page_id) {
+    SL.ioController.get('socket').emit('rect', {type: 'getAll', page_id: page_id});
+    SL.ioController.get('socket').emit('oval', {type: 'getAll', page_id: page_id});
+    SL.ioController.get('socket').emit('path', {type: 'getAll', page_id: page_id});
+    SL.ioController.get('socket').emit('text', {type: 'getAll', page_id: page_id});
   },
 
   // push create/edit/destroy page actions to server
   pushPageCreate: function(page) {
-    var data = {
-      type: 'create'
+    var note_id = SL.ioController.get('note_id');
+    if (note_id) {
+      SL.ioController.get('socket').emit('page', {type: 'create'});
     }
-
-    SL.ioController.get('socket').emit('page', data);
   },
 
   pushPageDestroy: function(page) {
@@ -239,6 +248,24 @@ SL.IoController = Em.Controller.extend({
     SL.ioController.get('socket').emit('text', data);
   },
 
+
+  // recieve note actions from server
+  noteEmitHandler: function(message) {
+    console.log(message);
+
+    // we got note id from server, now join room
+    if (message.type == 'noteID') {
+      SL.ioController.set('note_id', message.note.id)
+      SL.ioController.get('socket').emit('joinNote', message.note.id);
+    }
+
+    // we are now in the room, request pages in note
+    if (message.type == 'affirmjoinNote') {
+      SL.ioController.get('socket').emit('page', {type: 'getAll'});
+    }
+  },
+
+
   // recieve create/edit/destroy rect actions from server
   rectEmitHandler: function(message) {
     console.log(message);
@@ -430,14 +457,9 @@ SL.IoController = Em.Controller.extend({
 
     // Server done sending pages, we can now request objects
     if (message.type == 'initPages') {
-      // if there are pages, init
-      if (SL.editorController.get('pages').get('length')) {
-        console.log("length");
-        SL.ioController.initPageObjects();
-      }
-      // else create a new page & save to server
-      else {
-        console.log("empty");
+      // create a new page if none exist
+      if (!SL.editorController.get('pages').get('length')) {
+        console.log("creating first page");
         SL.editorController.newPage('editor-canvases', 600, 600, true, 0);
       }
     }
@@ -460,6 +482,8 @@ SL.IoController = Em.Controller.extend({
       }
       else {
         SL.editorController.newPage('editor-canvases', 600, 600, false, message.page.id);
+        // get objects on page
+        SL.ioController.initPageObjects(message.page.id);
       }
     }
     // We told server to update object

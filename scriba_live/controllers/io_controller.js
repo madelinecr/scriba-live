@@ -40,29 +40,53 @@ module.exports.listen = function(server, db) {
 
   io = socketio.listen(server);
   io.on('connection', function(socket) {
-    socket.on('room', function(room) {
-      socket.join(room);
+
+    // Search for note id
+    socket.on('getNoteID', function(data) {  // , by date and by user
+      db.Dino.findOrCreate({course: data.course}).success(function(sq_dino, is_new) {
+        db.Note.findOrCreate({dino_id: sq_dino.id}).success(function(sq_obj, is_new) {
+          sq_dino.addNote(sq_obj).success(function(sq_obj) {
+//            sq_user.addNote(sq_obj).success(function(sq_obj) {
+              // respond to initiating user and foward to remaining users
+              socket.emit('note', {success: true, type: 'noteID', note: sq_obj});
+//            }); // end sq_user.add
+          }); // end sq_dino.add
+        });
+      });
+    });
+
+    socket.on('joinNote', function(note_id) {
+      socket.join(note_id);
+      socket.note_id = note_id;
+      socket.emit('note', {success: true, type: 'affirmjoinNote'});
+    });
+
+    socket.on('leaveNote', function() {
+      console.log("left note:", socket.note_id)
+      socket.leave(socket.note_id);
+      socket.note_id = null;
+    });
 
       // Handle page actions
       socket.on('page', function(data) {
         if (data.type == 'create') {
-//          db.Note.find(data.object.note_id).success(function(sq_note){
-//            if (sq_note) {
+          db.Note.find(socket.note_id).success(function(sq_note){
+            if (sq_note) {
               db.Page.create().success(function(sq_obj) {
                 // add object to specific page
-//                sq_note.addPage(sq_obj).success(function(sq_obj) {
+                sq_note.addPage(sq_obj).success(function(sq_obj) {
                   // respond to initiating user and foward to remaining users
                   socket.emit('page', {success: true, type: 'affirmCreate', page: sq_obj});
-                  socket.broadcast.to(room).emit('page', {success: true, type: 'create', page: sq_obj});
-//                }); // end sq_note.add
+                  socket.broadcast.to(socket.note_id).emit('page', {success: true, type: 'create', page: sq_obj});
+                }); // end sq_note.add
               }).error(function(error) {
                 console.log("Fail: ", data);
               });
-/*            }
+            }
             else {
               console.log("Note not found: ", data);
             }
-          }); */
+          });
         } // end create page
 
         else if (data.type == 'destroy') {
@@ -73,7 +97,7 @@ module.exports.listen = function(server, db) {
               sq_obj.destroy().success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('page', {success: true, type: 'affirmDestroy', page: sq_obj});
-                socket.broadcast.to(room).emit('page', {success: true, type: 'destroy', page: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('page', {success: true, type: 'destroy', page: sq_obj});
               });
             }
             else {
@@ -82,9 +106,9 @@ module.exports.listen = function(server, db) {
           });
         } // end destroy page
 
-        // Dump existing objects to client
+        // Get pages in note
         else if (data.type == 'getAll') {
-          db.Page.findAll().success(function(sq_objs) {
+          db.Page.findAll({where: {note_id: socket.note_id}}).success(function(sq_objs) {
             // Send each object to the joining client
             for (idx in sq_objs) {
               socket.emit('page', {success: true, type: 'create', page: sq_objs[idx]});
@@ -109,7 +133,7 @@ module.exports.listen = function(server, db) {
                 sq_page.addText(sq_obj).success(function(sq_obj) {
                   // respond to initiating user and foward to remaining users
                   socket.emit('text', {success: true, type: 'affirmCreate', text: sq_obj});
-                  socket.broadcast.to(room).emit('text', {success: true, type: 'create', text: sq_obj});
+                  socket.broadcast.to(socket.note_id).emit('text', {success: true, type: 'create', text: sq_obj});
                 }); // end sq_page.add
               }).error(function(error) {
                 console.log("Fail: ", data);
@@ -129,7 +153,7 @@ module.exports.listen = function(server, db) {
               sq_obj.updateAttributes(FN.sqTextFromMsg(data.object)).success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('text', {success: true, type: 'affirmUpdate', text: sq_obj});
-                socket.broadcast.to(room).emit('text', {success: true, type: 'update', text: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('text', {success: true, type: 'update', text: sq_obj});
               });
             }
             else {
@@ -142,7 +166,7 @@ module.exports.listen = function(server, db) {
 
         // Dump existing objects to client
         else if (data.type == 'getAll') {
-          db.Text.findAll().success(function(sq_objs) {
+          db.Text.findAll({where: {page_id: data.page_id}}).success(function(sq_objs) {
             // Send each object to the joining client
             for (idx in sq_objs) {
               socket.emit('text', {success: true, type: 'create', text: sq_objs[idx]});
@@ -165,7 +189,7 @@ module.exports.listen = function(server, db) {
                 sq_page.addRect(sq_obj).success(function(sq_obj) {
                   // respond to initiating user and foward to remaining users
                   socket.emit('rect', {success: true, type: 'affirmCreate', rect: sq_obj});
-                  socket.broadcast.to(room).emit('rect', {success: true, type: 'create', rect: sq_obj});
+                  socket.broadcast.to(socket.note_id).emit('rect', {success: true, type: 'create', rect: sq_obj});
                 }); // end sq_page.add
               }).error(function(error) {
                 console.log("Fail: ", data);
@@ -185,7 +209,7 @@ module.exports.listen = function(server, db) {
               sq_obj.updateAttributes(FN.sqRectFromMsg(data.object)).success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('rect', {success: true, type: 'affirmUpdate', rect: sq_obj});
-                socket.broadcast.to(room).emit('rect', {success: true, type: 'update', rect: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('rect', {success: true, type: 'update', rect: sq_obj});
               });
             }
             else {
@@ -202,7 +226,7 @@ module.exports.listen = function(server, db) {
               sq_obj.destroy().success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('rect', {success: true, type: 'affirmDestroy', rect: sq_obj});
-                socket.broadcast.to(room).emit('rect', {success: true, type: 'destroy', rect: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('rect', {success: true, type: 'destroy', rect: sq_obj});
               });
             }
             else {
@@ -213,7 +237,7 @@ module.exports.listen = function(server, db) {
 
         // Dump existing objects to client
         else if (data.type == 'getAll') {
-          db.Rect.findAll().success(function(sq_objs) {
+          db.Rect.findAll({where: {page_id: data.page_id}}).success(function(sq_objs) {
             // Send each object to the joining client
             for (idx in sq_objs) {
               socket.emit('rect', {success: true, type: 'create', rect: sq_objs[idx]});
@@ -236,7 +260,7 @@ module.exports.listen = function(server, db) {
                 sq_page.addOval(sq_obj).success(function(sq_obj) {
                   // respond to initiating user and foward to remaining users
                   socket.emit('oval', {success: true, type: 'affirmCreate', oval: sq_obj});
-                  socket.broadcast.to(room).emit('oval', {success: true, type: 'create', oval: sq_obj});
+                  socket.broadcast.to(socket.note_id).emit('oval', {success: true, type: 'create', oval: sq_obj});
                 }); // end sq_page.add
               }).error(function(error) {
                 console.log("Fail: ", data);
@@ -256,7 +280,7 @@ module.exports.listen = function(server, db) {
               sq_obj.updateAttributes(FN.sqOvalFromMsg(data.object)).success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('oval', {success: true, type: 'affirmUpdate', oval: sq_obj});
-                socket.broadcast.to(room).emit('oval', {success: true, type: 'update', oval: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('oval', {success: true, type: 'update', oval: sq_obj});
               });
             }
             else {
@@ -273,7 +297,7 @@ module.exports.listen = function(server, db) {
               sq_obj.destroy().success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('oval', {success: true, type: 'affirmDestroy', oval: sq_obj});
-                socket.broadcast.to(room).emit('oval', {success: true, type: 'destroy', oval: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('oval', {success: true, type: 'destroy', oval: sq_obj});
               });
             }
             else {
@@ -284,7 +308,7 @@ module.exports.listen = function(server, db) {
 
         // Dump existing objects to client
         else if (data.type == 'getAll') {
-          db.Oval.findAll().success(function(sq_objs) {
+          db.Oval.findAll({where: {page_id: data.page_id}}).success(function(sq_objs) {
             // Send each object to the joining client
             for (idx in sq_objs) {
               socket.emit('oval', {success: true, type: 'create', oval: sq_objs[idx]});
@@ -307,7 +331,7 @@ module.exports.listen = function(server, db) {
                 sq_page.addPath(sq_obj).success(function(sq_obj) {
                   // respond to initiating user and foward to remaining users
                   socket.emit('path', {success: true, type: 'affirmCreate', path: sq_obj});
-                  socket.broadcast.to(room).emit('path', {success: true, type: 'create', path: sq_obj});
+                  socket.broadcast.to(socket.note_id).emit('path', {success: true, type: 'create', path: sq_obj});
                 });
               }).error(function(error) {
                 console.log("Fail: ", data);
@@ -327,7 +351,7 @@ module.exports.listen = function(server, db) {
               sq_obj.updateAttributes(FN.sqPathFromMsg(data.object)).success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('path', {success: true, type: 'affirmUpdate', path: sq_obj});
-                socket.broadcast.to(room).emit('path', {success: true, type: 'update', path: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('path', {success: true, type: 'update', path: sq_obj});
               });
             }
             else {
@@ -344,7 +368,7 @@ module.exports.listen = function(server, db) {
               sq_obj.destroy().success(function(sq_obj) {
                 // respond to initiating user and foward to remaining users
                 socket.emit('path', {success: true, type: 'affirmDestroy', path: sq_obj});
-                socket.broadcast.to(room).emit('path', {success: true, type: 'destroy', path: sq_obj});
+                socket.broadcast.to(socket.note_id).emit('path', {success: true, type: 'destroy', path: sq_obj});
               });
             }
             else {
@@ -355,7 +379,7 @@ module.exports.listen = function(server, db) {
 
         // Dump existing objects to client
         else if (data.type == 'getAll') {
-          db.Path.findAll().success(function(sq_objs) {
+          db.Path.findAll({where: {page_id: data.page_id}}).success(function(sq_objs) {
             // Send each object to the joining client
             for (idx in sq_objs) {
               socket.emit('path', {success: true, type: 'create', path: sq_objs[idx]});
@@ -367,7 +391,6 @@ module.exports.listen = function(server, db) {
 
       }); // end of socket.on path
 
-    });//end of socket on room
   }); // end of io.on
   return io;
 }

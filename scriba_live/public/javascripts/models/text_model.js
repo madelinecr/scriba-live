@@ -36,11 +36,11 @@ SL.Text = Em.Object.extend({
     SL.ioController.pushTextCreate(this);
   },
 
-  /*remove: function(push) {
+  remove: function(push) {
     // delete raphael object
-    var rg_obj = this.get('object');
+    var jq_obj = this.get('object');
     this.set('object', null);
-    rg_obj.remove();
+    jq_obj.remove();
 
     // remove from server
     if (push == 'push') {
@@ -49,6 +49,6 @@ SL.Text = Em.Object.extend({
 
     // remove this object
     this.destroy();
-  }*/
+  }
 
 });

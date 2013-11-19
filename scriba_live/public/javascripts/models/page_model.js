@@ -11,13 +11,16 @@ SL.Page = Em.Object.extend({
   save: function() {
     // save to server
     SL.ioController.pushPageCreate(this);
-  }/*,
+  },
 
   remove: function(push) {
     // delete raphael object
     var rg_obj = this.get('object');
     this.set('object', null);
     rg_obj.remove();
+
+    // delete div container
+    $(this.jq_id).remove();
 
     // remove from server
     if (push == 'push') {
@@ -26,5 +29,5 @@ SL.Page = Em.Object.extend({
 
     // remove this object
     this.destroy();
-  }*/
+  }
 });
