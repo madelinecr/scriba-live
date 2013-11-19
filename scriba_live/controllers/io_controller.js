@@ -55,9 +55,7 @@ module.exports.listen = function(server, db, moment) {
       });
     });
 
-    socket.on('getClassNotes', function(
-
-    ));
+    socket.on('getClassNotes', function() {});
 
     socket.on('joinNote', function(note_id) {
       socket.join(note_id);
