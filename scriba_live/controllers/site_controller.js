@@ -40,7 +40,7 @@ exports.preferences = function(req, res) {
 */
 
 exports.editor = function(req, res) {
-  res.render('site/editor', { title: 'Express' });
+  res.render('site/editor', { title: 'Express', dino_id: req.params.dino_id });
 };
 
 /*
