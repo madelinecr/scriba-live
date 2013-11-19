@@ -7,15 +7,19 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var jade = require('jade');
+var moment = require('moment');
+
 
 var app = express();
 
 var server = http.createServer(app);
 
+
 app.set('db', require('./models'));
 app.set('controllers', require('./controllers'));
 
 // all environments
+app.set('moment', moment);
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.engine('jade', jade.__express);
@@ -98,7 +102,7 @@ app.post('/schools/:id', app.get('controllers').schools.update);
 app.delete('/schools/:id', app.get('controllers').schools.destroy);
 
 // socket io
-app.get('controllers').io.listen(server, app.get('db'));
+app.get('controllers').io.listen(server, app.get('db'), app.get('moment'));
 
 // DATABASE
 app.get('db').sequelize.sync().complete(function(err) {

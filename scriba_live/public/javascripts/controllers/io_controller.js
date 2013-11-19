@@ -27,7 +27,7 @@ SL.IoController = Em.Controller.extend({
     socket.on('text', SL.ioController.textEmitHandler);
 
     // Find note to connect to
-    socket.emit('getNoteID', {course: 'CSCI430'});
+    socket.emit('getNoteID', {course: 'CSCI430', date: moment().format('L')});
   },
 
 

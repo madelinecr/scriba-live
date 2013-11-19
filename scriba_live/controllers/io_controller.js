@@ -3,7 +3,7 @@
 
 var socketio = require('socket.io');
 
-module.exports.listen = function(server, db) {
+module.exports.listen = function(server, db, moment) {
   var FN = {
     // Map message into sequelize input object
     sqTextFromMsg: function(msg_obj) {
@@ -44,7 +44,7 @@ module.exports.listen = function(server, db) {
     // Search for note id
     socket.on('getNoteID', function(data) {  // , by date and by user
       db.Dino.findOrCreate({course: data.course}).success(function(sq_dino, is_new) {
-        db.Note.findOrCreate({dino_id: sq_dino.id}).success(function(sq_obj, is_new) {
+        db.Note.findOrCreate({dino_id: sq_dino.id, date: data.date}).success(function(sq_obj, is_new) {
           sq_dino.addNote(sq_obj).success(function(sq_obj) {
 //            sq_user.addNote(sq_obj).success(function(sq_obj) {
               // respond to initiating user and foward to remaining users
@@ -54,6 +54,10 @@ module.exports.listen = function(server, db) {
         });
       });
     });
+
+    socket.on('getClassNotes', function(
+
+    ));
 
     socket.on('joinNote', function(note_id) {
       socket.join(note_id);
