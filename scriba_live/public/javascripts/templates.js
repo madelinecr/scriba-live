@@ -646,7 +646,7 @@ function program46(depth0,data) {
 Ember.TEMPLATES["signin"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, hashTypes, hashContexts, self=this;
+  var buffer = '', stack1, hashTypes, hashContexts, self=this, escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
@@ -659,7 +659,11 @@ function program1(depth0,data) {
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "loginFailed", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n<form action=\"signin\" method=\"post\">\n  <label for=\"signin_email\">E-Mail</label>\n  <input name=\"signin_email\" type=\"text\">\n  <label for=\"signin_password\">Password</label>\n  <input name=signin_password type=\"password\">\n  <button class=\"btn\" formaction=\"signin\" value=\"Sign In\">Sign In</button>\n</form>\n");
+  data.buffer.push("\n<form>\n  <label for=\"signin_email\">E-Mail</label>\n  <input id=\"signin_email\" name=\"signin_email\" type=\"text\">\n  <label for=\"signin_password\">Password</label>\n  <input id=\"signin_password\" name=signin_password type=\"password\">\n  <button class=\"btn\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "submitSignin", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">Sign In</button>\n</form>\n");
   return buffer;
   
 });

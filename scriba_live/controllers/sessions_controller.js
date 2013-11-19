@@ -20,15 +20,8 @@ exports.create = function(req, res) {
         res.cookie('pass', user.password);
         req.session.user = user;
         res.send(user, 200);
-       // res.send({
-       //   success: true,
-       //   user: user
-       // });
       } else {
-        res.send({
-          success: false,
-          error: "Incorrect username or password"
-        });
+        res.send(400);
       }
     }).error(function(error) {
       res.send({

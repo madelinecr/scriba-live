@@ -4,23 +4,19 @@ SL.SigninController = Em.Controller.extend({
 
   loginFailed: false,
 
-  actions: {
-  
-    submitSignin: function() {
-      SL.signinController.signin();
-    }
-  },
-
   signin: function() {
+    console.log("signin called");
+    console.log( $("#signin_email").val() );
     $.post("/signin", {
-      username: this.get("signin_username"),
-      password: this.get("signin_password")
-    },function(reponse) {
-      alert("signed in");
+      signin_email: $("#signin_email").val(),
+      signin_password: $("#signin_password").val()
+    },function(response) {
+      console.log(response);
       document.location = "/preferences";
-    });//, function() {
-      //this.set("loginFailed", true);
-    //}.bind(this));
+    }).fail(function() {
+      console.log("setting loginFailed to true");
+      loginFailed = true;
+    });
     //alert("signin button pressed");
   },
 
@@ -78,9 +74,4 @@ SL.SigninController = Em.Controller.extend({
       SL.signinController.signin();
     }
   }
-=======
-    });
-  },
-
->>>>>>> origin/s1_site_profile
 });
