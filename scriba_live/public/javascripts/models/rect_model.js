@@ -13,26 +13,33 @@ SL.Rect = Em.Object.extend({
     return this.get('object').node.id;
   }.property('this.object.node.id'),
 
-  update: function() {
+  update: function(push) {
     this.set('x_pos', this.object.attr('x'));
     this.set('y_pos', this.object.attr('y'));
     this.set('width', this.object.attr('width'));
     this.set('height', this.object.attr('height'));
+
+    // push to server
+    if (push == 'push') {
+      SL.ioController.pushRectUpdate(this);
+    }
   },
 
-  save: function () {
-    //save to server here
+  save: function() {
+    // save to server
     SL.ioController.pushRectCreate(this);
   },
 
-  remove: function() {
+  remove: function(push) {
     // delete raphael object
-    var raph_object = this.get('object');
+    var rg_obj = this.get('object');
     this.set('object', null);
-    raph_object.remove();
+    rg_obj.remove();
 
     // remove from server
-    SL.ioController.pushRectDestroy(this);
+    if (push == 'push') {
+      SL.ioController.pushRectDestroy(this);
+    }
 
     // remove this object
     this.destroy();

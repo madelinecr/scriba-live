@@ -7,3 +7,9 @@ module.exports = function(sequelize, DataTypes) {
     y_size: DataTypes.INTEGER
   });
 }
+/* Columns added by sequelize:
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT
+  `created_at` DATETIME NOT NULL
+  `updated_at` DATETIME NOT NULL
+  `page_id` INTEGER
+*/
