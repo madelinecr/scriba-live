@@ -41,7 +41,7 @@ if ('development' == app.get('env')) {
 // VIEW ROUTES (serve actual HTML site)
 // -> SITE ROUTES
 app.get('/', app.get('controllers').site.welcome);
-app.get('/editor/:class_id', app.get('controllers').site.editor);
+app.get('/editor/:dino_id', app.get('controllers').site.editor);
 app.get('/profile/:id', app.get('controllers').site.profile);
 app.get('/preferences', app.get('controllers').site.preferences);
 

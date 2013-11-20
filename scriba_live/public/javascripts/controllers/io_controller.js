@@ -2,12 +2,19 @@ SL.IoController = Em.Controller.extend({
   // controller variables
   socket: null,
   note_id: null,
+  current_dino: null,
+  current_date: "",
   initialized_pages: false,
 
 
   // connect to server
   createConnection: function(){
     SL.editorController.startEditor();
+
+    SL.ioController.set('current_date', moment().format('L'));
+
+    var user_id = $('#user-id').html();
+    var dino_id = $('#dino-id').html();
 
     var socket = io.connect();
     SL.ioController.set('socket', socket);
@@ -25,21 +32,48 @@ SL.IoController = Em.Controller.extend({
     socket.on('path', SL.ioController.pathEmitHandler);
     //text event
     socket.on('text', SL.ioController.textEmitHandler);
+    //dino events
+    socket.on('getAllDinoNotes', SL.ioController.getAllDinoNotesEmitHandler);
+    socket.on('getDino', SL.ioController.getDinoEmitHandler);
 
     // Find note to connect to
-    socket.emit('getNoteID', {course: 'CSCI430', date: moment().format('L')});
+    socket.emit('getNoteID', {dino_id: dino_id, date: moment().format('L'), user_id: user_id});
+    SL.ioController.getCurrentDino();
   },
 
+  getCurrentDino: function() {
+    var dino_id = $('#dino-id').html();
 
-  changeNotes: function(course) {
+    SL.ioController.getDino(dino_id);
+  },
+
+  getDino: function (dino_id) {
+    var socket = SL.ioController.get('socket');
+
+    socket.emit('getDino', {dino_id: dino_id});
+  },
+
+  getAllDinoNotes: function() {
+    var user_id = $('#user-id').html();
+    var date = SL.ioController.get('current_date');
+    var socket = SL.ioController.get('socket');
+    var dino = SL.ioController.get('current_dino');
+
+    socket.emit('getAllDinoNotes', {dino_id: dino.id, date: date, user_id: user_id});
+  },
+
+  changeNote: function(date, user_id) {
     SL.ioController.set('note_id', null);
     SL.ioController.get('socket').emit('leaveNote');
     SL.editorController.clearNote();
 
-    SL.ioController.get('socket').emit('getNoteID', {course: course});
+    var dino_id = $('#dino-id').html();
+
+    SL.ioController.get('socket').emit('getNoteID', {dino_id: dino_id, date: date, user_id: user_id});
   },
-  note1: function() {SL.ioController.changeNotes('CSCI430');},
-  note2: function() {SL.ioController.changeNotes('MATH217');},
+
+  //note1: function() {SL.ioController.changeNote('CSCI430', "11/18/2013", 1);},
+  //note2: function() {SL.ioController.changeNote('MATH217', "11/18/2013", 1);},
 
   initPageObjects: function(page_id) {
     SL.ioController.get('socket').emit('rect', {type: 'getAll', page_id: page_id});
@@ -548,6 +582,50 @@ SL.IoController = Em.Controller.extend({
     else if (message.type == 'affirmDestroy') {
     }
     else if (message.type == 'destroy') {
+    }
+  },
+
+  getAllDinoNotesEmitHandler: function(message) {
+    console.log(message);
+
+    if (message.notes.length) {
+      // populate class_notes
+      for (i = 0; i < message.notes.length; i++) {
+        var note = SL.Note.create({
+          id: message.notes[i].id,
+          title: message.notes[i].title,
+          date: message.notes[i].date,
+          dino_id: message.notes[i].dino_id,
+          user_id: message.notes[i].user_id,
+          user_name: message.notes[i].user.first_name + " " + message.notes[i].user.last_name
+        });
+
+        SL.editorController.get('dino_notes').pushObject(note);
+      }
+    }
+    else {
+      console.error("There are no other notes for this class and date");
+    }
+  },
+
+  getDinoEmitHandler: function(message) {
+    if (message.success) {
+      var dino = SL.Dino.create({
+        id: message.dino.id,
+        school_id: message.dino.school_id,
+        year: message.dino.year,
+        semester: message.dino.semester,
+        department: message.dino.department,
+        course: message.dino.course,
+        instructor_first_name: message.dino.instructor_first_name,
+        instructor_last_name: message.dino.instructor_last_name
+      });
+
+      SL.ioController.set('current_dino', dino);
+      SL.ioController.getAllDinoNotes();
+    }
+    else {
+      console.error("Something went wrong with getting the current dino");
     }
   }
 });

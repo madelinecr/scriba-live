@@ -3,7 +3,7 @@
 SL.ProfileController = Em.Controller.extend({
 
    // Can be 'home_tab', 'enroll_tab', or 'settings_tab'
-  current_tab: 'home_tab', 
+  current_tab: 'home_tab',
 
   // Schools and classes the user is enrolled in
   home_schools: [],
@@ -16,12 +16,12 @@ SL.ProfileController = Em.Controller.extend({
   num_debug_schools:     200,
 
   // Can be 'schools', 'years', semseters', or 'dinoes'
-  search_state:     'schools', 
+  search_state:     'schools',
   current_school:   null,
   current_semester: null,
   current_year:     null,
-  creating_school:  false, 
-  creating_class:   false, 
+  creating_school:  false,
+  creating_class:   false,
 
   // Dinoes that belong to the selected school, year, and semester
   filtered_dinoes: [],
@@ -36,12 +36,12 @@ SL.ProfileController = Em.Controller.extend({
   updated_user_first_name: '',
   updated_user_last_name:  '',
   updated_user_email:      '',
-  updated_first_name_info: false, 
-  updated_last_name_info:  false, 
-  updated_email_info:      false, 
+  updated_first_name_info: false,
+  updated_last_name_info:  false,
+  updated_email_info:      false,
   updated_user_info:       false,
   updating_user:           false,
- 
+
   is_home_tab: function(){
     return this.get('current_tab') == 'home_tab';
   }.property('current_tab'),
@@ -54,7 +54,7 @@ SL.ProfileController = Em.Controller.extend({
     return this.get('current_tab') == 'settings_tab';
   }.property('current_tab'),
 
-  // Every school that is registered to ScribaLive 
+  // Every school that is registered to ScribaLive
   all_schools_list: function(){
     var index           =  SL.profileController.get('schools_display_index');
     var count_per_page  =  SL.profileController.get('schools_display_count');
@@ -179,6 +179,9 @@ SL.ProfileController = Em.Controller.extend({
   }.property('updated_first_name_info', 'updated_last_name_info', 'updated_email_info'),
 
   actions: {
+    startEditor: function(dino) {
+      window.location="/editor/"+dino.id;
+    },
     setTab: function(tab_name){
       SL.profileController.set('current_tab', tab_name);
     },
@@ -209,11 +212,11 @@ SL.ProfileController = Em.Controller.extend({
     },
     viewSemestersBySchool: function(school){
       SL.profileController.set('current_school', school);
-      SL.profileController.set('search_state', 'years'); 
+      SL.profileController.set('search_state', 'years');
     },
     viewSemestersByYear: function(year){
       SL.profileController.set('current_year', year);
-      SL.profileController.set('search_state', 'semesters');  
+      SL.profileController.set('search_state', 'semesters');
     },
     viewDinoesBySemester: function(semester){
       SL.profileController.set('current_semester', semester);
@@ -244,9 +247,9 @@ SL.ProfileController = Em.Controller.extend({
         success:function(response){
           var response_school = SL.School.create({
             id:      response.school.id,
-            title:   response.school.title, 
-            city:    response.school.city, 
-            state:   response.school.state, 
+            title:   response.school.title,
+            city:    response.school.city,
+            state:   response.school.state,
             country: response.school.country
           });
             SL.profileController.get('home_schools').pushObject(response_school);
@@ -318,12 +321,12 @@ SL.ProfileController = Em.Controller.extend({
         success:function(response){
           var response_dino = SL.Dino.create({
             id:                    response.dino.id,
-            school_id:             response.dino.school_id, 
+            school_id:             response.dino.school_id,
             year:                  response.dino.year,
             semester:              response.dino.semester,
-            department:            response.dino.department, 
-            course:                response.dino.course, 
-            instructor_first_name: response.dino.instructor_first_name, 
+            department:            response.dino.department,
+            course:                response.dino.course,
+            instructor_first_name: response.dino.instructor_first_name,
             instructor_last_name:  response.dino.instructor_last_name
           });
           SL.profileController.get('home_dinoes').pushObject(response_dino);
@@ -364,16 +367,16 @@ SL.ProfileController = Em.Controller.extend({
       else{
         if(SL.profileController.get('updating_user')==true)
           return;
-        
+
         SL.profileController.set('updating_user', true);
 
-        updated_first_name.attr("readonly", true);   
-        updated_last_name.attr("readonly", true);   
-        updated_email.attr("readonly", true);  
+        updated_first_name.attr("readonly", true);
+        updated_last_name.attr("readonly", true);
+        updated_email.attr("readonly", true);
 
-        $.post('/users/'+current_user_id, { 
-          first_name: updated_first_name.val(), 
-          last_name:  updated_last_name.val(), 
+        $.post('/users/'+current_user_id, {
+          first_name: updated_first_name.val(),
+          last_name:  updated_last_name.val(),
           email:      updated_email.val()
         }, function(response) {
           if(response.success){
@@ -388,8 +391,8 @@ SL.ProfileController = Em.Controller.extend({
           updated_first_name.val("");
           updated_last_name.val("");
           updated_email.val("");
-          updated_first_name.attr("readonly", false);   
-          updated_last_name.attr("readonly", false);   
+          updated_first_name.attr("readonly", false);
+          updated_last_name.attr("readonly", false);
           updated_email.attr("readonly", false);
 
           // Reset update info logic controllers
@@ -400,7 +403,7 @@ SL.ProfileController = Em.Controller.extend({
           SL.profileController.set('updated_last_name_info', false);
           SL.profileController.set('updated_email_info', false);
           SL.profileController.set('updating_user', false);
-        }); 
+        });
       }
     },
     schoolsBack: function(){
@@ -456,19 +459,19 @@ SL.ProfileController = Em.Controller.extend({
       state = "state"+(number+i);
       country = "country"+(number+i);
 
-      $.post('/schools', { 
-        title:    title, 
-        city:     city, 
-        state:    state, 
-        country:  country 
+      $.post('/schools', {
+        title:    title,
+        city:     city,
+        state:    state,
+        country:  country
       }, function(response) {
         if(response.success){
           // Create a new client side school based on server's response school
           var school = SL.School.create({
             id:      response.school.id,
-            title:   response.school.title, 
-            city:    response.school.city, 
-            state:   response.school.state, 
+            title:   response.school.title,
+            city:    response.school.city,
+            state:   response.school.state,
             country: response.school.country
           });
           SL.profileController.get('all_schools').pushObject(school);
@@ -506,22 +509,22 @@ SL.ProfileController = Em.Controller.extend({
       console.log('Empty parameters');
     }
     else{
-      title.attr("readonly", true);   
-      city.attr("readonly", true);   
-      state.attr("readonly", true);   
-      country.attr("readonly", true);   
-      $.post('/schools', { 
-        title:    title.val(), 
-        city:     city.val(), 
-        state:    state.val(), 
-        country:  country.val() 
+      title.attr("readonly", true);
+      city.attr("readonly", true);
+      state.attr("readonly", true);
+      country.attr("readonly", true);
+      $.post('/schools', {
+        title:    title.val(),
+        city:     city.val(),
+        state:    state.val(),
+        country:  country.val()
       }, function(response) {
         if(response.success){
           var school = SL.School.create({
             id:      response.school.id,
-            title:   response.school.title, 
-            city:    response.school.city, 
-            state:   response.school.state, 
+            title:   response.school.title,
+            city:    response.school.city,
+            state:   response.school.state,
             country: response.school.country
           });
           SL.profileController.get('all_schools').pushObject(school);
@@ -532,14 +535,14 @@ SL.ProfileController = Em.Controller.extend({
         city.val("");
         state.val("");
         country.val("");
-        title.attr("readonly", false);   
-        city.attr("readonly", false);   
-        state.attr("readonly", false);   
-        country.attr("readonly", false);   
+        title.attr("readonly", false);
+        city.attr("readonly", false);
+        state.attr("readonly", false);
+        country.attr("readonly", false);
       });
     }
-  }, 
-  createDino: function(){ 
+  },
+  createDino: function(){
     if(SL.profileController.get('creating_class')==true)
       return;
 
@@ -560,29 +563,29 @@ SL.ProfileController = Em.Controller.extend({
       console.log('Empty parameters');
     }
     else{
-      department.attr("readonly", true);   
-      course.attr("readonly", true);   
-      instructor_first_name.attr("readonly", true);   
-      instructor_last_name.attr("readonly", true);   
-      $.post('/dinoes', { 
-        school_id:             current_school_id, 
+      department.attr("readonly", true);
+      course.attr("readonly", true);
+      instructor_first_name.attr("readonly", true);
+      instructor_last_name.attr("readonly", true);
+      $.post('/dinoes', {
+        school_id:             current_school_id,
         year:                  current_year,
         semester:              current_semester,
-        department:            department.val(), 
-        course:                course.val(), 
-        instructor_first_name: instructor_first_name.val(), 
-        instructor_last_name:  instructor_last_name.val() 
+        department:            department.val(),
+        course:                course.val(),
+        instructor_first_name: instructor_first_name.val(),
+        instructor_last_name:  instructor_last_name.val()
       }, function(response) {
         if(response.success){
           // Create a new client side dino based on server's response dino
           var dino = SL.Dino.create({
             id:                    response.dino.id,
-            school_id:             response.dino.school_id, 
+            school_id:             response.dino.school_id,
             year:                  response.dino.year,
             semester:              response.dino.semester,
-            department:            response.dino.department, 
-            course:                response.dino.course, 
-            instructor_first_name: response.dino.instructor_first_name, 
+            department:            response.dino.department,
+            course:                response.dino.course,
+            instructor_first_name: response.dino.instructor_first_name,
             instructor_last_name:  response.dino.instructor_last_name
           });
           SL.profileController.get('filtered_dinoes').pushObject(dino);
@@ -592,16 +595,16 @@ SL.ProfileController = Em.Controller.extend({
         course.val("");
         instructor_first_name.val("");
         instructor_last_name.val("");
-        department.attr("readonly", false);   
-        course.attr("readonly", false);   
-        instructor_first_name.attr("readonly", false);   
-        instructor_last_name.attr("readonly", false); 
+        department.attr("readonly", false);
+        course.attr("readonly", false);
+        instructor_first_name.attr("readonly", false);
+        instructor_last_name.attr("readonly", false);
 
         SL.profileController.set('creating_class', false);
       });
     }
   },
-  getEnrolledSchools: function(user_id){ 
+  getEnrolledSchools: function(user_id){
     //we have user id
     $.ajax({
       type:'GET',
@@ -640,7 +643,7 @@ SL.ProfileController = Em.Controller.extend({
           });
           // Populate array with current school
           SL.profileController.get('all_schools').pushObject(school);
-        } 
+        }
       }
     });
   },
@@ -658,7 +661,7 @@ SL.ProfileController = Em.Controller.extend({
         for(i=0; i<response.dinoes.length; i++){
           var dino = SL.Dino.create({
             id:                    response.dinoes[i].id,
-            school_id:             response.dinoes[i].school_id, 
+            school_id:             response.dinoes[i].school_id,
             year:                  response.dinoes[i].year,
             semester:              response.dinoes[i].semester,
             department:            response.dinoes[i].department,
@@ -681,7 +684,7 @@ SL.ProfileController = Em.Controller.extend({
         for(i=0; i<response.dinoes.length; i++){
           var dino = SL.Dino.create({
             id:                    response.dinoes[i].id,
-            school_id:             response.dinoes[i].school_id, 
+            school_id:             response.dinoes[i].school_id,
             year:                  response.dinoes[i].year,
             semester:              response.dinoes[i].semester,
             department:            response.dinoes[i].department,

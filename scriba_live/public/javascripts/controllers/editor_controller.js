@@ -9,6 +9,8 @@ SL.EditorController = Em.Controller.extend({
   ovals: [],
   paths: [],
 
+  dino_notes: [],
+
   // variables
   tool: 'text',
   active: null,
@@ -803,6 +805,10 @@ SL.EditorController = Em.Controller.extend({
 
   // EMBER HANDLEBARS ACTIONS
   actions: {
+    // change to new note
+    changeNote: function(note) {
+      SL.ioController.changeNote(moment(note.get('date')).add('d',1).format('L'), note.user_id);
+    },
 
     // sets tool to passed tool
     setTool: function(tool) {

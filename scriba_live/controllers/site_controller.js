@@ -8,7 +8,7 @@
 */
 
 exports.welcome = function(req, res) {
-  if(req.session.user) {
+  if(req.session.user !== undefined) {
     res.render('site/welcome', { user: req.session.user });
   } else {
     res.render('site/welcome');
@@ -20,10 +20,14 @@ exports.welcome = function(req, res) {
 */
 
 exports.profile = function(req, res) {
-  req.app.get("db").User.find(req.params.id).success(function(user){
-    res.render('site/profile', { user: user, title: 'Express' } );
-  }).error(function(error){
-  });
+  console.log("USER999: "+req.session.user.id);
+  if (req.session.user !== undefined) {
+    res.render('site/profile', { user: req.session.user, title: 'Express' } );
+  }
+  else {
+    console.log('ANON USER ATTEMPTED TO ACCESS SITE WITHOUT CREDENTIALS');
+    res.redirect('/');
+  }
 };
 
 /*
@@ -31,7 +35,14 @@ exports.profile = function(req, res) {
 */
 
 exports.preferences = function(req, res) {
-  res.render('site/preferences', { user: req.session.user, title: 'Express' });
+  if (req.session.user !== undefined) {
+    res.redirect('/profile/'+req.session.user.id);
+  }
+  else {
+    console.log('ANON USER ATTEMPTED TO ACCESS SITE WITHOUT CREDENTIALS');
+    res.redirect('/');
+  }
+  //res.render('site/preferences', { user: req.session.user, title: 'Express' });
 };
 
 
@@ -40,7 +51,13 @@ exports.preferences = function(req, res) {
 */
 
 exports.editor = function(req, res) {
-  res.render('site/editor', { title: 'Express', dino_id: req.params.dino_id });
+  if (req.session.user !== undefined) {
+    res.render('site/editor', { title: 'Express', dino_id: req.params.dino_id, user: req.session.user });
+  }
+  else {
+    console.log('ANON USER ATTEMPTED TO ACCESS SITE WITHOUT CREDENTIALS');
+    res.redirect('/');
+  }
 };
 
 /*

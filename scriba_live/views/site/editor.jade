@@ -2,6 +2,8 @@ extends ../layout
 
 block content
   //- Indent the script or it will not render
-  <div hidden id='class-id'>#{dino_id}</div>
+  <div hidden id='dino-id'>#{dino_id}</div>
+  <div hidden id='user-id'>#{user.id}</div>
+  <div hidden id='current_page'>EDITOR</div>
   script(type="text/x-handlebars")
     {{view SL.EditorView controllerBinding="SL.editorController"}}

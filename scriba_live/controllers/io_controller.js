@@ -43,8 +43,8 @@ module.exports.listen = function(server, db, moment) {
 
     // Search for note id
     socket.on('getNoteID', function(data) {  // , by date and by user
-      db.Dino.findOrCreate({course: data.course}).success(function(sq_dino, is_new) {
-        db.Note.findOrCreate({dino_id: sq_dino.id, date: data.date}).success(function(sq_obj, is_new) {
+      db.Dino.find(data.dino_id).success(function(sq_dino) {
+        db.Note.findOrCreate({dino_id: sq_dino.id, date: data.date, user_id: data.user_id}).success(function(sq_obj, is_new) {
           sq_dino.addNote(sq_obj).success(function(sq_obj) {
 //            sq_user.addNote(sq_obj).success(function(sq_obj) {
               // respond to initiating user and foward to remaining users
@@ -55,7 +55,21 @@ module.exports.listen = function(server, db, moment) {
       });
     });
 
-    socket.on('getClassNotes', function() {});
+    socket.on('getAllDinoNotes', function(data) {
+      db.Note.findAll({where: {dino_id: data.dino_id, date: data.date}, include: [ db.User ]}).success(function(sq_objs) {
+        socket.emit('getAllDinoNotes', {success: true, type: 'getDinoNotes', notes: sq_objs});
+      }).error(function(error) {
+        console.log("No notes available: " + data);
+      });
+    });
+
+    socket.on('getDino', function(data){
+      db.Dino.find(data.dino_id).success(function(sq_obj) {
+        socket.emit('getDino', {success: true, type: 'getDino', dino: sq_obj});
+      }).error(function(error) {
+        socket.emit('getDino', {success: false, type: 'getDino', error: error});
+      });
+    });
 
     socket.on('joinNote', function(note_id) {
       socket.join(note_id);
