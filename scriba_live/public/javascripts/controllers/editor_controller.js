@@ -31,6 +31,17 @@ SL.EditorController = Em.Controller.extend({
   // general required start functions
   startEditor: function() {
     window.onkeydown = SL.editorController.keyDown;
+
+    $('#date-picker').pickadate({
+      format: 'mm/dd/yy',
+      clear: null,
+      onSet: function (event) {
+        SL.ioController.set('current_date', moment(event.select).format('L'));
+        SL.editorController.set('dino_notes', []);
+        SL.ioController.changeNote(moment(event.select).format('L'), SL.ioController.get("current_user_id"));
+        SL.ioController.getCurrentDino();
+      }
+    });
   },
 
   // CRUD FOR USERS TO CREATE THINGS

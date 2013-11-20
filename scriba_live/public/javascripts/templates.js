@@ -16,15 +16,15 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\n    <li>\n    ");
+  data.buffer.push("\n        <li>\n        ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "note.user_name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n    <input type=\"button\" value=\"View Note\" ");
+  data.buffer.push("\n        <input type=\"button\" value=\"View Note\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "changeNote", "note", {hash:{},contexts:[depth0,depth0],types:["STRING","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" /><br><br>\n    </li>\n");
+  data.buffer.push(" />\n        </li>\n    ");
   return buffer;
   }
 
@@ -60,12 +60,12 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "nextPage", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">&gt;</button>\n    <span id=\"page-num\">Page 1 of 0</span>\n  </div>\n<div id=\"editor-canvases\"></div>\n</div>\n<ul>\n");
+  data.buffer.push(">&gt;</button>\n    <span id=\"page-num\">Page 1 of 0</span>\n  </div>\n<div id=\"editor-canvases\"></div>\n</div>\n<div id=\"dino-notes\">\n    <input id=\"date-picker\" type=\"text\"/>\n    <ul>\n    ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers.each.call(depth0, "note", "in", "controller.dino_notes", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n</ul>");
+  data.buffer.push("\n    </ul>\n</div>");
   return buffer;
   
 });

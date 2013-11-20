@@ -4,6 +4,7 @@ SL.IoController = Em.Controller.extend({
   note_id: null,
   current_dino: null,
   current_date: "",
+  current_user_id: 0,
   initialized_pages: false,
 
 
@@ -13,8 +14,12 @@ SL.IoController = Em.Controller.extend({
 
     SL.ioController.set('current_date', moment().format('L'));
 
+    $("#date-picker").val(moment().format('L'));
+
     var user_id = $('#user-id').html();
     var dino_id = $('#dino-id').html();
+
+    SL.ioController.set('current_user_id', user_id);
 
     var socket = io.connect();
     SL.ioController.set('socket', socket);
@@ -63,11 +68,12 @@ SL.IoController = Em.Controller.extend({
   },
 
   changeNote: function(date, user_id) {
+    var dino_id = $('#dino-id').html();
+
     SL.ioController.set('note_id', null);
     SL.ioController.get('socket').emit('leaveNote');
+    SL.ioController.set('current_user_id', user_id);
     SL.editorController.clearNote();
-
-    var dino_id = $('#dino-id').html();
 
     SL.ioController.get('socket').emit('getNoteID', {dino_id: dino_id, date: date, user_id: user_id});
   },
@@ -589,6 +595,7 @@ SL.IoController = Em.Controller.extend({
     console.log(message);
 
     if (message.notes.length) {
+      akharazia5 = message;
       // populate class_notes
       for (i = 0; i < message.notes.length; i++) {
         var note = SL.Note.create({

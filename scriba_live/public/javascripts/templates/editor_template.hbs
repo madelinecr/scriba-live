@@ -13,11 +13,14 @@
   </div>
 <div id="editor-canvases"></div>
 </div>
-<ul>
-{{#each note in controller.dino_notes}}
-    <li>
-    {{note.user_name}}
-    <input type="button" value="View Note" {{action "changeNote" note}} /><br><br>
-    </li>
-{{/each}}
-</ul>
+<div id="dino-notes">
+    <input id="date-picker" type="text"/>
+    <ul>
+    {{#each note in controller.dino_notes}}
+        <li>
+        {{note.user_name}}
+        <input type="button" value="View Note" {{action "changeNote" note}} />
+        </li>
+    {{/each}}
+    </ul>
+</div>
