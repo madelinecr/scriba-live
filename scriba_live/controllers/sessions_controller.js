@@ -15,9 +15,12 @@ exports.create = function(req, res) {
         email: req.body.signin_email
       }
     }).success(function(user) {
+      console.log("user: " + user);
+      if(user == null) {
+        res.send(400);
+        return;
+      }
       if(verifyPassword(req.body.signin_password, user.password)) {
-        res.cookie('email', user.email);
-        res.cookie('pass', user.password);
         req.session.user = user;
         res.send(user, 200);
       } else {
