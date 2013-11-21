@@ -694,7 +694,7 @@ function program1(depth0,data) {
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "loginFailed", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n<form>\n  <label for=\"signin_email\">E-Mail</label>\n  <input id=\"signin_email\" name=\"signin_email\" type=\"text\">\n  <label for=\"signin_password\">Password</label>\n  <input id=\"signin_password\" name=signin_password type=\"password\">\n  <button class=\"btn\" ");
+  data.buffer.push("\n<form>\n  <label for=\"signin_email\">E-Mail</label>\n  <input id=\"signin_email\" placeholder=\"me@example.com\" name=\"signin_email\"\n   type=\"text\">\n  <br>\n  <label for=\"signin_password\">Password</label>\n  <input id=\"signin_password\" name=signin_password type=\"password\">\n  <button class=\"btn\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "submitSignin", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));

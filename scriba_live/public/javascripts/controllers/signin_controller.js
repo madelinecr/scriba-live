@@ -15,7 +15,7 @@ SL.SigninController = Em.Controller.extend({
       document.location = "/preferences";
     }).fail(function() {
       console.log("setting loginFailed to true");
-      loginFailed = true;
+      SL.signinController.set('loginFailed', true);
     });
     //alert("signin button pressed");
   },

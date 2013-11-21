@@ -4,7 +4,9 @@
 {{/if}}
 <form>
   <label for="signin_email">E-Mail</label>
-  <input id="signin_email" name="signin_email" type="text">
+  <input id="signin_email" placeholder="me@example.com" name="signin_email"
+   type="text">
+  <br>
   <label for="signin_password">Password</label>
   <input id="signin_password" name=signin_password type="password">
   <button class="btn" {{action "submitSignin"}}>Sign In</button>
