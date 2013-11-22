@@ -1,13 +1,38 @@
 <h3>Sign up</h3>
-<form action="/users" method="post">
-  <label>Name</label>
-  <input class="firstname" type="text" name="first_name">
-  <input class="lastname" type="text" name="last_name"><br>
-  <label for="email">E-Mail</label>
-  <input type="text" name="email"><br>
-  <label for="password">Password and confirmation</label>
-  <input type="password" name="password"><br>
-  <input type="password" name="password_confirmation"><br>
-  <input class="btn" type="submit" formation="/users" value="Submit">
+{{#if createError}}
+  <div class="alert alert-warning">Error, unable to create a new account.</div>
+{{/if}}
+<form class="form-horizontal">
+  <div class="form-group">
+    <div class="col-sm-4">
+      <label class="control-label">Name</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="firstname form-control" type="text" name="first_name">
+    </div>
+    <div class="col-sm-4">
+      <input class="lastname form-control" type="text" name="last_name">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-4">
+      <label class="control-label" for="email">E-Mail</label>
+    </div>
+    <div class="col-sm-8">
+      <input class="form-control" type="text" name="email">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-4">
+      <label class="control-label" for="password">Password</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control" type="password" name="password">
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control" type="password" name="password_confirmation">
+    </div>
+  </div>
+  <input class="button" type="submit" value="Submit" {{action "createUser"}}>
 </form>
 

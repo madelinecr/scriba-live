@@ -1,4 +1,5 @@
 <div class="container">
+  <!--
   <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
       <div class="navbar-header">
         <a href="/" class="navbar-brand">ScribaLive</a>
@@ -11,44 +12,25 @@
           <li><a href="/preferences">Preferences</a></li>
         </ul>
       </div>
-      <!--
-      <div class="navbar-header navbar-right">
-        <ul class="nav topbar">
-          <li>
-          </li>
-          <li class="">
-            <a href="/" class="navbar">Home</a>
-          </li>
-          <li>
-            <a href="/editor" class="navbar">Editor</a>
-          </li>
-          <li>
-            <a href="/profile" class="navbar">Profile</a>
-          </li>
-          <li>
-            <a href="/preferences" class="navbar">Account Preferences</a>
-          </li>
-        </ul>
-      </div>
-      -->
   </div>
+  -->
 </div>
+<div class="hero-unit">
+  <h1>Welcome to ScribaLive!</h1>
+  <p>ScribaLive lets you share your notes as you take them.</p>
+</div>
+<div id="flashmessage"></div>
 <div class="container content">
-  <div class="hero-unit">
-    <h1>Welcome to ScribaLive!</h1>
-    <p>ScribaLive lets you share your notes as you take them.</p>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4">
-        {{ view SL.SigninView controllerBinding="SL.signinController" }}
-      </div>
-      <div id="splash_image" class="col-md-4">
-        <img src="/img/welcome1.jpg"/>
-      </div>
-      <div class="col-md-4">
-        {{ view SL.UsersNewView controllerBinding="SL.usersNewController" }}
-      </div>
+  <div class="row">
+    <div class="col-md-4">
+      {{ view SL.SigninView controllerBinding="SL.signinController" }}
+    </div>
+    <div id="splash_image" class="col-md-4">
+      <img src="/img/welcome1.jpg"/>
+    </div>
+    <div class="col-md-4">
+      {{ view SL.UsersNewView controllerBinding="SL.usersNewController" }}
     </div>
   </div>
+</div>
 </div>

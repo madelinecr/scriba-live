@@ -658,7 +658,11 @@ function program46(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "setTab", "settings_tab", {hash:{},contexts:[depth0,depth0],types:["STRING","STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" />\n\n<div id=\"subnavinfo\">\n  ");
+  data.buffer.push(" />\n<input type=\"button\" value=\"Log out\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "logout", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\n\n<div id=\"subnavinfo\">\n  ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "controller.is_home_tab", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
@@ -694,7 +698,7 @@ function program1(depth0,data) {
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "loginFailed", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n<form>\n  <label for=\"signin_email\">E-Mail</label>\n  <input id=\"signin_email\" placeholder=\"me@example.com\" name=\"signin_email\"\n   type=\"text\">\n  <br>\n  <label for=\"signin_password\">Password</label>\n  <input id=\"signin_password\" name=signin_password type=\"password\">\n  <button class=\"btn\" ");
+  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_email\">E-Mail</label>\n    <input class=\"col-sm-8\" id=\"signin_email\" placeholder=\"me@example.com\"\n     name=\"signin_email\"\n     type=\"text\">\n   </div>\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_password\">Password</label>\n    <input class=\"col-sm-8\" id=\"signin_password\" name=signin_password \n     type=\"password\">\n  </div>\n  <button class=\"btn\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "submitSignin", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -706,10 +710,25 @@ function program1(depth0,data) {
 Ember.TEMPLATES["users_new"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, hashTypes, hashContexts, self=this, escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
   
+  
+  data.buffer.push("\n  <div class=\"alert alert-warning\">Error, unable to create a new account.</div>\n");
+  }
 
-
-  data.buffer.push("<h3>Sign up</h3>\n<form action=\"/users\" method=\"post\">\n  <label>Name</label>\n  <input class=\"firstname\" type=\"text\" name=\"first_name\">\n  <input class=\"lastname\" type=\"text\" name=\"last_name\"><br>\n  <label for=\"email\">E-Mail</label>\n  <input type=\"text\" name=\"email\"><br>\n  <label for=\"password\">Password and confirmation</label>\n  <input type=\"password\" name=\"password\"><br>\n  <input type=\"password\" name=\"password_confirmation\"><br>\n  <input class=\"btn\" type=\"submit\" formation=\"/users\" value=\"Submit\">\n</form>\n\n");
+  data.buffer.push("<h3>Sign up</h3>\n");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "createError", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\">Name</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"firstname form-control\" type=\"text\" name=\"first_name\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"lastname form-control\" type=\"text\" name=\"last_name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"email\">E-Mail</label>\n    </div>\n    <div class=\"col-sm-8\">\n      <input class=\"form-control\" type=\"text\" name=\"email\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"password\">Password</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password_confirmation\">\n    </div>\n  </div>\n  <input class=\"button\" type=\"submit\" value=\"Submit\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "createUser", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\n</form>\n\n");
+  return buffer;
   
 });
 
@@ -757,19 +776,19 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', hashContexts, hashTypes, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"container\">\n  <div class=\"navbar navbar-fixed-top navbar-inverse\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <a href=\"/\" class=\"navbar-brand\">ScribaLive</a>\n      </div>\n      <div class=\"navbar-collapse collapse\">\n        <ul class=\"nav navbar-nav\">\n          <li class=\"active\"><a href=\"/\">Home</a></li>\n          <li><a href=\"/editor\">Editor</a></li>\n          <li><a href=\"/profile\">Profile</a></li>\n          <li><a href=\"/preferences\">Preferences</a></li>\n        </ul>\n      </div>\n      <!--\n      <div class=\"navbar-header navbar-right\">\n        <ul class=\"nav topbar\">\n          <li>\n          </li>\n          <li class=\"\">\n            <a href=\"/\" class=\"navbar\">Home</a>\n          </li>\n          <li>\n            <a href=\"/editor\" class=\"navbar\">Editor</a>\n          </li>\n          <li>\n            <a href=\"/profile\" class=\"navbar\">Profile</a>\n          </li>\n          <li>\n            <a href=\"/preferences\" class=\"navbar\">Account Preferences</a>\n          </li>\n        </ul>\n      </div>\n      -->\n  </div>\n</div>\n<div class=\"container content\">\n  <div class=\"hero-unit\">\n    <h1>Welcome to ScribaLive!</h1>\n    <p>ScribaLive lets you share your notes as you take them.</p>\n  </div>\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-4\">\n        ");
+  data.buffer.push("<div class=\"container\">\n  <!--\n  <div class=\"navbar navbar-fixed-top navbar-inverse\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <a href=\"/\" class=\"navbar-brand\">ScribaLive</a>\n      </div>\n      <div class=\"navbar-collapse collapse\">\n        <ul class=\"nav navbar-nav\">\n          <li class=\"active\"><a href=\"/\">Home</a></li>\n          <li><a href=\"/editor\">Editor</a></li>\n          <li><a href=\"/profile\">Profile</a></li>\n          <li><a href=\"/preferences\">Preferences</a></li>\n        </ul>\n      </div>\n  </div>\n  -->\n</div>\n<div class=\"hero-unit\">\n  <h1>Welcome to ScribaLive!</h1>\n  <p>ScribaLive lets you share your notes as you take them.</p>\n</div>\n<div id=\"flashmessage\"></div>\n<div class=\"container content\">\n  <div class=\"row\">\n    <div class=\"col-md-4\">\n      ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.SigninView", {hash:{
     'controllerBinding': ("SL.signinController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n      </div>\n      <div id=\"splash_image\" class=\"col-md-4\">\n        <img src=\"/img/welcome1.jpg\"/>\n      </div>\n      <div class=\"col-md-4\">\n        ");
+  data.buffer.push("\n    </div>\n    <div id=\"splash_image\" class=\"col-md-4\">\n      <img src=\"/img/welcome1.jpg\"/>\n    </div>\n    <div class=\"col-md-4\">\n      ");
   hashContexts = {'controllerBinding': depth0};
   hashTypes = {'controllerBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "SL.UsersNewView", {hash:{
     'controllerBinding': ("SL.usersNewController")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n      </div>\n    </div>\n  </div>\n</div>\n");
+  data.buffer.push("\n    </div>\n  </div>\n</div>\n</div>\n");
   return buffer;
   
 });

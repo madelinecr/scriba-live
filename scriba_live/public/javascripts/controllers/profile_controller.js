@@ -182,6 +182,10 @@ SL.ProfileController = Em.Controller.extend({
     startEditor: function(dino) {
       window.location="/editor/"+dino.id;
     },
+    logout: function() {
+      $.post('/signout', {}, function() { console.log("successfully logged out") });
+      window.location="/";
+    },
     setTab: function(tab_name){
       SL.profileController.set('current_tab', tab_name);
     },

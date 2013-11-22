@@ -3,6 +3,7 @@ Welcome {{controller.current_user_first_name}}&nbsp;{{controller.current_user_la
 <input type="button" value="Home" {{action "setTab" "home_tab"}} />
 <input type="button" value="Enroll" {{action "setTab" "enroll_tab"}} />
 <input type="button" value="Settings" {{action "setTab" "settings_tab"}} />
+<input type="button" value="Log out" {{action "logout"}}>
 
 <div id="subnavinfo">
   {{#if controller.is_home_tab}}

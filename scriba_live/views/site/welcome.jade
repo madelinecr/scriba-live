@@ -2,11 +2,11 @@ extends ../layout
 
 block content
   <div hidden id='current_page'>WELCOME</div>   
-  if user
-    h3 Hello #{user.first_name}!
-    form(action="/signout",method="post")
-      input(type="submit",value="Sign Out")
-    br
+  //if user
+  //  h3 Hello #{user.first_name}!
+  //  form(action="/signout",method="post")
+  //    input(type="submit",value="Sign Out")
+  //  br
   //- Indent the script or it will not render
   script(type="text/x-handlebars")
     {{outlet}}
