@@ -18,7 +18,11 @@ module.exports.listen = function(server, db, moment) {
         x_pos:  msg_obj.x_pos,
         y_pos:  msg_obj.y_pos,
         x_size: msg_obj.width,
-        y_size: msg_obj.height
+        y_size: msg_obj.height,
+        fill_color: msg_obj.fill_color,
+        fill_alpha: msg_obj.fill_alpha,
+        line_width: msg_obj.line_width,
+        line_color: msg_obj.line_color
       }
     },
     sqOvalFromMsg: function(msg_obj) {
@@ -26,7 +30,11 @@ module.exports.listen = function(server, db, moment) {
         x_pos:  msg_obj.x_pos,
         y_pos:  msg_obj.y_pos,
         x_size: msg_obj.width,
-        y_size: msg_obj.height
+        y_size: msg_obj.height,
+        fill_color: msg_obj.fill_color,
+        fill_alpha: msg_obj.fill_alpha,
+        line_width: msg_obj.line_width,
+        line_color: msg_obj.line_color
       }
     },
     sqPathFromMsg: function(msg_obj) {
@@ -34,6 +42,10 @@ module.exports.listen = function(server, db, moment) {
         x_pos: msg_obj.x_pos,
         y_pos: msg_obj.y_pos,
         value: msg_obj.path,
+        fill_color: msg_obj.fill_color,
+        fill_alpha: msg_obj.fill_alpha,
+        line_width: msg_obj.line_width,
+        line_color: msg_obj.line_color
       }
     }
   };

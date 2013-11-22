@@ -110,15 +110,19 @@ SL.IoController = Em.Controller.extend({
   },
 
   // push create/edit/destroy rect actions to server
-  pushRectCreate: function(rect) {
+  pushRectCreate: function(em_obj) {
     var data = {
       type: 'create',
       object: {
-        page_id: rect.get('page_id'),
-        x_pos:  rect.get('x_pos'),
-        y_pos:  rect.get('y_pos'),
-        width:  rect.get('width'),
-        height: rect.get('height')
+        page_id: em_obj.get('page_id'),
+        x_pos:  em_obj.get('x_pos'),
+        y_pos:  em_obj.get('y_pos'),
+        width:  em_obj.get('width'),
+        height: em_obj.get('height'),
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -134,7 +138,11 @@ SL.IoController = Em.Controller.extend({
         x_pos:  em_obj.get('x_pos'),
         y_pos:  em_obj.get('y_pos'),
         width:  em_obj.get('width'),
-        height: em_obj.get('height')
+        height: em_obj.get('height'),
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -156,15 +164,19 @@ SL.IoController = Em.Controller.extend({
 
 
   // push create/edit/destroy oval actions to server
-  pushOvalCreate: function(oval) {
+  pushOvalCreate: function(em_obj) {
     var data = {
       type: 'create',
       object: {
-        page_id: oval.get('page_id'),
-        x_pos:   oval.get('x_pos'),
-        y_pos:   oval.get('y_pos'),
-        width:   oval.get('width'),
-        height:  oval.get('height')
+        page_id: em_obj.get('page_id'),
+        x_pos:  em_obj.get('x_pos'),
+        y_pos:  em_obj.get('y_pos'),
+        width:  em_obj.get('width'),
+        height: em_obj.get('height'),
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -182,7 +194,11 @@ SL.IoController = Em.Controller.extend({
         x_pos:  em_obj.get('x_pos'),
         y_pos:  em_obj.get('y_pos'),
         width:  em_obj.get('width'),
-        height: em_obj.get('height')
+        height: em_obj.get('height'),
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -204,14 +220,18 @@ SL.IoController = Em.Controller.extend({
 
 
   // push create/edit/destroy path actions to server
-  pushPathCreate: function(path) {
+  pushPathCreate: function(em_obj) {
     var data = {
       type: 'create',
       object: {
-        page_id: path.get('page_id'),
-        x_pos:  path.get('x_pos'),
-        y_pos:  path.get('y_pos'),
-        path:   path.get('object').node.attributes.d.value
+        page_id: em_obj.get('page_id'),
+        x_pos:  em_obj.get('x_pos'),
+        y_pos:  em_obj.get('y_pos'),
+        path:   em_obj.get('object').node.attributes.d.value,
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -225,7 +245,11 @@ SL.IoController = Em.Controller.extend({
         id: em_obj.get('id'),
         x_pos:  em_obj.get('x_pos'),
         y_pos:  em_obj.get('y_pos'),
-        path:   em_obj.get('object').node.attributes.d.value
+        path:   em_obj.get('object').node.attributes.d.value,
+        fill_color: em_obj.get('fill_color'),
+        fill_alpha: em_obj.get('fill_alpha'),
+        line_width: em_obj.get('line_width'),
+        line_color: em_obj.get('line_color')
       }
     }
 
@@ -326,7 +350,13 @@ SL.IoController = Em.Controller.extend({
           message.rect.x_pos,
           message.rect.y_pos,
           message.rect.x_size,
-          message.rect.y_size
+          message.rect.y_size,
+          {
+            fill_color: message.rect.fill_color,
+            fill_alpha: message.rect.fill_alpha,
+            line_width: message.rect.line_width,
+            line_color: message.rect.line_color
+          }
         );
         var em_rect = SL.Rect.create({
           id: message.rect.id,
@@ -337,6 +367,10 @@ SL.IoController = Em.Controller.extend({
           y_pos: message.rect.y_pos,
           width: message.rect.x_size,
           height: message.rect.y_size,
+          fill_color: message.rect.fill_color,
+          fill_alpha: message.rect.fill_alpha,
+          line_width: message.rect.line_width,
+          line_color: message.rect.line_color,
           object: rg_rect
         });
         SL.editorController.get('rects').pushObject(em_rect);
@@ -356,7 +390,11 @@ SL.IoController = Em.Controller.extend({
           x:      message.rect.x_pos,
           y:      message.rect.y_pos,
           width:  message.rect.x_size,
-          height: message.rect.y_size
+          height: message.rect.y_size,
+          fill_color: message.rect.fill_color,
+          fill_alpha: message.rect.fill_alpha,
+          line_width: message.rect.line_width,
+          line_color: message.rect.line_color
         });
         em_obj.update('local');
       }
@@ -390,7 +428,13 @@ SL.IoController = Em.Controller.extend({
           message.oval.x_pos,
           message.oval.y_pos,
           message.oval.x_size,
-          message.oval.y_size
+          message.oval.y_size,
+          {
+            fill_color: message.oval.fill_color,
+            fill_alpha: message.oval.fill_alpha,
+            line_width: message.oval.line_width,
+            line_color: message.oval.line_color
+          }
         );
         var em_oval = SL.Oval.create({
           id: message.oval.id,
@@ -401,6 +445,10 @@ SL.IoController = Em.Controller.extend({
           y_pos:  message.oval.y_pos,
           width:  message.oval.x_size,
           height: message.oval.y_size,
+          fill_color: message.oval.fill_color,
+          fill_alpha: message.oval.fill_alpha,
+          line_width: message.oval.line_width,
+          line_color: message.oval.line_color,
           object: rg_oval
         });
         SL.editorController.get('ovals').pushObject(em_oval);
@@ -420,7 +468,11 @@ SL.IoController = Em.Controller.extend({
           cx: message.oval.x_pos,
           cy: message.oval.y_pos,
           rx: message.oval.x_size,
-          ry: message.oval.y_size
+          ry: message.oval.y_size,
+          fill_color: message.oval.fill_color,
+          fill_alpha: message.oval.fill_alpha,
+          line_width: message.oval.line_width,
+          line_color: message.oval.line_color
         });
         em_obj.update('local');
       }
@@ -450,7 +502,10 @@ SL.IoController = Em.Controller.extend({
       }
       else {
         var rg_page = SL.editorController.get('pages').findBy('id', message.path.page_id);
-        var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value);
+        var rg_path = SL.editorController.newRaphPath(rg_page, message.path.value, {
+          line_color: message.path.line_color,
+          line_width: message.path.line_width
+        });
         var em_path = SL.Path.create({
           id: message.path.id,
           page_id: message.path.page_id,
@@ -459,6 +514,10 @@ SL.IoController = Em.Controller.extend({
           x_pos: message.path.x_pos,
           y_pos: message.path.y_pos,
           path:  message.path.value,
+          fill_color: message.path.fill_color,
+          fill_alpha: message.path.fill_alpha,
+          line_width: message.path.line_width,
+          line_color: message.path.line_color,
           object: rg_path
         });
         rg_path.transform("T"+(em_path.x_pos)+","+(em_path.y_pos));
@@ -478,6 +537,10 @@ SL.IoController = Em.Controller.extend({
         em_obj.set('x_pos', message.path.x_pos);
         em_obj.set('y_pos', message.path.y_pos);
         em_obj.set('path', message.path.value);
+        em_obj.set('fill_color', message.path.fill_color);
+        em_obj.set('fill_alpha', message.path.fill_alpha);
+        em_obj.set('line_width', message.path.line_width);
+        em_obj.set('line_color', message.path.line_color);
         em_obj.object.transform("T"+(em_obj.x_pos)+","+(em_obj.y_pos));
       }
     }

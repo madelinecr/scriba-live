@@ -7,6 +7,10 @@ SL.Oval = Em.Object.extend({
   y_pos: 0,
   width: 0,
   height: 0,
+  fill_color: "",
+  fill_alpha: "",
+  line_width: "",
+  line_color: "",
   object: null,
 
   element_id: function() {
@@ -18,6 +22,10 @@ SL.Oval = Em.Object.extend({
     this.set('y_pos', this.object.attr('cy'));
     this.set('width', this.object.attr('rx'));
     this.set('height', this.object.attr('ry'));
+    this.set('fill_color', this.object.attr('fill'));
+    this.set('fill_alpha', this.object.attr('opacity'));
+    this.set('line_width', this.object.attr('stroke-width'));
+    this.set('line_color', this.object.attr('stroke'));
 
     // push to server
     if (push == 'push') {
@@ -27,6 +35,7 @@ SL.Oval = Em.Object.extend({
 
   save: function() {
     // save to server
+    this.update('local');
     SL.ioController.pushOvalCreate(this);
   },
 

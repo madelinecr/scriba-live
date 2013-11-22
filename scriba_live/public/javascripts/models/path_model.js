@@ -5,11 +5,15 @@ SL.Path = Em.Object.extend({
   user_id: 0,
   x_pos: 0,
   y_pos: 0,
+  fill_color: "",
+  fill_alpha: "",
+  line_width: "",
+  line_color: "",
+  object: null,
+
   path: function(){
     return this.get('object').node.attributes.d.value;
   }.property('this.object.node.attributes.d.value'),
-
-  object: null,
 
   element_id: function() {
     return this.get('object').node.id;
@@ -17,6 +21,9 @@ SL.Path = Em.Object.extend({
 
   update: function(push) {
     this.set('path', this.object.node.attributes.d.value);
+    this.set('line_color', this.object.attr('stroke'));
+    this.set('line_width', this.object.attr('stroke-width'));
+
     // push to server
     if (push == 'push') {
       SL.ioController.pushPathUpdate(this);
@@ -26,6 +33,7 @@ SL.Path = Em.Object.extend({
 
   save: function() {
     //save to server
+    this.update('local');
     SL.ioController.pushPathCreate(this);
   },
 
