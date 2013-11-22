@@ -950,6 +950,11 @@ SL.EditorController = Em.Controller.extend({
 
   // EMBER HANDLEBARS ACTIONS
   actions: {
+    // go home
+    goHome: function() {
+      window.location ="/profile/"+$('#user-id').html();
+    },
+
     // change to new note
     changeNote: function(note) {
       SL.ioController.changeNote(moment(note.get('date')).add('d',1).format('L'), note.user_id);
