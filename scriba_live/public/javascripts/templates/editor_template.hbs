@@ -6,6 +6,17 @@
     <button id="path-tool" {{action "setTool" "path"}}>Path</button>
     <button id="rect-tool" {{action "setTool" "rect"}}>Rect</button>
     <button id="oval-tool" {{action "setTool" "oval"}}>Oval</button>
+    <input type='text' id="fill-palette"/>
+    <input type='text' id="line-palette"/>
+    <select id="line-width">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2" selected="selected">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
     <button id="add-page" {{action "addPage"}}>New Page</button>
     <button id="prev-page" {{action "prevPage"}}>&lt;</button>
     <button id="next-page" {{action "nextPage"}}>&gt;</button>

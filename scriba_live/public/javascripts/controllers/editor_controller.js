@@ -13,6 +13,11 @@ SL.EditorController = Em.Controller.extend({
 
   // variables
   tool: 'text',
+  current_color: "#6aa84f",
+  current_alpha: "1",
+  current_line_color: "#000000",
+  current_line_alpha: "1",
+  current_line_width: 2,
   active: null,
   last_active: null,
   active_page: null,
@@ -32,6 +37,11 @@ SL.EditorController = Em.Controller.extend({
   startEditor: function() {
     window.onkeydown = SL.editorController.keyDown;
 
+    $('#line-width').change(function(event) {
+      akharazia4 = event;
+      SL.editorController.set('current_line_width', parseInt(event.target.value));
+    });
+
     $('#date-picker').pickadate({
       format: 'mm/dd/yy',
       clear: null,
@@ -42,6 +52,106 @@ SL.EditorController = Em.Controller.extend({
         SL.ioController.getCurrentDino();
       }
     });
+
+    // http://jsfiddle.net/bgrins/ctkY3/
+
+    $("#fill-palette").spectrum({
+      color: SL.editorController.get('current_color'),
+      showInput: true,
+      className: "scriba-spectrum",
+      showInitial: true,
+      showPalette: true,
+      showAlpha: true,
+      showSelectionPalette: true,
+      maxPaletteSize: 10,
+      preferredFormat: "hex",
+      localStorageKey: "spectrum.scriba",
+      move: function (color) {},
+      show: function () {},
+      beforeShow: function () {},
+      hide: function () {},
+      change: function(color) {
+        SL.editorController.set('current_color', color.toHexString());
+        SL.editorController.set('current_alpha', color.getAlpha());
+      },
+      palette: [
+          ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)",
+          "rgb(204, 204, 204)", "rgb(217, 217, 217)","rgb(255, 255, 255)"],
+          ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+          "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"],
+          ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+          "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+          "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+          "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+          "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+          "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+          "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+          "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+          "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+          "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"]
+      ]
+    });
+
+    $("#line-palette").spectrum({
+      color: SL.editorController.get('current_line_color'),
+      showInput: true,
+      className: "scriba-spectrum",
+      showInitial: true,
+      showPalette: true,
+      showSelectionPalette: true,
+      maxPaletteSize: 10,
+      preferredFormat: "hex",
+      localStorageKey: "spectrum.scriba",
+      move: function (color) {},
+      show: function () {},
+      beforeShow: function () {},
+      hide: function () {},
+      change: function(color) {
+        SL.editorController.set('current_line_color', color.toHexString());
+        SL.editorController.set('current_line_alpha', color.getAlpha());
+      },
+      palette: [
+          ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)",
+          "rgb(204, 204, 204)", "rgb(217, 217, 217)","rgb(255, 255, 255)"],
+          ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+          "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"],
+          ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+          "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+          "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+          "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+          "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+          "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+          "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+          "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+          "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+          "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"]
+      ]
+    });
+  },
+
+  clearAll: function() {
+    var rects = SL.editorController.get('rects');
+    var ovals = SL.editorController.get('ovals');
+    var paths = SL.editorController.get('paths');
+
+    rects.forEach(function(rect) {
+      console.log(rect);
+      rect.remove('push');
+    });
+
+    ovals.forEach(function(oval) {
+      console.log(oval);
+      oval.remove('push');
+    });
+
+    paths.forEach(function(path) {
+      console.log(path);
+      path.remove('push');
+    });
+
+    SL.editorController.set('rects', []);
+    SL.editorController.set('ovals', []);
+    SL.editorController.set('paths', []);
   },
 
   // CRUD FOR USERS TO CREATE THINGS
@@ -233,7 +343,7 @@ SL.EditorController = Em.Controller.extend({
     return rg_text;
   },
 
-  newRaphPath: function(em_page, path_string) {
+  newRaphPath: function(em_page, path_string, style) {
     // Get locally unique number for DOM id field
     var uid = SL.editorController.uniqueID();
 
@@ -243,11 +353,14 @@ SL.EditorController = Em.Controller.extend({
     // build element id
     var element_id = "path-"+uid+"-page"+em_page.get('id');
 
+    akharazia3 = style;
+
     // style
     rg_path.attr({
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
-        'stroke-width': 2
+        'stroke-width': style.line_width > 0 ? style.line_width : .5,
+        'stroke': style.line_color
     });
 
     // set id
@@ -261,7 +374,7 @@ SL.EditorController = Em.Controller.extend({
     return rg_path;
   },
 
-  newRaphRect: function(em_page, x, y, width, height) {
+  newRaphRect: function(em_page, x, y, width, height, style) {
     // Get locally unique number for DOM id field
     var uid = SL.editorController.uniqueID();
 
@@ -273,7 +386,10 @@ SL.EditorController = Em.Controller.extend({
 
     // style
     rg_rect.attr({
-      fill: 'green',
+      fill: style.fill_color,
+      opacity: style.fill_alpha,
+      'stroke-width': style.line_width,
+      'stroke': style.line_color
     });
 
     // set id
@@ -287,9 +403,11 @@ SL.EditorController = Em.Controller.extend({
     return rg_rect;
   },
 
-  newRaphOval: function(em_page, cx, cy, rx, ry) {
+  newRaphOval: function(em_page, cx, cy, rx, ry, style) {
     // Get locally unique number for DOM id field
     var uid = SL.editorController.uniqueID();
+
+    akharazia6=style;
 
     // create new raphael ellipse object
     var rg_oval = em_page.get('object').ellipse(cx, cy, rx, ry);
@@ -299,7 +417,10 @@ SL.EditorController = Em.Controller.extend({
 
     // style
     rg_oval.attr({
-      fill: 'green',
+      fill: style.fill_color,
+      opacity: style.fill_alpha,
+      'stroke-width': style.line_width,
+      'stroke': style.line_color
     });
 
     // set id
@@ -436,7 +557,12 @@ SL.EditorController = Em.Controller.extend({
     controller.set('oy', event.offsetY);
 
     // create a new rectangle to shape where mouse clicks down
-    var rg_rect = controller.newRaphRect(controller.get('active_page'), event.offsetX, event.offsetY, 1, 1);
+    var rg_rect = controller.newRaphRect(controller.get('active_page'), event.offsetX, event.offsetY, 1, 1, {
+      fill_color: SL.editorController.get('current_color'),
+      fill_alpha: SL.editorController.get('current_alpha'),
+      line_color: SL.editorController.get('current_line_color'),
+      line_width: SL.editorController.get('current_line_width')
+    });
 
     // set active value to rectangle so other events know what to edit
     controller.set('active', rg_rect);
@@ -507,7 +633,12 @@ SL.EditorController = Em.Controller.extend({
     controller.set('oy', event.offsetY);
 
     // create a new ellipse to shape where mouse clicks down
-    var oval = controller.newRaphOval(controller.get('active_page'), event.offsetX, event.offsetY, 0.5, 0.5);
+    var oval = controller.newRaphOval(controller.get('active_page'), event.offsetX, event.offsetY, 0.5, 0.5, {
+      fill_color: SL.editorController.get('current_color'),
+      fill_alpha: SL.editorController.get('current_alpha'),
+      line_color: SL.editorController.get('current_line_color'),
+      line_width: SL.editorController.get('current_line_width')
+    });
 
     // set active value to ellipse so other events know what to edit
     controller.set('active', oval);
@@ -579,7 +710,10 @@ SL.EditorController = Em.Controller.extend({
     controller.set('ly', event.offsetY);
 
     // create a new ellipse to shape where mouse clicks down
-    var rg_path = controller.newRaphPath(controller.get('active_page'), 'M0,0');
+    var rg_path = controller.newRaphPath(controller.get('active_page'), 'M0,0', {
+      line_color: SL.editorController.get('current_line_color'),
+      line_width: SL.editorController.get('current_line_width')
+    });
     rg_path.transform("t"+(event.offsetX)+","+(event.offsetY));
 
     // set active value to ellipse so other events know what to edit
