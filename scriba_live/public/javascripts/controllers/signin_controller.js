@@ -5,16 +5,12 @@ SL.SigninController = Em.Controller.extend({
   loginFailed: false,
 
   signin: function() {
-    console.log("signin called");
-    console.log( $("#signin_email").val() );
     $.post("/signin", {
       signin_email: $("#signin_email").val(),
       signin_password: $("#signin_password").val()
     },function(response) {
-      console.log(response);
       document.location = "/preferences";
     }).fail(function() {
-      console.log("setting loginFailed to true");
       SL.signinController.set('loginFailed', true);
     });
     //alert("signin button pressed");
