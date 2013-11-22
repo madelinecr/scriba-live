@@ -52,7 +52,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "setTool", "oval", {hash:{},contexts:[depth0,depth0],types:["STRING","STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Oval</button>\n    <input type='text' id=\"fill-palette\"/>\n    <input type='text' id=\"line-palette\"/>\n    <select id=\"line-width\">\n      <option value=\"0\">0</option>\n      <option value=\"1\">1</option>\n      <option value=\"2\">2</option>\n      <option value=\"3\">3</option>\n      <option value=\"4\">4</option>\n      <option value=\"5\">5</option>\n      <option value=\"6\">6</option>\n    </select>\n    <button id=\"add-page\" ");
+  data.buffer.push(">Oval</button>\n    <input type='text' id=\"fill-palette\"/>\n    <input type='text' id=\"line-palette\"/>\n    <select id=\"line-width\">\n      <option value=\"0\">0</option>\n      <option value=\"1\">1</option>\n      <option value=\"2\" selected=\"selected\">2</option>\n      <option value=\"3\">3</option>\n      <option value=\"4\">4</option>\n      <option value=\"5\">5</option>\n      <option value=\"6\">6</option>\n    </select>\n    <button id=\"add-page\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "addPage", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
