@@ -32,7 +32,7 @@ SL.SigninController = Em.Controller.extend({
       $.get("/reset_password/" + email,function(response) {
         if(response.success == true) {
           SL.signinController.set('resetSent', true);
-          console.log("Password reset.);
+          console.log("Password reset.");
         } else {
           SL.signinController.set('resetFailed', true);
           console.log("Password not reset.");
