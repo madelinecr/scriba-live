@@ -99,6 +99,16 @@ svg {
   width: 95px;
 }
 
+.modal-body {
+  width: 100%;
+  overflow: auto;
+}
+
+#forgot-pass {
+  margin-top: 5px;
+  text-align: right;
+}
+
 #subnavinfo
 {
 margin: 0 auto;

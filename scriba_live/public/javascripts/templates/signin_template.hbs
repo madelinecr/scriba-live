@@ -14,5 +14,61 @@
     <input class="col-sm-8" id="signin_password" name=signin_password 
      type="password">
   </div>
-  <button class="btn" {{action "submitSignin"}}>Sign In</button>
+  <div class="col-sm-4">
+    <button class="btn" {{action "submitSignin"}}>Sign In</button>
+  </div>
+  <a href="#" id="forgot-pass" class="col-sm-8" data-toggle="modal"
+     data-target="#forgot-pass-modal">
+    Forgot your password?
+  </a>
+
+  <!-- hidden modal -->
+  <div class="modal fade" id="forgot-pass-modal" tabindex="-1" role="dialog"
+    aria-labelledby="#forgot-pass-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"
+            aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="forgot-pass-title">Reset Password</h4>
+        </div>
+        <div class="modal-body">
+          {{#if resetSent}}
+            <div class="alert alert-success">Email sent! It may take a few
+              minutes to make its way to you.</div>
+          {{/if}}
+          {{#if resetEmpty}}
+            <div class="alert alert-warning">Hang on, you didn't enter an email
+              address!</div>
+          {{/if}}
+          {{#if resetFailed}}
+            <div class="alert alert-danger">It looks like we couldn't find your
+              account. Double check the address you entered is correct.</div>
+          {{/if}}
+          If you've forgotten your password, you can reset it here. Just give us
+          the email address you used to register, and we'll send it to you
+          shortly.
+          <br>
+          <br>
+          <div class="col-sm-8 col-sm-offset-2">
+            <form role="form">
+              <div class="form-group">
+                <label for="#reset-pass-email" class="control-label col-xsm-8">Email Address</label>
+                <input type="text" class="form-control" id="reset-pass-email"
+                  placeholder="email@example.com">
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" {{action "resetPassword"}}>
+            Reset Password
+          </button>
+          <button class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>

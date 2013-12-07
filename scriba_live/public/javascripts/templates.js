@@ -606,7 +606,7 @@ function program45(depth0,data) {
     'placeholder': ("First Name"),
     'id': ("updated_first_name-id")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("<br>\n    Last Name:");
   hashContexts = {'type': depth0,'value': depth0,'placeholder': depth0,'id': depth0};
   hashTypes = {'type': "STRING",'value': "ID",'placeholder': "STRING",'id': "STRING"};
@@ -616,7 +616,7 @@ function program45(depth0,data) {
     'placeholder': ("Last Name"),
     'id': ("updated_last_name-id")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("<br>\n    Email:");
   hashContexts = {'type': depth0,'value': depth0,'placeholder': depth0,'id': depth0};
   hashTypes = {'type': "STRING",'value': "ID",'placeholder': "STRING",'id': "STRING"};
@@ -626,9 +626,8 @@ function program45(depth0,data) {
     'placeholder': ("Email"),
     'id': ("updated_email-id")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("<br>\n\n    ");
-  data.buffer.push("\n");
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || (depth0 && depth0.input)),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("<br>\n\n    \n");
   return buffer;
   }
 function program46(depth0,data) {
@@ -697,16 +696,53 @@ function program1(depth0,data) {
   data.buffer.push("\n  <div class=\"alert alert-danger\">Invalid username or password</div>\n");
   }
 
+function program3(depth0,data) {
+  
+  
+  data.buffer.push("\n            <div class=\"alert alert-success\">Email sent! It may take a few\n              minutes to make its way to you.</div>\n          ");
+  }
+
+function program5(depth0,data) {
+  
+  
+  data.buffer.push("\n            <div class=\"alert alert-warning\">Hang on, you didn't enter an email\n              address!</div>\n          ");
+  }
+
+function program7(depth0,data) {
+  
+  
+  data.buffer.push("\n            <div class=\"alert alert-danger\">It looks like we couldn't find your\n              account. Double check the address you entered is correct.</div>\n          ");
+  }
+
   data.buffer.push("<h3>Sign in</h3>\n");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "loginFailed", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_email\">E-Mail</label>\n    <input class=\"col-sm-8\" id=\"signin_email\" placeholder=\"me@example.com\"\n     name=\"signin_email\"\n     type=\"text\">\n   </div>\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_password\">Password</label>\n    <input class=\"col-sm-8\" id=\"signin_password\" name=signin_password \n     type=\"password\">\n  </div>\n  <button class=\"btn\" ");
+  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_email\">E-Mail</label>\n    <input class=\"col-sm-8\" id=\"signin_email\" placeholder=\"me@example.com\"\n     name=\"signin_email\"\n     type=\"text\">\n   </div>\n  <div class=\"form-group\">\n    <label class=\"col-sm-4\" for=\"signin_password\">Password</label>\n    <input class=\"col-sm-8\" id=\"signin_password\" name=signin_password \n     type=\"password\">\n  </div>\n  <div class=\"col-sm-4\">\n    <button class=\"btn\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "submitSignin", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Sign In</button>\n</form>\n");
+  data.buffer.push(">Sign In</button>\n  </div>\n  <a href=\"#\" id=\"forgot-pass\" class=\"col-sm-8\" data-toggle=\"modal\"\n     data-target=\"#forgot-pass-modal\">\n    Forgot your password?\n  </a>\n\n  <!-- hidden modal -->\n  <div class=\"modal fade\" id=\"forgot-pass-modal\" tabindex=\"-1\" role=\"dialog\"\n    aria-labelledby=\"#forgot-pass-title\" aria-hidden=\"true\">\n    <div class=\"modal-dialog\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n            aria-hidden=\"true\">\n            &times;\n          </button>\n          <h4 class=\"modal-title\" id=\"forgot-pass-title\">Reset Password</h4>\n        </div>\n        <div class=\"modal-body\">\n          ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "resetSent", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n          ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "resetEmpty", {hash:{},inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n          ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "resetFailed", {hash:{},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n          If you've forgotten your password, you can reset it here. Just give us\n          the email address you used to register, and we'll send it to you\n          shortly.\n          <br>\n          <br>\n          <div class=\"col-sm-8 col-sm-offset-2\">\n            <form role=\"form\">\n              <div class=\"form-group\">\n                <label for=\"#reset-pass-email\" class=\"control-label col-xsm-8\">Email Address</label>\n                <input type=\"text\" class=\"form-control\" id=\"reset-pass-email\"\n                  placeholder=\"email@example.com\">\n              </div>\n            </form>\n          </div>\n        </div>\n        <div class=\"modal-footer\">\n          <button class=\"btn btn-primary\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "resetPassword", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\n            Reset Password\n          </button>\n          <button class=\"btn\">Close</button>\n        </div>\n      </div>\n    </div>\n  </div>\n</form>\n");
   return buffer;
   
 });
@@ -727,11 +763,11 @@ function program1(depth0,data) {
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "createError", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\">Name</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"firstname form-control\" type=\"text\" name=\"first_name\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"lastname form-control\" type=\"text\" name=\"last_name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"email\">E-Mail</label>\n    </div>\n    <div class=\"col-sm-8\">\n      <input class=\"form-control\" type=\"text\" name=\"email\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"password\">Password</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password_confirmation\">\n    </div>\n  </div>\n  <input class=\"button\" type=\"submit\" value=\"Submit\" ");
+  data.buffer.push("\n<form class=\"form-horizontal\">\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\">Name</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"firstname form-control\" type=\"text\" name=\"first_name\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"lastname form-control\" type=\"text\" name=\"last_name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"email\">E-Mail</label>\n    </div>\n    <div class=\"col-sm-8\">\n      <input class=\"form-control\" type=\"text\" name=\"email\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-4\">\n      <label class=\"control-label\" for=\"password\">Password</label>\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password\">\n    </div>\n    <div class=\"col-sm-4\">\n      <input class=\"form-control\" type=\"password\" name=\"password_confirmation\">\n    </div>\n  </div>\n  <button class=\"btn\" type=\"submit\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "createUser", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">\n</form>\n\n");
+  data.buffer.push(">Submit</button>\n</form>\n\n");
   return buffer;
   
 });

@@ -16,12 +16,16 @@ exports.resetpass = function(req, res) {
       var new_password = generateSalt();
       user.password = hashAndSalt(new_password);
       user.save(['password']).success(function() {
-        console.log("success");
+        console.log("Password reset email sent to " + req.params.email);
         mail({
           from: "noreply@scribalive.com",
           to: req.params.email,
           subject: "Reset Password",
           text: "Your new password is " + new_password + "."
+        });
+        res.send({
+          success: true,
+          user: user,
         });
       }).error(function(error) {
         console.log(error);
@@ -30,13 +34,10 @@ exports.resetpass = function(req, res) {
           error: error
         });
       });
-      res.send({
-        success: true,
-        user: user,
-        new_password: new_password
-      });
     } else {
-      res.send(400);
+      res.send({
+        success: false
+      });
     }
   }).error(function(error) {
     res.send({

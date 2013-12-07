@@ -3,6 +3,9 @@
 SL.SigninController = Em.Controller.extend({
 
   loginFailed: false,
+  resetSent: false,
+  resetEmpty: false,
+  resetFailed: false,
 
   signin: function() {
     $.post("/signin", {
@@ -14,6 +17,28 @@ SL.SigninController = Em.Controller.extend({
       SL.signinController.set('loginFailed', true);
     });
     //alert("signin button pressed");
+  },
+
+  resetPassword: function() {
+    var email = $("#reset-pass-email").val();
+    console.log(email);
+    SL.signinController.set('resetFailed', false);
+    SL.signinController.set('resetEmpty', false);
+    SL.signinController.set('resetSent', false);
+
+    if(email == "") {
+      SL.signinController.set('resetEmpty', true);
+    } else {
+      $.get("/reset_password/" + email,function(response) {
+        if(response.success == true) {
+          SL.signinController.set('resetSent', true);
+          console.log("Password reset.);
+        } else {
+          SL.signinController.set('resetFailed', true);
+          console.log("Password not reset.");
+        }
+      });
+    }
   },
 
 //  actions: {   
@@ -68,6 +93,9 @@ SL.SigninController = Em.Controller.extend({
   
     submitSignin: function() {
       SL.signinController.signin();
+    },
+    resetPassword: function() {
+      SL.signinController.resetPassword();
     }
   }
 });
