@@ -1,9 +1,50 @@
 var crypto = require('crypto');
+var mail = require('nodemailer').mail;
 
 /*
   This is the users controller which controls user-related data
 */
 
+/*
+  Reset password for account
+ */
+exports.resetpass = function(req, res) {
+  req.app.get('db').User.find({
+    where: { email: req.params.email }
+  }).success(function(user) {
+    if(user) {
+      var new_password = generateSalt();
+      user.password = hashAndSalt(new_password);
+      user.save(['password']).success(function() {
+        console.log("success");
+        mail({
+          from: "noreply@scribalive.com",
+          to: req.params.email,
+          subject: "Reset Password",
+          text: "Your new password is " + new_password + "."
+        });
+      }).error(function(error) {
+        console.log(error);
+        res.send({
+          success: false,
+          error: error
+        });
+      });
+      res.send({
+        success: true,
+        user: user,
+        new_password: new_password
+      });
+    } else {
+      res.send(400);
+    }
+  }).error(function(error) {
+    res.send({
+      success: false,
+      error: error
+    });
+  });
+};
 
 /*
   GET list of (multiple) users in JSON.

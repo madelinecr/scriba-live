@@ -52,6 +52,7 @@ app.get('/preferences', app.get('controllers').site.preferences);
 // app.http_verb('/model', app.get('controllers').model.action)
 // -> USERS ROUTES
 // --> GET
+app.get('/reset_password/:email', app.get('controllers').users.resetpass);
 app.get('/users', app.get('controllers').users.index);
 app.get('/users/:id', app.get('controllers').users.show);
 //app.post('/login', app.get('controllers').users.login);

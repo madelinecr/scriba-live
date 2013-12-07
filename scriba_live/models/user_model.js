@@ -17,23 +17,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     email: {
       type: DataTypes.STRING,
+      unique: true,
       validate: {
         isEmail: true,
         notNull: { args: true, msg: "Email cannot be blank" },
-        isUnique: function(value, next) {
-          UserModel.find({
-            where: {email: value},
-            attributes: ['id']
-          }).done(function(error, user) {
-            if(error) {
-              return next(error);
-            }
-            if(user) {
-              return next('Email address already in use!');
-            }
-            next();
-          });
-        }
       }
     },
     password: {
